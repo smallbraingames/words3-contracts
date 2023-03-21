@@ -1,6 +1,21 @@
 {
-  "components": ["CounterComponent"],
+  "components": [
+    "LetterCountComponent",
+    "RewardsComponent",
+    "ScoreComponent",
+    "SpentComponent",
+    "TileComponent"
+  ],
   "systems": [
-    { "name": "IncrementSystem", "writeAccess": ["CounterComponent"] }
+    {
+      "name": "BoardSystem",
+      "writeAccess": [
+        "LetterCountComponent",
+        "RewardsComponent",
+        "ScoreComponent",
+        "SpentComponent",
+        "TileComponent"
+      ]
+    }
   ]
 }
