@@ -8,3 +8,4 @@ abi/
 types/
 broadcast/
 .env
+latticeDeploy.sh

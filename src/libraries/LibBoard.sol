@@ -118,7 +118,7 @@ library LibBoard {
     }
 
     /// @notice Plays the first word "infinite" on the board
-    function playInfinite(TileComponent tileComponent) public {
+    function playInfinite(TileComponent tileComponent) internal {
         if (LibTile.hasTileAtCoord(Coord({x: 0, y: 0}), tileComponent)) {
             revert AlreadySetupGrid();
         }

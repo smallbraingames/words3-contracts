@@ -40,7 +40,7 @@ contract TileComponent is BareComponent {
     }
 
     function getValue(uint256 entity) public view returns (Tile memory) {
-        bytes memory rawData = abi.decode(getRawValue(entity), (bytes));
+        bytes memory rawData = getRawValue(entity);
         uint8[] memory lengths = new uint8[](2);
         lengths[0] = 20;
         lengths[1] = 1;
