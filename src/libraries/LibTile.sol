@@ -37,7 +37,10 @@ library LibTile {
                 bytes32(
                     bytes.concat(
                         bytes4(uint32(coord.x)),
-                        bytes4(uint32(coord.y))
+                        bytes4(uint32(coord.y)),
+                        // All non-tile entities are players (address entities)
+                        // This prevents collisions between entities
+                        bytes20(type(uint160).max)
                     )
                 )
             );

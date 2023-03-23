@@ -16,6 +16,10 @@
         "SpentComponent",
         "TileComponent"
       ]
+    },
+    {
+      "name": "SetupBoardSystem",
+      "writeAccess": ["TileComponent"]
     }
   ]
 }
