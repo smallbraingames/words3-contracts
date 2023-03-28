@@ -37,7 +37,7 @@ contract BoardSystem is System {
 
     /// @notice Merkle root for dictionary of words
     bytes32 private merkleRoot =
-        0xd848d23e6ac07f7c22c9cb0e121f568619a636d37fab669e76595adfda216273;
+        0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432;
 
     /// @notice Mapping for point values of letters, set up in setupLetterPoints()
     mapping(Letter => uint8) private letterValue;

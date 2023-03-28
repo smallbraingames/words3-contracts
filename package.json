@@ -26,6 +26,7 @@
     "@rari-capital/solmate": "https://github.com/rari-capital/solmate.git#851ea3baa4327f453da723df75b1093b58b964dc",
     "@solidstate/contracts": "^0.0.52",
     "@typechain/ethers-v5": "^10.1.1",
+    "@types/minimist": "^1.2.2",
     "@types/node": "^18.11.9",
     "ds-test": "https://github.com/dapphub/ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f",
     "ethers": "^5.7.1",
@@ -42,6 +43,8 @@
     "wait-on": "^6.0.1"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.8.2"
+    "@openzeppelin/contracts": "^4.8.2",
+    "@openzeppelin/merkle-tree": "^1.0.4",
+    "minimist": "^1.2.8"
   }
 }
