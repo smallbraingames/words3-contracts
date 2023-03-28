@@ -18,7 +18,7 @@ library LibBoard {
         bytes32[] memory proof,
         bytes32 merkleRoot
     ) internal pure {
-        bytes32 leaf = keccak256(abi.encodePacked(word));
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(word))));
         bool isValidLeaf = MerkleProof.verify(proof, merkleRoot, leaf);
         if (!isValidLeaf) revert InvalidWord();
     }
