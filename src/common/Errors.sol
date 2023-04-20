@@ -18,6 +18,7 @@ error InvalidWordEnd();
 error LonelyWord();
 error WordTooLong();
 error InvalidCrossProofs();
+error PointsForEmptyLetter();
 
 error PaymentTooLow();
 

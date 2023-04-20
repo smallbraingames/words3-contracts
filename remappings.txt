@@ -9,4 +9,5 @@ solecs/=node_modules/@latticexyz/solecs/src/
 memmove/=node_modules/memmove/src/
 ds-test/=node_modules/ds-test/src/
 solmate/=node_modules/@rari-capital/solmate/src/
+utils/=node_modules/solmate/src/utils/
 forge-std/=node_modules/forge-std/src/

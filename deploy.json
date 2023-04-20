@@ -1,25 +1,23 @@
 {
   "components": [
-    "LetterCountComponent",
     "RewardsComponent",
     "ScoreComponent",
     "SpentComponent",
-    "TileComponent"
+    "TileComponent",
+    "LetterWeightComponent"
   ],
   "systems": [
     {
       "name": "BoardSystem",
-      "writeAccess": [
-        "LetterCountComponent",
-        "RewardsComponent",
-        "ScoreComponent",
-        "SpentComponent",
-        "TileComponent"
-      ]
+      "writeAccess": ["RewardsComponent", "ScoreComponent", "SpentComponent"]
     },
     {
       "name": "SetupBoardSystem",
-      "writeAccess": ["TileComponent"]
+      "writeAccess": ["TileComponent", "LetterWeightComponent"]
+    },
+    {
+      "name": "PlaceLetterSystem",
+      "writeAccess": ["TileComponent", "LetterWeightComponent"]
     }
   ]
 }

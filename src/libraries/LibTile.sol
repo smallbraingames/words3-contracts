@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import {Coord} from "std-contracts/components/CoordComponent.sol";
-import {TileComponent, ID as TileComponentID} from "components/TileComponent.sol";
+import {TileComponent} from "components/TileComponent.sol";
 
 import {Tile} from "common/Tile.sol";
 

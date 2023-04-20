@@ -3,22 +3,24 @@ pragma solidity >=0.8.0;
 
 import {System} from "solecs/System.sol";
 import {IWorld} from "solecs/interfaces/IWorld.sol";
-import {getAddressById} from "solecs/utils.sol";
+import {getAddressById, getSystemAddressById} from "solecs/utils.sol";
 import {Coord} from "std-contracts/components/CoordComponent.sol";
 
 import {Letter} from "common/Letter.sol";
 import {Tile} from "common/Tile.sol";
 import {Score} from "common/Score.sol";
-import {LetterCountComponent, ID as LetterCountComponentID} from "components/LetterCountComponent.sol";
 import {RewardsComponent, ID as RewardsComponentID} from "components/RewardsComponent.sol";
 import {TileComponent, ID as TileComponentID} from "components/TileComponent.sol";
 import {ScoreComponent, ID as ScoreComponentID} from "components/ScoreComponent.sol";
+import {LetterWeightComponent, ID as LetterWeightComponentID} from "components/LetterWeightComponent.sol";
+import {PlaceLetterSystem, ID as PlaceLetterSystemID} from "systems/PlaceLetterSystem.sol";
 
 import {Direction} from "common/Direction.sol";
 import {Bounds} from "common/Bounds.sol";
 import {LibBoard} from "libraries/LibBoard.sol";
-import {LibLetterCount} from "libraries/LibLetterCount.sol";
+import {LibLetter} from "libraries/LibLetter.sol";
 import {LibPlayer} from "libraries/LibPlayer.sol";
+import {LibPrice} from "libraries/LibPrice.sol";
 import {LibTile} from "libraries/LibTile.sol";
 import {GameOver, PaymentTooLow, WordTooLong, InvalidWordStart, InvalidWordEnd, EmptyLetterNotOnExisting, LonelyWord, NoLettersPlayed, LetterOnExistingTile, BoundsDoNotMatch, InvalidBoundLength, InvalidBoundEdges, InvalidEmptyLetterBound, InvalidCrossProofs} from "common/Errors.sol";
 
@@ -32,22 +34,24 @@ contract BoardSystem is System {
 
     /// @notice End time for game end
     uint256 public immutable endTime = block.timestamp + 86400 * 7;
+    /// @notice End time for game start
+    uint256 public immutable startTime = block.timestamp;
     /// @notice Amount of sales that go to rewards (1/4)
     uint256 public immutable rewardFraction = 4;
+    /// @notice Total price of all letters scaled by 1e18
+    int256 public immutable totalPrice = 25e14;
+
+    /// @notice Treasury (mutable variable, sorry ECS)
+    uint256 public treasury;
 
     /// @notice Merkle root for dictionary of words
     bytes32 private merkleRoot =
         0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432;
 
-    /// @notice Mapping for point values of letters, set up in setupLetterPoints()
-    mapping(Letter => uint8) private letterValue;
-
     constructor(
         IWorld _world,
         address _components
-    ) System(_world, _components) {
-        setupLetterPoints();
-    }
+    ) System(_world, _components) {}
 
     /// ============ Public functions ============
 
@@ -98,22 +102,9 @@ contract BoardSystem is System {
         }
 
         // Ensure payment is sufficient
-        uint256 price = getPriceForWord(word);
+        uint256 price = getWordPrice(word);
         if (msg.value < price) {
             revert PaymentTooLow();
-        }
-
-        // Increment letter counts
-        LetterCountComponent letterCountComponent = LetterCountComponent(
-            getAddressById(components, LetterCountComponentID)
-        );
-        for (uint32 i = 0; i < word.length; i++) {
-            if (word[i] != Letter.EMPTY) {
-                LibLetterCount.incrementLetterCount(
-                    word[i],
-                    letterCountComponent
-                );
-            }
         }
 
         // Check if move is valid, and if so, make it
@@ -271,6 +262,13 @@ contract BoardSystem is System {
             getAddressById(components, RewardsComponentID)
         );
 
+        // The PlaceLetterSystem will place letters and increment weights
+        PlaceLetterSystem placeLetterSystem = PlaceLetterSystem(
+            getSystemAddressById(components, PlaceLetterSystemID)
+        );
+        // It needs daysSinceStart to do this
+        int256 daysSinceStart = LibPrice.getDaysSinceStart(startTime);
+
         // Evenly split the reward fraction of among tiles the player used to create their word
         // Rewards are only awarded to players who are used in the "primary" word
         uint256 rewardPerEmptyTile = LibBoard.getRewardPerEmptyTile(
@@ -298,12 +296,13 @@ contract BoardSystem is System {
                 );
                 filledWord[i] = tile.letter;
             } else {
-                LibTile.setTileAtCoord(
-                    letterCoord,
-                    Tile({player: msg.sender, letter: word[i]}),
-                    tileComponent
-                );
                 filledWord[i] = word[i];
+                placeLetterSystem.executeTyped(
+                    letterCoord,
+                    msg.sender,
+                    word[i],
+                    daysSinceStart
+                );
             }
         }
         return filledWord;
@@ -348,27 +347,45 @@ contract BoardSystem is System {
     /// @notice Get the points for a given word, the points are simply a sum of the letter point values
     function countPointsForWord(
         Letter[] memory word
-    ) private view returns (uint32) {
+    ) private pure returns (uint32) {
         uint32 points;
         for (uint32 i; i < word.length; i++) {
-            points += letterValue[word[i]];
+            points += LibLetter.getPointsForLetter(word[i]);
         }
         return points;
     }
 
-    /// @notice Get price for a letter using a linear VRGDA
-    function getPriceForLetter(Letter letter) public view returns (uint256) {
-        return 10;
+    /// @notice Get price for a letter
+    function getLetterPrice(
+        Letter letter,
+        int256 totalWeight,
+        LetterWeightComponent letterWeightComponent
+    ) public view returns (uint256) {
+        return
+            uint256(
+                LibPrice.getLetterPrice(
+                    letter,
+                    totalWeight,
+                    totalPrice,
+                    letterWeightComponent
+                )
+            );
     }
 
     /// @notice Get price for a word
-    function getPriceForWord(
-        Letter[] memory word
-    ) public view returns (uint256) {
+    function getWordPrice(Letter[] memory word) public view returns (uint256) {
+        LetterWeightComponent letterWeightComponent = LetterWeightComponent(
+            getAddressById(components, LetterWeightComponentID)
+        );
         uint256 price;
+        int256 totalWeight = LibPrice.getTotalWeight(letterWeightComponent);
         for (uint32 i = 0; i < word.length; i++) {
             if (word[i] != Letter.EMPTY) {
-                price += getPriceForLetter(word[i]);
+                price += getLetterPrice(
+                    word[i],
+                    totalWeight,
+                    letterWeightComponent
+                );
             }
         }
         return price;
@@ -377,36 +394,5 @@ contract BoardSystem is System {
     /// @notice Get if game is over.
     function isGameOver() private view returns (bool) {
         return block.timestamp >= endTime;
-    }
-
-    /// ============ Setup functions ============
-
-    function setupLetterPoints() private {
-        letterValue[Letter.A] = 1;
-        letterValue[Letter.B] = 3;
-        letterValue[Letter.C] = 3;
-        letterValue[Letter.D] = 2;
-        letterValue[Letter.E] = 1;
-        letterValue[Letter.F] = 4;
-        letterValue[Letter.G] = 2;
-        letterValue[Letter.H] = 4;
-        letterValue[Letter.I] = 1;
-        letterValue[Letter.J] = 8;
-        letterValue[Letter.K] = 5;
-        letterValue[Letter.L] = 1;
-        letterValue[Letter.M] = 3;
-        letterValue[Letter.N] = 1;
-        letterValue[Letter.O] = 1;
-        letterValue[Letter.P] = 3;
-        letterValue[Letter.Q] = 10;
-        letterValue[Letter.R] = 1;
-        letterValue[Letter.S] = 1;
-        letterValue[Letter.T] = 1;
-        letterValue[Letter.U] = 1;
-        letterValue[Letter.V] = 4;
-        letterValue[Letter.W] = 4;
-        letterValue[Letter.X] = 8;
-        letterValue[Letter.Y] = 4;
-        letterValue[Letter.Z] = 10;
     }
 }
