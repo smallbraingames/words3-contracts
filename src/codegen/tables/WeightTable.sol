@@ -20,10 +20,10 @@ import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCou
 // Import user types
 import { Letter } from "./../Types.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("LetterWeightTable")));
-bytes32 constant LetterWeightTableTableId = _tableId;
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("WeightTable")));
+bytes32 constant WeightTableTableId = _tableId;
 
-library LetterWeightTable {
+library WeightTable {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](1);
@@ -43,7 +43,7 @@ library LetterWeightTable {
   function getMetadata() internal pure returns (string memory, string[] memory) {
     string[] memory _fieldNames = new string[](1);
     _fieldNames[0] = "weight";
-    return ("LetterWeightTable", _fieldNames);
+    return ("WeightTable", _fieldNames);
   }
 
   /** Register the table's schema */

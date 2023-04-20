@@ -16,7 +16,7 @@ export default mudConfig({
       },
       storeArgument: true,
     },
-    LetterWeightTable: {
+    WeightTable: {
       primaryKeys: { letter: "Letter" },
       schema: {
         weight: "int256",
