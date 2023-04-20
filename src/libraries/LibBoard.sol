@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import {Coord} from "std-contracts/components/CoordComponent.sol";
-import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import {Letter} from "codegen/Types.sol";
+import {TileTableData} from "codegen/Tables.sol";
 
-import {Direction} from "common/Direction.sol";
-import {Letter} from "common/Letter.sol";
-import {Tile} from "common/Tile.sol";
-import {LibTile} from "libraries/LibTile.sol";
-import {TileComponent} from "components/TileComponent.sol";
+import {Coord} from "common/Coord.sol";
 import {BoundTooLong, EmptyLetterInBounds, InvalidWord, AlreadySetupGrid} from "common/Errors.sol";
+import {Direction} from "common/Direction.sol";
+import {LibTile} from "libraries/LibTile.sol";
+
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 library LibBoard {
     /// @notice Verifies a Merkle proof to check if a given word is in the dictionary
@@ -85,8 +85,7 @@ library LibBoard {
         Coord memory letterCoord,
         Direction direction,
         uint32 positive,
-        uint32 negative,
-        TileComponent tileComponent
+        uint32 negative
     ) internal view returns (Letter[] memory) {
         uint32 wordLength = positive + negative + 1;
         Letter[] memory word = new Letter[](wordLength);
@@ -106,7 +105,7 @@ library LibBoard {
             );
         }
         for (uint32 i = 0; i < wordLength; i++) {
-            word[i] = LibTile.getTileAtCoord(coord, tileComponent).letter;
+            word[i] = LibTile.getTileAtCoord(coord).letter;
             if (word[i] == Letter.EMPTY) revert EmptyLetterInBounds();
             if (direction == Direction.LEFT_TO_RIGHT) {
                 coord.y += 1;
@@ -118,49 +117,41 @@ library LibBoard {
     }
 
     /// @notice Plays the first word "infinite" on the board
-    function playInfinite(TileComponent tileComponent) internal {
-        if (LibTile.hasTileAtCoord(Coord({x: 0, y: 0}), tileComponent)) {
+    function playInfinite() internal {
+        if (LibTile.hasTileAtCoord(Coord({x: 0, y: 0}))) {
             revert AlreadySetupGrid();
         }
         LibTile.setTileAtCoord(
             Coord({x: 0, y: 0}),
-            Tile({player: address(0), letter: Letter.I}),
-            tileComponent
+            TileTableData({player: address(0), letter: Letter.I})
         );
         LibTile.setTileAtCoord(
             Coord({x: 1, y: 0}),
-            Tile({player: address(0), letter: Letter.N}),
-            tileComponent
+            TileTableData({player: address(0), letter: Letter.N})
         );
         LibTile.setTileAtCoord(
             Coord({x: 2, y: 0}),
-            Tile({player: address(0), letter: Letter.F}),
-            tileComponent
+            TileTableData({player: address(0), letter: Letter.F})
         );
         LibTile.setTileAtCoord(
             Coord({x: 3, y: 0}),
-            Tile({player: address(0), letter: Letter.I}),
-            tileComponent
+            TileTableData({player: address(0), letter: Letter.I})
         );
         LibTile.setTileAtCoord(
             Coord({x: 4, y: 0}),
-            Tile({player: address(0), letter: Letter.N}),
-            tileComponent
+            TileTableData({player: address(0), letter: Letter.N})
         );
         LibTile.setTileAtCoord(
             Coord({x: 5, y: 0}),
-            Tile({player: address(0), letter: Letter.I}),
-            tileComponent
+            TileTableData({player: address(0), letter: Letter.I})
         );
         LibTile.setTileAtCoord(
             Coord({x: 6, y: 0}),
-            Tile({player: address(0), letter: Letter.T}),
-            tileComponent
+            TileTableData({player: address(0), letter: Letter.T})
         );
         LibTile.setTileAtCoord(
             Coord({x: 7, y: 0}),
-            Tile({player: address(0), letter: Letter.E}),
-            tileComponent
+            TileTableData({player: address(0), letter: Letter.E})
         );
     }
 }
