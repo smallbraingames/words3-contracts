@@ -1,19 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
-import {System, IWorld} from "solecs/System.sol";
-import {getAddressById} from "solecs/utils.sol";
-import {Coord} from "std-contracts/components/CoordComponent.sol";
 
+import {Coord} from "common/Coord.sol";
 import {Letter} from "common/Letter.sol";
 import {Tile} from "common/Tile.sol";
 import {LibPrice} from "libraries/LibPrice.sol";
 import {LibTile} from "libraries/LibTile.sol";
-import {LetterWeightComponent, ID as LetterWeightComponentID} from "components/LetterWeightComponent.sol";
-import {TileComponent, ID as TileComponentID} from "components/TileComponent.sol";
 
-uint256 constant ID = uint256(keccak256("system.PlaceLetter"));
+import {System, IWorld} from "solecs/System.sol";
+import {getAddressById} from "solecs/utils.sol";
 
-contract PlaceLetterSystem is System {
+uint256 constant ID = uint256(keccak256("system.PlaceTile"));
+
+contract PlaceTileSystem is System {
     constructor(
         IWorld _world,
         address _components

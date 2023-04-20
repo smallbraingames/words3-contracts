@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import {Letter} from "common/Letter.sol";
+import {Letter} from "codegen/Types.sol";
+
 import {PointsForEmptyLetter} from "common/Errors.sol";
 
 library LibLetter {

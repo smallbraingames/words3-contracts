@@ -1,31 +1,30 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import {Letter} from "common/Letter.sol";
-import {LetterWeightComponent} from "components/LetterWeightComponent.sol";
+import {Letter} from "codegen/Types.sol";
+import {WeightTable} from "codegen/Tables.sol";
+
 import {LibLetter} from "libraries/LibLetter.sol";
+
 import {wadExp, wadMul, wadDiv, toWadUnsafe, toDaysWadUnsafe} from "utils/SignedWadMath.sol";
 
 library LibPrice {
     function getLetterPrice(
         Letter letter,
         int256 totalWeight, // Total weight of all letters
-        int256 totalPrice, // Total price of all letters, scaled by 1e18
-        LetterWeightComponent letterWeightComponent
+        int256 totalPrice // Total price of all letters, scaled by 1e18
     ) internal view returns (int256) {
-        int256 letterWeight = getLetterWeight(letter, letterWeightComponent);
+        int256 letterWeight = getLetterWeight(letter);
         return wadMul(wadDiv(letterWeight, totalWeight), totalPrice);
     }
 
     function incrementLetterWeight(
         Letter letter,
-        int256 daysSinceStart,
-        LetterWeightComponent letterWeightComponent
+        int256 daysSinceStart
     ) internal {
-        uint256 letterEntity = getLetterWeightEntityForLetter(letter);
-        int256 prevWeight = getLetterWeight(letter, letterWeightComponent);
-        letterWeightComponent.set(
-            letterEntity,
+        int256 prevWeight = getLetterWeight(letter);
+        WeightTable.set(
+            letter,
             prevWeight +
                 wadMul(
                     wadExp(daysSinceStart),
@@ -34,29 +33,8 @@ library LibPrice {
         );
     }
 
-    function getLetterWeight(
-        Letter letter,
-        LetterWeightComponent letterWeightComponent
-    ) internal view returns (int256) {
-        uint256 letterEntity = getLetterWeightEntityForLetter(letter);
-        return letterWeightComponent.getValue(letterEntity);
-    }
-
-    function getLetterWeightEntityForLetter(
-        Letter letter
-    ) internal pure returns (uint256) {
-        return
-            uint256(
-                bytes32(
-                    bytes.concat(
-                        bytes1(uint8(letter)),
-                        // All non-tile entities are players (address entities)
-                        // or tiles (entities where the 22nd byte is all 1s), so
-                        // this prevents collisions between entities
-                        bytes20(type(uint160).max)
-                    )
-                )
-            );
+    function getLetterWeight(Letter letter) internal view returns (int256) {
+        return WeightTable.get(letter);
     }
 
     function getDaysSinceStart(
@@ -65,24 +43,19 @@ library LibPrice {
         return toWadUnsafe(1) + toDaysWadUnsafe(block.timestamp - startTime);
     }
 
-    function getTotalWeight(
-        LetterWeightComponent letterWeightComponent
-    ) internal view returns (int256) {
+    function getTotalWeight() internal view returns (int256) {
         int256 totalWeight = 0;
         for (uint8 i = 1; i <= 26; i++) {
             Letter letter = Letter(i);
-            totalWeight += getLetterWeight(letter, letterWeightComponent);
+            totalWeight += getLetterWeight(letter);
         }
         return totalWeight;
     }
 
-    function setupLetterWeights(
-        LetterWeightComponent letterWeightComponent
-    ) internal {
+    function setupLetterWeights() internal {
         for (uint8 i = 1; i <= 26; i++) {
             Letter letter = Letter(i);
-            uint256 entity = getLetterWeightEntityForLetter(letter);
-            letterWeightComponent.set(entity, toWadUnsafe(1));
+            WeightTable.set(letter, toWadUnsafe(1));
         }
     }
 }
