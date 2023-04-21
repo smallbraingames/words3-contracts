@@ -1,4 +1,5 @@
 @openzeppelin/=node_modules/@openzeppelin/
+@latticexyz/=node_modules/@latticexyz/
 @solidstate=node_modules/@solidstate/
 common/=./src/common
 codegen/=./src/codegen

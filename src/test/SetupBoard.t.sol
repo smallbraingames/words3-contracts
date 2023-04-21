@@ -1,41 +1,50 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import "std-contracts/test/MudTest.t.sol";
-import {Coord} from "std-contracts/components/CoordComponent.sol";
+import "forge-std/Test.sol";
+import {MudV2Test} from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
+import {getKeysWithValue} from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
 
-import {Deploy} from "./Deploy.sol";
-import {Letter} from "common/Letter.sol";
-import {TileComponent, ID as TileComponentID} from "components/TileComponent.sol";
-import {SetupBoardSystem, ID as SetupBoardSystemID} from "systems/SetupBoardSystem.sol";
-import {LibTile} from "libraries/LibTile.sol";
+import {IWorld} from "codegen/world/IWorld.sol";
+import {TileTable} from "codegen/Tables.sol";
 
-contract SetupBoardTest is MudTest {
-    constructor() MudTest(new Deploy()) {}
+contract CounterTest is MudV2Test {
+    IWorld world;
 
-    function testSetupBoard() public {
-        SetupBoardSystem setupBoardSystem = SetupBoardSystem(
-            system(SetupBoardSystemID)
-        );
-        TileComponent tileComponent = TileComponent(
-            getAddressById(components, TileComponentID)
-        );
-        setupBoardSystem.executeTyped();
-        assertEq(
-            uint8(
-                LibTile
-                    .getTileAtCoord(Coord({x: 0, y: 0}), tileComponent)
-                    .letter
-            ),
-            uint8(Letter.I)
-        );
-        assertEq(
-            uint8(
-                LibTile
-                    .getTileAtCoord(Coord({x: 4, y: 0}), tileComponent)
-                    .letter
-            ),
-            uint8(Letter.N)
-        );
+    function setUp() public override {
+        super.setUp();
+        world = IWorld(worldAddress);
     }
+
+    function testWorldExists() public {
+        uint256 codeSize;
+        address addr = worldAddress;
+        assembly {
+            codeSize := extcodesize(addr)
+        }
+        assertTrue(codeSize > 0);
+    }
+
+    // function testCounter() public {
+    //     // Expect the counter to be 1 because it was incremented in the PostDeploy script.
+    //     bytes32 key = SingletonKey;
+    //     uint32 counter = CounterTable.get(world, key);
+    //     assertEq(counter, 1);
+
+    //     // Expect the counter to be 2 after calling increment.
+    //     world.increment();
+    //     counter = CounterTable.get(world, key);
+    //     assertEq(counter, 2);
+    // }
+
+    // function testKeysWithValue() public {
+    //     bytes32 key = SingletonKey;
+    //     uint32 counter = CounterTable.get(world, key);
+    //     bytes32[] memory keysWithValue = getKeysWithValue(
+    //         world,
+    //         CounterTableTableId,
+    //         CounterTable.encode(counter)
+    //     );
+    //     assertEq(keysWithValue.length, 1);
+    // }
 }

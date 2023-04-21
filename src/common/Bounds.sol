@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.0;
 
-import {Letter} from "./Letter.sol";
+import {Letter} from "codegen/Types.sol";
 
 // Bounds for a played word
 struct Bounds {
