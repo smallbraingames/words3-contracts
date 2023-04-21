@@ -1,22 +1,13 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import {System} from "solecs/System.sol";
-import {IWorld} from "solecs/interfaces/IWorld.sol";
-import {getAddressById, getSystemAddressById} from "solecs/utils.sol";
-import {Coord} from "std-contracts/components/CoordComponent.sol";
+import {IWorld} from "codegen/World/IWorld.sol";
+import {Letter} from "codegen/Types.sol";
+import {TileTableData} from "codegen/Tables.sol";
 
-import {Letter} from "common/Letter.sol";
-import {Tile} from "common/Tile.sol";
-import {Score} from "common/Score.sol";
-import {RewardsComponent, ID as RewardsComponentID} from "components/RewardsComponent.sol";
-import {TileComponent, ID as TileComponentID} from "components/TileComponent.sol";
-import {ScoreComponent, ID as ScoreComponentID} from "components/ScoreComponent.sol";
-import {LetterWeightComponent, ID as LetterWeightComponentID} from "components/LetterWeightComponent.sol";
-import {PlaceLetterSystem, ID as PlaceLetterSystemID} from "systems/PlaceLetterSystem.sol";
-
-import {Direction} from "common/Direction.sol";
 import {Bounds} from "common/Bounds.sol";
+import {Coord} from "common/Coord.sol";
+import {Direction} from "common/Direction.sol";
 import {LibBoard} from "libraries/LibBoard.sol";
 import {LibLetter} from "libraries/LibLetter.sol";
 import {LibPlayer} from "libraries/LibPlayer.sol";
@@ -24,7 +15,7 @@ import {LibPrice} from "libraries/LibPrice.sol";
 import {LibTile} from "libraries/LibTile.sol";
 import {GameOver, PaymentTooLow, WordTooLong, InvalidWordStart, InvalidWordEnd, EmptyLetterNotOnExisting, LonelyWord, NoLettersPlayed, LetterOnExistingTile, BoundsDoNotMatch, InvalidBoundLength, InvalidBoundEdges, InvalidEmptyLetterBound, InvalidCrossProofs} from "common/Errors.sol";
 
-uint256 constant ID = uint256(keccak256("system.Board"));
+import {System} from "@latticexyz/world/src/System.sol";
 
 /// @title Game Board System for Words3
 /// @author Small Brain Games
@@ -40,34 +31,11 @@ contract BoardSystem is System {
     uint256 public immutable rewardFraction = 4;
     /// @notice Total price of all letters scaled by 1e18
     int256 public immutable totalPrice = 25e14;
-
-    /// @notice Treasury (mutable variable, sorry ECS)
-    uint256 public treasury;
-
     /// @notice Merkle root for dictionary of words
     bytes32 private merkleRoot =
         0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432;
 
-    constructor(
-        IWorld _world,
-        address _components
-    ) System(_world, _components) {}
-
     /// ============ Public functions ============
-
-    function execute(bytes memory arguments) public returns (bytes memory) {
-        (
-            Letter[] memory word,
-            bytes32[] memory proof,
-            Coord memory coord,
-            Direction direction,
-            Bounds memory bounds
-        ) = abi.decode(
-                arguments,
-                (Letter[], bytes32[], Coord, Direction, Bounds)
-            );
-        executeInternal(word, proof, coord, direction, bounds);
-    }
 
     /// @notice Checks if a move is valid and if so, plays a word on the board
     /// @param word The letters of the word being played, empty letters mean using existing letters on board
@@ -75,27 +43,13 @@ contract BoardSystem is System {
     /// @param coord The starting coord that the word is being played from
     /// @param direction The direction the word is being played (top-down, or left-to-right)
     /// @param bounds The bounds of all other words on the cross axis this word makes
-    function executeTyped(
+    function play(
         Letter[] memory word,
         bytes32[] memory proof,
         Coord memory coord,
         Direction direction,
         Bounds memory bounds
-    ) public payable returns (bytes memory) {
-        return execute(abi.encode(word, proof, coord, direction, bounds));
-    }
-
-    /// ============ Private functions ============
-
-    /// @notice Internal function to check if a move is valid and if so, play it on the board
-    /// @dev Making execute payable breaks the System interface, so executeInternal is needed
-    function executeInternal(
-        Letter[] memory word,
-        bytes32[] memory proof,
-        Coord memory coord,
-        Direction direction,
-        Bounds memory bounds
-    ) private {
+    ) public payable {
         // Ensure game is not ever
         if (isGameOver()) {
             revert GameOver();
@@ -111,6 +65,8 @@ contract BoardSystem is System {
         makeMoveChecked(word, proof, coord, direction, bounds);
     }
 
+    /// ============ Private functions ============
+
     /// @notice Checks if a move is valid, and if so, update TileComponent and ScoreComponent
     function makeMoveChecked(
         Letter[] memory word,
@@ -119,18 +75,10 @@ contract BoardSystem is System {
         Direction direction,
         Bounds memory bounds
     ) private {
-        TileComponent tileComponent = TileComponent(
-            getAddressById(components, TileComponentID)
-        );
-        checkWord(word, proof, coord, direction, tileComponent);
-        checkBounds(word, coord, direction, bounds, tileComponent);
-        Letter[] memory filledWord = processWord(
-            word,
-            coord,
-            direction,
-            tileComponent
-        );
-        countPointsChecked(filledWord, coord, direction, bounds, tileComponent);
+        checkWord(word, proof, coord, direction);
+        checkBounds(word, coord, direction, bounds);
+        Letter[] memory filledWord = processWord(word, coord, direction);
+        countPointsChecked(filledWord, coord, direction, bounds);
     }
 
     /// @notice Checks if a word is 1) played on another word, 2) has at least one letter, 3) is a valid word, 4) has valid bounds, and 5) has not been played yet
@@ -138,16 +86,14 @@ contract BoardSystem is System {
         Letter[] memory word,
         bytes32[] memory proof,
         Coord memory coord,
-        Direction direction,
-        TileComponent tileComponent
+        Direction direction
     ) public view {
         // Ensure word is less than 200 letters
         if (word.length > 200) revert WordTooLong();
         // Ensure word isn't missing letters at edges
         if (
             LibTile.hasTileAtCoord(
-                LibBoard.getLetterCoord(-1, coord, direction),
-                tileComponent
+                LibBoard.getLetterCoord(-1, coord, direction)
             )
         ) {
             revert InvalidWordStart();
@@ -158,8 +104,7 @@ contract BoardSystem is System {
                     int32(uint32(word.length)),
                     coord,
                     direction
-                ),
-                tileComponent
+                )
             )
         ) {
             revert InvalidWordEnd();
@@ -180,17 +125,15 @@ contract BoardSystem is System {
                 emptyTile = true;
 
                 // Ensure empty letter is played on existing letter
-                if (!LibTile.hasTileAtCoord(letterCoord, tileComponent))
+                if (!LibTile.hasTileAtCoord(letterCoord))
                     revert EmptyLetterNotOnExisting();
 
-                filledWord[i] = LibTile
-                    .getTileAtCoord(letterCoord, tileComponent)
-                    .letter;
+                filledWord[i] = LibTile.getTileAtCoord(letterCoord).letter;
             } else {
                 nonEmptyTile = true;
 
                 // Ensure non-empty letter is played on empty tile
-                if (LibTile.hasTileAtCoord(letterCoord, tileComponent))
+                if (LibTile.hasTileAtCoord(letterCoord))
                     revert LetterOnExistingTile();
 
                 filledWord[i] = word[i];
@@ -210,8 +153,7 @@ contract BoardSystem is System {
         Letter[] memory word,
         Coord memory coord,
         Direction direction,
-        Bounds memory bounds,
-        TileComponent tileComponent
+        Bounds memory bounds
     ) private view {
         // Ensure bounds of equal length
         if (bounds.positive.length != bounds.negative.length)
@@ -240,8 +182,7 @@ contract BoardSystem is System {
                         bounds.negative[i]
                     );
                 if (
-                    LibTile.hasTileAtCoord(start, tileComponent) ||
-                    LibTile.hasTileAtCoord(end, tileComponent)
+                    LibTile.hasTileAtCoord(start) || LibTile.hasTileAtCoord(end)
                 ) revert InvalidBoundEdges();
             }
         }
@@ -252,20 +193,10 @@ contract BoardSystem is System {
     function processWord(
         Letter[] memory word,
         Coord memory coord,
-        Direction direction,
-        TileComponent tileComponent
+        Direction direction
     ) private returns (Letter[] memory) {
         Letter[] memory filledWord = new Letter[](word.length);
 
-        // Rewards are tracked in the score component
-        RewardsComponent rewardsComponent = RewardsComponent(
-            getAddressById(components, RewardsComponentID)
-        );
-
-        // The PlaceLetterSystem will place letters and increment weights
-        PlaceLetterSystem placeLetterSystem = PlaceLetterSystem(
-            getSystemAddressById(components, PlaceLetterSystemID)
-        );
         // It needs daysSinceStart to do this
         int256 daysSinceStart = LibPrice.getDaysSinceStart(startTime);
 
@@ -285,21 +216,14 @@ contract BoardSystem is System {
                 direction
             );
             if (word[i] == Letter.EMPTY) {
-                Tile memory tile = LibTile.getTileAtCoord(
-                    letterCoord,
-                    tileComponent
-                );
-                LibPlayer.incrementRewards(
-                    tile.player,
-                    rewardPerEmptyTile,
-                    rewardsComponent
-                );
+                TileTableData memory tile = LibTile.getTileAtCoord(letterCoord);
+                LibPlayer.incrementRewards(tile.player, rewardPerEmptyTile);
                 filledWord[i] = tile.letter;
             } else {
                 filledWord[i] = word[i];
-                placeLetterSystem.executeTyped(
+                IWorld(_world()).placeTile(
                     letterCoord,
-                    msg.sender,
+                    _msgSender(),
                     word[i],
                     daysSinceStart
                 );
@@ -314,8 +238,7 @@ contract BoardSystem is System {
         Letter[] memory filledWord,
         Coord memory coord,
         Direction direction,
-        Bounds memory bounds,
-        TileComponent tiles
+        Bounds memory bounds
     ) private {
         uint32 points = countPointsForWord(filledWord);
         // Count points for perpendicular word
@@ -327,8 +250,7 @@ contract BoardSystem is System {
                         LibBoard.getLetterCoord(int32(i), coord, direction),
                         direction,
                         bounds.positive[i],
-                        bounds.negative[i],
-                        tiles
+                        bounds.negative[i]
                     );
                 LibBoard.verifyWordProof(
                     perpendicularWord,
@@ -338,10 +260,8 @@ contract BoardSystem is System {
                 points += countPointsForWord(perpendicularWord);
             }
         }
-        ScoreComponent scoreComponent = ScoreComponent(
-            getAddressById(components, ScoreComponentID)
-        );
-        LibPlayer.incrementScore(msg.sender, points, scoreComponent);
+
+        LibPlayer.incrementScore(_msgSender(), points);
     }
 
     /// @notice Get the points for a given word, the points are simply a sum of the letter point values
@@ -358,34 +278,19 @@ contract BoardSystem is System {
     /// @notice Get price for a letter
     function getLetterPrice(
         Letter letter,
-        int256 totalWeight,
-        LetterWeightComponent letterWeightComponent
+        int256 totalWeight
     ) public view returns (uint256) {
         return
-            uint256(
-                LibPrice.getLetterPrice(
-                    letter,
-                    totalWeight,
-                    totalPrice,
-                    letterWeightComponent
-                )
-            );
+            uint256(LibPrice.getLetterPrice(letter, totalWeight, totalPrice));
     }
 
     /// @notice Get price for a word
     function getWordPrice(Letter[] memory word) public view returns (uint256) {
-        LetterWeightComponent letterWeightComponent = LetterWeightComponent(
-            getAddressById(components, LetterWeightComponentID)
-        );
         uint256 price;
-        int256 totalWeight = LibPrice.getTotalWeight(letterWeightComponent);
+        int256 totalWeight = LibPrice.getTotalWeight();
         for (uint32 i = 0; i < word.length; i++) {
             if (word[i] != Letter.EMPTY) {
-                price += getLetterPrice(
-                    word[i],
-                    totalWeight,
-                    letterWeightComponent
-                );
+                price += getLetterPrice(word[i], totalWeight);
             }
         }
         return price;

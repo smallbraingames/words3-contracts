@@ -3,6 +3,7 @@ import { mudConfig } from "@latticexyz/config";
 export default mudConfig({
   overrideSystems: {
     PlaceTileSystem: {
+      name: "PlaceTileSystem",
       openAccess: false,
       accessList: ["BoardSystem"],
     },
