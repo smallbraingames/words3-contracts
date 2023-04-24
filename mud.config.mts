@@ -29,6 +29,11 @@ export default mudConfig({
         rewards: "uint256",
       },
     },
+    TreasuryTable: {
+      schema: {
+        value: "uint256",
+      },
+    },
     ScoreTable: {
       primaryKeys: { player: "address" },
       schema: {

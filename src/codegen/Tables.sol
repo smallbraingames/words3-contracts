@@ -6,5 +6,6 @@ pragma solidity >=0.8.0;
 import { TileTable, TileTableData, TileTableTableId } from "./tables/TileTable.sol";
 import { WeightTable, WeightTableTableId } from "./tables/WeightTable.sol";
 import { RewardsTable, RewardsTableTableId } from "./tables/RewardsTable.sol";
+import { TreasuryTable, TreasuryTableTableId } from "./tables/TreasuryTable.sol";
 import { ScoreTable, ScoreTableTableId } from "./tables/ScoreTable.sol";
 import { SpentTable, SpentTableTableId } from "./tables/SpentTable.sol";
