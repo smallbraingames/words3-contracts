@@ -5,7 +5,7 @@ import {Letter} from "codegen/Types.sol";
 
 // Bounds for a played word
 struct Bounds {
-    uint32[] positive; // Distance in the positive direction
-    uint32[] negative; // Distance in the negative direction
+    uint16[] positive; // Distance in the positive direction
+    uint16[] negative; // Distance in the negative direction
     bytes32[][] proofs;
 }

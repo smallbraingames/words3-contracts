@@ -20,7 +20,9 @@ library LibBoard {
     ) internal pure {
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(word))));
         bool isValidLeaf = MerkleProof.verify(proof, merkleRoot, leaf);
-        if (!isValidLeaf) revert InvalidWord();
+        if (!isValidLeaf) {
+            revert InvalidWord();
+        }
     }
 
     /// @notice Get the amount of rewards paid to every empty tile in the word
@@ -32,6 +34,11 @@ library LibBoard {
         uint256 numEmptyTiles;
         for (uint32 i = 0; i < word.length; i++) {
             if (word[i] == Letter.EMPTY) numEmptyTiles++;
+        }
+        // No reward given out if no empty tiles
+        // Or if no reward fraction
+        if (numEmptyTiles == 0 || rewardFraction == 0) {
+            return 0;
         }
         // msg.value / rewardFraction is total to be paid out in rewards, split across numEmptyTiles
         return (value / rewardFraction) / numEmptyTiles;
@@ -63,18 +70,18 @@ library LibBoard {
     function getOutsideBoundCoords(
         Coord memory letterCoord,
         Direction direction,
-        uint32 positive,
-        uint32 negative
+        uint16 positive,
+        uint16 negative
     ) internal pure returns (Coord memory, Coord memory) {
         if (positive > 200 || negative > 200) revert BoundTooLong();
         Coord memory start = Coord({x: letterCoord.x, y: letterCoord.y});
         Coord memory end = Coord({x: letterCoord.x, y: letterCoord.y});
         if (direction == Direction.LEFT_TO_RIGHT) {
-            start.y -= (int32(negative) + 1);
-            end.y += (int32(positive) + 1);
+            start.y -= (int32(uint32(negative)) + 1);
+            end.y += (int32(uint32(positive)) + 1);
         } else {
-            start.x -= (int32(negative) + 1);
-            end.x += (int32(positive) + 1);
+            start.x -= (int32(uint32(negative)) + 1);
+            end.x += (int32(uint32(positive)) + 1);
         }
         return (start, end);
     }
@@ -84,29 +91,31 @@ library LibBoard {
     function getWordInBoundsChecked(
         Coord memory letterCoord,
         Direction direction,
-        uint32 positive,
-        uint32 negative
+        uint16 positive,
+        uint16 negative
     ) internal view returns (Letter[] memory) {
-        uint32 wordLength = positive + negative + 1;
+        uint16 wordLength = positive + negative + 1;
         Letter[] memory word = new Letter[](wordLength);
         Coord memory coord;
         // Start at edge of negative bound
         if (direction == Direction.LEFT_TO_RIGHT) {
             coord = LibBoard.getLetterCoord(
-                -1 * int32(negative),
+                -1 * int32(uint32(negative)),
                 letterCoord,
                 Direction.TOP_TO_BOTTOM
             );
         } else {
             coord = LibBoard.getLetterCoord(
-                -1 * int32(negative),
+                -1 * int32(uint32(negative)),
                 letterCoord,
                 Direction.LEFT_TO_RIGHT
             );
         }
-        for (uint32 i = 0; i < wordLength; i++) {
+        for (uint16 i = 0; i < wordLength; i++) {
             word[i] = LibTile.getTileAtCoord(coord).letter;
-            if (word[i] == Letter.EMPTY) revert EmptyLetterInBounds();
+            if (word[i] == Letter.EMPTY) {
+                revert EmptyLetterInBounds();
+            }
             if (direction == Direction.LEFT_TO_RIGHT) {
                 coord.y += 1;
             } else {
@@ -118,9 +127,6 @@ library LibBoard {
 
     /// @notice Plays the first word "infinite" on the board
     function playInfinite() internal {
-        if (LibTile.hasTileAtCoord(Coord({x: 0, y: 0}))) {
-            revert AlreadySetupGrid();
-        }
         LibTile.setTileAtCoord(
             Coord({x: 0, y: 0}),
             TileTableData({player: address(0), letter: Letter.I})

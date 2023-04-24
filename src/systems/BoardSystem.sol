@@ -165,7 +165,7 @@ contract BoardSystem is System {
             revert InvalidCrossProofs();
 
         // Ensure positive and negative bounds are valid
-        for (uint32 i; i < word.length; i++) {
+        for (uint16 i; i < word.length; i++) {
             if (word[i] == Letter.EMPTY) {
                 // Ensure bounds are 0 if letter is empty
                 // since you cannot get points for words formed by letters you did not play
@@ -176,7 +176,11 @@ contract BoardSystem is System {
                 // Bounds that are too large will be caught while verifying formed words
                 (Coord memory start, Coord memory end) = LibBoard
                     .getOutsideBoundCoords(
-                        LibBoard.getLetterCoord(int32(i), coord, direction),
+                        LibBoard.getLetterCoord(
+                            int32(uint32(i)),
+                            coord,
+                            direction
+                        ),
                         direction,
                         bounds.positive[i],
                         bounds.negative[i]
