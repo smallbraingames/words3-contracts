@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/World/IWorld.sol";
 import {Letter} from "codegen/Types.sol";
-import {TileTableData} from "codegen/Tables.sol";
+import {RewardsTable, TileTableData} from "codegen/Tables.sol";
 
 import {Bounds} from "common/Bounds.sol";
 import {Coord} from "common/Coord.sol";
@@ -14,7 +14,7 @@ import {LibPlayer} from "libraries/LibPlayer.sol";
 import {LibPrice} from "libraries/LibPrice.sol";
 import {LibTile} from "libraries/LibTile.sol";
 import {LibTreasury} from "libraries/LibTreasury.sol";
-import {GameOver, PaymentTooLow, WordTooLong, InvalidWordStart, InvalidWordEnd, EmptyLetterNotOnExisting, LonelyWord, NoLettersPlayed, LetterOnExistingTile, BoundsDoNotMatch, InvalidBoundLength, InvalidBoundEdges, InvalidEmptyLetterBound, InvalidCrossProofs} from "common/Errors.sol";
+import {GameOver, GameNotOver, PaymentTooLow, WordTooLong, InvalidWordStart, InvalidWordEnd, EmptyLetterNotOnExisting, LonelyWord, NoLettersPlayed, LetterOnExistingTile, BoundsDoNotMatch, InvalidBoundLength, InvalidBoundEdges, InvalidEmptyLetterBound, InvalidCrossProofs} from "common/Errors.sol";
 
 import {System} from "@latticexyz/world/src/System.sol";
 
@@ -67,6 +67,14 @@ contract BoardSystem is System {
 
         // Check if move is valid, and if so, make it
         makeMoveChecked(word, proof, coord, direction, bounds);
+    }
+
+    function claimPayout() public {
+        if (!isGameOver()) revert GameNotOver();
+        address player = msg.sender;
+        uint256 winnings = LibTreasury.getPlayerTreasuryWinnings(player);
+        uint256 rewards = RewardsTable.get(player);
+        payable(player).transfer(winnings + rewards);
     }
 
     /// ============ Private functions ============

@@ -5,6 +5,8 @@ import {RewardsTable} from "codegen/Tables.sol";
 import {ScoreTable} from "codegen/Tables.sol";
 import {SpentTable} from "codegen/Tables.sol";
 
+import {SingletonAddress} from "common/Singleton.sol";
+
 library LibPlayer {
     function incrementRewards(address player, uint256 increment) internal {
         uint256 previous = RewardsTable.get(player);
@@ -19,5 +21,8 @@ library LibPlayer {
     function incrementScore(address player, uint32 increment) internal {
         uint256 score = ScoreTable.get(player);
         ScoreTable.set(player, score + increment);
+        // Increment total score
+        uint256 totalScore = ScoreTable.get(SingletonAddress);
+        ScoreTable.set(SingletonAddress, totalScore + increment);
     }
 }
