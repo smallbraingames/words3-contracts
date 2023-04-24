@@ -13,6 +13,7 @@ import {LibLetter} from "libraries/LibLetter.sol";
 import {LibPlayer} from "libraries/LibPlayer.sol";
 import {LibPrice} from "libraries/LibPrice.sol";
 import {LibTile} from "libraries/LibTile.sol";
+import {LibTreasury} from "libraries/LibTreasury.sol";
 import {GameOver, PaymentTooLow, WordTooLong, InvalidWordStart, InvalidWordEnd, EmptyLetterNotOnExisting, LonelyWord, NoLettersPlayed, LetterOnExistingTile, BoundsDoNotMatch, InvalidBoundLength, InvalidBoundEdges, InvalidEmptyLetterBound, InvalidCrossProofs} from "common/Errors.sol";
 
 import {System} from "@latticexyz/world/src/System.sol";
@@ -60,6 +61,9 @@ contract BoardSystem is System {
         if (msg.value < price) {
             revert PaymentTooLow();
         }
+
+        // Increment treasury
+        LibTreasury.incrementTreasury(msg.value, rewardFraction);
 
         // Check if move is valid, and if so, make it
         makeMoveChecked(word, proof, coord, direction, bounds);
