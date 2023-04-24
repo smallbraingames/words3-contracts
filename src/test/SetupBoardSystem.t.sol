@@ -5,6 +5,7 @@ import {IWorld} from "codegen/world/IWorld.sol";
 import {TileTable, TileTableData} from "codegen/Tables.sol";
 import {Letter} from "codegen/Types.sol";
 
+import {AlreadySetupGrid} from "common/Errors.sol";
 import {Coord} from "common/Coord.sol";
 
 import "forge-std/Test.sol";
@@ -28,11 +29,17 @@ contract SetupBoardTest is MudV2Test {
         assertTrue(codeSize > 0);
     }
 
-    function testFirstWord() public {
+    function testSetupBoard() public {
         world.playFirstWord();
         TileTableData memory firstTile = TileTable.get(world, 0, 0);
         assertEq(uint8(firstTile.letter), uint8(Letter.I));
         TileTableData memory thirdTile = TileTable.get(world, 2, 0);
         assertEq(uint8(thirdTile.letter), uint8(Letter.F));
+    }
+
+    function testRevertDoubleSetupBoard() public {
+        world.playFirstWord();
+        vm.expectRevert(AlreadySetupGrid.selector);
+        world.playFirstWord();
     }
 }
