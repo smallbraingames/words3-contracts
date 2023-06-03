@@ -1,14 +1,14 @@
 [profile.default]
+solc_version = "0.8.13"
 ffi = false
 fuzz_runs = 256
 optimizer = true
-optimizer_runs = 1000000
+optimizer_runs = 3000
 verbosity = 1
-libs = ["../../node_modules", "../../mud"]
-gas_reports = ["*"]
 src = "src"
 test = "test"
 out = "out"
+allow_paths = ["./node_modules"]
 extra_output_files = [
   "abi",
   "evm.bytecode"

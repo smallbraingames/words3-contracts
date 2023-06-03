@@ -1,15 +1,8 @@
 @openzeppelin/=node_modules/@openzeppelin/
 @latticexyz/=node_modules/@latticexyz/
 @solidstate=node_modules/@solidstate/
+
 common/=./src/common
 codegen/=./src/codegen
 systems/=./src/systems
 libraries/=./src/libraries
-
-std-contracts/=node_modules/@latticexyz/std-contracts/src/
-solecs/=node_modules/@latticexyz/solecs/src/
-memmove/=node_modules/memmove/src/
-ds-test/=node_modules/ds-test/src/
-solmate/=node_modules/@rari-capital/solmate/src/
-utils/=node_modules/solmate/src/utils/
-forge-std/=node_modules/forge-std/src/

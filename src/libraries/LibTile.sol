@@ -5,8 +5,22 @@ import {Letter} from "codegen/Types.sol";
 import {TileTable, TileTableData} from "codegen/Tables.sol";
 
 import {Coord} from "common/Coord.sol";
+import {LibPrice} from "libraries/LibPrice.sol";
 
 library LibTile {
+    function placeTile(
+        Coord memory coord,
+        address player,
+        Letter letter,
+        int256 daysSinceStart
+    ) internal {
+        LibPrice.incrementLetterWeight(letter, daysSinceStart);
+        LibTile.setTileAtCoord(
+            coord,
+            TileTableData({player: player, letter: letter})
+        );
+    }
+
     function setTileAtCoord(
         Coord memory coord,
         TileTableData memory tile
