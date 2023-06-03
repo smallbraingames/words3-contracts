@@ -9,4 +9,4 @@ abi/
 types/
 broadcast/
 .env
-latticeDeploy.sh
+latticeEnv.sh

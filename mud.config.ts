@@ -1,13 +1,7 @@
 import { mudConfig } from "@latticexyz/config";
 
 export default mudConfig({
-  overrideSystems: {
-    PlaceTileSystem: {
-      name: "PlaceTileSystem",
-      openAccess: false,
-      accessList: ["BoardSystem"],
-    },
-  },
+  overrideSystems: {},
   tables: {
     TileTable: {
       primaryKeys: { x: "int32", y: "int32" },

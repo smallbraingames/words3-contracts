@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import {IWorld} from "codegen/World/IWorld.sol";
 import {Letter} from "codegen/Types.sol";
 import {RewardsTable, TileTableData} from "codegen/Tables.sol";
 
@@ -237,7 +236,7 @@ contract BoardSystem is System {
                 filledWord[i] = tile.letter;
             } else {
                 filledWord[i] = word[i];
-                IWorld(_world()).placeTile(
+                LibTile.placeTile(
                     letterCoord,
                     _msgSender(),
                     word[i],
