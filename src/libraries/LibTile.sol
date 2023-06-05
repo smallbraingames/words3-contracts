@@ -1,40 +1,23 @@
-// SPDX-License-Identifier: Unlicensed
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
+import {Direction} from "codegen/Types.sol";
 import {Letter} from "codegen/Types.sol";
-import {TileTable, TileTableData} from "codegen/Tables.sol";
+import {TileLetter, TilePlayer} from "codegen/Tables.sol";
 
 import {Coord} from "common/Coord.sol";
-import {LibPrice} from "libraries/LibPrice.sol";
 
 library LibTile {
-    function placeTile(
-        Coord memory coord,
-        address player,
-        Letter letter,
-        int256 daysSinceStart
-    ) internal {
-        LibPrice.incrementLetterWeight(letter, daysSinceStart);
-        LibTile.setTileAtCoord(
-            coord,
-            TileTableData({player: player, letter: letter})
-        );
+    function setTile(Coord memory coord, Letter letter, address player) internal {
+        TileLetter.set(coord.x, coord.y, letter);
+        TilePlayer.set(coord.x, coord.y, player);
     }
 
-    function setTileAtCoord(
-        Coord memory coord,
-        TileTableData memory tile
-    ) internal {
-        TileTable.set(coord.x, coord.y, tile);
+    function getLetter(Coord memory coord) internal view returns (Letter) {
+        return TileLetter.get(coord.x, coord.y);
     }
 
-    function getTileAtCoord(
-        Coord memory coord
-    ) internal view returns (TileTableData memory) {
-        return TileTable.get(coord.x, coord.y);
-    }
-
-    function hasTileAtCoord(Coord memory coord) internal view returns (bool) {
-        return TileTable.get(coord.x, coord.y).letter != Letter.EMPTY;
+    function getPlayer(Coord memory coord) internal view returns (address) {
+        return TilePlayer.get(coord.x, coord.y);
     }
 }

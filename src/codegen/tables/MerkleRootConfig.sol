@@ -17,21 +17,20 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("RewardsTable")));
-bytes32 constant RewardsTableTableId = _tableId;
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("MerkleRootConfig")));
+bytes32 constant MerkleRootConfigTableId = _tableId;
 
-library RewardsTable {
+library MerkleRootConfig {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](1);
-    _schema[0] = SchemaType.UINT256;
+    _schema[0] = SchemaType.BYTES32;
 
     return SchemaLib.encode(_schema);
   }
 
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](1);
-    _schema[0] = SchemaType.ADDRESS;
+    SchemaType[] memory _schema = new SchemaType[](0);
 
     return SchemaLib.encode(_schema);
   }
@@ -39,8 +38,8 @@ library RewardsTable {
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
     string[] memory _fieldNames = new string[](1);
-    _fieldNames[0] = "rewards";
-    return ("RewardsTable", _fieldNames);
+    _fieldNames[0] = "value";
+    return ("MerkleRootConfig", _fieldNames);
   }
 
   /** Register the table's schema */
@@ -65,58 +64,57 @@ library RewardsTable {
     _store.setMetadata(_tableId, _tableName, _fieldNames);
   }
 
-  /** Get rewards */
-  function get(address player) internal view returns (uint256 rewards) {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
+  /** Get value */
+  function get() internal view returns (bytes32 value) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _primaryKeys, 0);
-    return (uint256(Bytes.slice32(_blob, 0)));
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
+    return (Bytes.slice32(_blob, 0));
   }
 
-  /** Get rewards (using the specified store) */
-  function get(IStore _store, address player) internal view returns (uint256 rewards) {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
+  /** Get value (using the specified store) */
+  function get(IStore _store) internal view returns (bytes32 value) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = _store.getField(_tableId, _primaryKeys, 0);
-    return (uint256(Bytes.slice32(_blob, 0)));
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
+    return (Bytes.slice32(_blob, 0));
   }
 
-  /** Set rewards */
-  function set(address player, uint256 rewards) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
+  /** Set value */
+  function set(bytes32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.setField(_tableId, _primaryKeys, 0, abi.encodePacked((rewards)));
+    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
   }
 
-  /** Set rewards (using the specified store) */
-  function set(IStore _store, address player, uint256 rewards) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
+  /** Set value (using the specified store) */
+  function set(IStore _store, bytes32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.setField(_tableId, _primaryKeys, 0, abi.encodePacked((rewards)));
+    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(uint256 rewards) internal view returns (bytes memory) {
-    return abi.encodePacked(rewards);
+  function encode(bytes32 value) internal view returns (bytes memory) {
+    return abi.encodePacked(value);
+  }
+
+  /** Encode keys as a bytes32 array using this table's schema */
+  function encodeKeyTuple() internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](0);
   }
 
   /* Delete all data for given keys */
-  function deleteRecord(address player) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
+  function deleteRecord() internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.deleteRecord(_tableId, _primaryKeys);
+    StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
 
   /* Delete all data for given keys (using the specified store) */
-  function deleteRecord(IStore _store, address player) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
+  function deleteRecord(IStore _store) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.deleteRecord(_tableId, _primaryKeys);
+    _store.deleteRecord(_tableId, _keyTuple);
   }
 }

@@ -17,10 +17,10 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("ScoreTable")));
-bytes32 constant ScoreTableTableId = _tableId;
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("Spent")));
+bytes32 constant SpentTableId = _tableId;
 
-library ScoreTable {
+library Spent {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](1);
@@ -39,8 +39,8 @@ library ScoreTable {
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
     string[] memory _fieldNames = new string[](1);
-    _fieldNames[0] = "score";
-    return ("ScoreTable", _fieldNames);
+    _fieldNames[0] = "value";
+    return ("Spent", _fieldNames);
   }
 
   /** Register the table's schema */
@@ -65,58 +65,34 @@ library ScoreTable {
     _store.setMetadata(_tableId, _tableName, _fieldNames);
   }
 
-  /** Get score */
-  function get(address player) internal view returns (uint256 score) {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
+  /** Emit the ephemeral event using individual values */
+  function emitEphemeral(address player, uint256 value) internal {
+    bytes memory _data = encode(value);
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _primaryKeys, 0);
-    return (uint256(Bytes.slice32(_blob, 0)));
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((player))));
+
+    StoreSwitch.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
 
-  /** Get score (using the specified store) */
-  function get(IStore _store, address player) internal view returns (uint256 score) {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
+  /** Emit the ephemeral event using individual values (using the specified store) */
+  function emitEphemeral(IStore _store, address player, uint256 value) internal {
+    bytes memory _data = encode(value);
 
-    bytes memory _blob = _store.getField(_tableId, _primaryKeys, 0);
-    return (uint256(Bytes.slice32(_blob, 0)));
-  }
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((player))));
 
-  /** Set score */
-  function set(address player, uint256 score) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
-
-    StoreSwitch.setField(_tableId, _primaryKeys, 0, abi.encodePacked((score)));
-  }
-
-  /** Set score (using the specified store) */
-  function set(IStore _store, address player, uint256 score) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
-
-    _store.setField(_tableId, _primaryKeys, 0, abi.encodePacked((score)));
+    _store.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(uint256 score) internal view returns (bytes memory) {
-    return abi.encodePacked(score);
+  function encode(uint256 value) internal view returns (bytes memory) {
+    return abi.encodePacked(value);
   }
 
-  /* Delete all data for given keys */
-  function deleteRecord(address player) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
-
-    StoreSwitch.deleteRecord(_tableId, _primaryKeys);
-  }
-
-  /* Delete all data for given keys (using the specified store) */
-  function deleteRecord(IStore _store, address player) internal {
-    bytes32[] memory _primaryKeys = new bytes32[](1);
-    _primaryKeys[0] = bytes32(bytes20((player)));
-
-    _store.deleteRecord(_tableId, _primaryKeys);
+  /** Encode keys as a bytes32 array using this table's schema */
+  function encodeKeyTuple(address player) internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((player))));
   }
 }

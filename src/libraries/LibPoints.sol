@@ -1,11 +1,51 @@
-// SPDX-License-Identifier: Unlicensed
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
+import {Direction} from "codegen/Types.sol";
 import {Letter} from "codegen/Types.sol";
 
-import {PointsForEmptyLetter} from "common/Errors.sol";
+import {Bound} from "common/Bound.sol";
+import {Coord} from "common/Coord.sol";
+import {LibBoard} from "libraries/LibBoard.sol";
+import {LibPlayer} from "libraries/LibPlayer.sol";
 
-library LibLetter {
+import {NoPointsForEmptyLetter} from "common/Errors.sol";
+
+library LibPoints {
+    /// @notice Updates the score for a player for the main word and cross words
+    function setScore(
+        Letter[] memory filledWord,
+        Coord memory coord,
+        Direction direction,
+        Bound[] memory bounds,
+        address player
+    ) internal {
+        uint32 points = countPointsForWord(filledWord);
+        // Count points for cross words
+        // This double counts points on purpose (points are recounted for every valid word)
+        for (uint256 i; i < filledWord.length; i++) {
+            uint16 positive = bounds[i].positive;
+            uint16 negative = bounds[i].negative;
+            if (positive != 0 || negative != 0) {
+                Letter[] memory perpendicularWord = LibBoard.getCrossWord(
+                    LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction), filledWord[i], direction, bounds[i]
+                );
+                points += countPointsForWord(perpendicularWord);
+            }
+        }
+
+        LibPlayer.incrementScore(player, points);
+    }
+
+    /// @notice Get the points for a given word, the points are simply a sum of the letter point values
+    function countPointsForWord(Letter[] memory word) internal pure returns (uint32) {
+        uint32 points;
+        for (uint256 i; i < word.length; i++) {
+            points += getPointsForLetter(word[i]);
+        }
+        return points;
+    }
+
     function getPointsForLetter(Letter letter) internal pure returns (uint32) {
         if (letter == Letter.A) {
             return 1;
@@ -60,6 +100,6 @@ library LibLetter {
         } else if (letter == Letter.Z) {
             return 10;
         }
-        revert PointsForEmptyLetter();
+        revert NoPointsForEmptyLetter();
     }
 }
