@@ -2,6 +2,8 @@
 @latticexyz/=node_modules/@latticexyz/
 @solidstate=node_modules/@solidstate/
 
+ds-test/=./node_modules/ds-test/src/
+forge-std/=./node_modules/forge-std/src/
 common/=./src/common
 codegen/=./src/codegen
 systems/=./src/systems

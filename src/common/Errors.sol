@@ -1,28 +1,19 @@
-// SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-error BoundsDoNotMatch();
-error InvalidBoundLength();
-error InvalidBoundEdges();
+error NoPointsForEmptyLetter();
+
 error BoundTooLong();
 error EmptyLetterInBounds();
-error InvalidEmptyLetterBound();
 
-error EmptyLetterNotOnExisting();
-error LetterOnExistingTile();
-
-error NoLettersPlayed();
-error InvalidWord();
+error WordTooLong();
 error InvalidWordStart();
 error InvalidWordEnd();
+error EmptyLetterNotOnExistingLetter();
+error LetterOnExistingLetter();
 error LonelyWord();
-error WordTooLong();
-error InvalidCrossProofs();
-error PointsForEmptyLetter();
-
-error PaymentTooLow();
-
-error AlreadySetupGrid();
-error AlreadyClaimedPayout();
-error GameOver();
-error GameNotOver();
+error NoLettersPlayed();
+error WordNotInDictionary();
+error InvalidBoundLength();
+error NonzeroEmptyLetterBound();
+error NonemptyBoundEdges();

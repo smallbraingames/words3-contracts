@@ -1,47 +1,64 @@
-import { mudConfig } from "@latticexyz/config";
+import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
-  overrideSystems: {},
   tables: {
-    TileTable: {
-      primaryKeys: { x: "int32", y: "int32" },
+    // Config
+    GameConfig: {
+      keySchema: {},
       schema: {
-        player: "address",
-        letter: "Letter",
-      },
-      storeArgument: true,
-    },
-    WeightTable: {
-      primaryKeys: { letter: "Letter" },
-      schema: {
-        weight: "int256",
+        status: "Status",
+        maxWords: "uint16",
+        wordsPlayed: "uint16",
       },
     },
-    RewardsTable: {
-      primaryKeys: { player: "address" },
+    MerkleRootConfig: {
+      keySchema: {},
       schema: {
-        rewards: "uint256",
+        value: "bytes32",
       },
     },
-    TreasuryTable: {
+    VRGDAConfig: {
+      keySchema: {},
+      schema: {
+        startTime: "uint256",
+      },
+    },
+
+    // Game
+    TileLetter: {
+      keySchema: { x: "int32", y: "int32" },
+      schema: {
+        value: "Letter",
+      },
+    },
+    TilePlayer: {
+      keySchema: { x: "int32", y: "int32" },
+      schema: {
+        value: "address",
+      },
+    },
+    Treasury: {
       schema: {
         value: "uint256",
       },
     },
-    ScoreTable: {
-      primaryKeys: { player: "address" },
+    Points: {
+      keySchema: { player: "address" },
       schema: {
-        score: "uint256",
+        value: "uint32",
       },
     },
-    SpentTable: {
-      primaryKeys: { player: "address" },
+    Spent: {
+      keySchema: { player: "address" },
       schema: {
-        score: "uint256",
+        value: "uint256",
       },
+      ephemeral: true,
     },
   },
   enums: {
+    Direction: ["LEFT_TO_RIGHT", "TOP_TO_BOTTOM"],
+    Status: ["NOT_STARTED", "STARTED", "OVER"],
     Letter: [
       "EMPTY",
       "A",
