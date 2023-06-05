@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Unlicensed
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
 import {Direction} from "codegen/Types.sol";
@@ -10,7 +10,7 @@ import {LibPlay} from "libraries/LibPlay.sol";
 
 import {System} from "@latticexyz/world/src/System.sol";
 
-contract BoardSystem is System {
+contract Play is System {
     /// @notice Checks if a move is valid and if so, plays a word on the board
     /// @param word Letters of the word being played, empty letters mean using existing letters on board
     /// @param proof Merkle proof that the word is in the dictionary
@@ -24,6 +24,8 @@ contract BoardSystem is System {
         Direction direction,
         Bound[] memory bounds
     ) public payable {
+        // Todo: check payment and treasury logic
+
         LibPlay.play(word, proof, coord, direction, bounds, _msgSender());
     }
 }
