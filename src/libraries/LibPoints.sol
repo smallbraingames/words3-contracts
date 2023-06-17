@@ -20,7 +20,7 @@ library LibPoints {
         Bound[] memory bounds,
         address player
     ) internal {
-        uint32 points = countPointsForWord(filledWord);
+        uint32 points = getWordPoints(filledWord);
         // Count points for cross words
         // This double counts points on purpose (points are recounted for every valid word)
         for (uint256 i; i < filledWord.length; i++) {
@@ -30,7 +30,7 @@ library LibPoints {
                 Letter[] memory perpendicularWord = LibBoard.getCrossWord(
                     LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction), filledWord[i], direction, bounds[i]
                 );
-                points += countPointsForWord(perpendicularWord);
+                points += getWordPoints(perpendicularWord);
             }
         }
 
@@ -38,15 +38,15 @@ library LibPoints {
     }
 
     /// @notice Get the points for a given word, the points are simply a sum of the letter point values
-    function countPointsForWord(Letter[] memory word) internal pure returns (uint32) {
+    function getWordPoints(Letter[] memory word) internal pure returns (uint32) {
         uint32 points;
         for (uint256 i; i < word.length; i++) {
-            points += getPointsForLetter(word[i]);
+            points += getLetterPoints(word[i]);
         }
         return points;
     }
 
-    function getPointsForLetter(Letter letter) internal pure returns (uint32) {
+    function getLetterPoints(Letter letter) internal pure returns (uint32) {
         if (letter == Letter.A) {
             return 1;
         } else if (letter == Letter.B) {

@@ -10,8 +10,15 @@ import {LibGame} from "libraries/LibGame.sol";
 
 import {System} from "@latticexyz/world/src/System.sol";
 
-contract Start is System {
-    function start(Letter[] memory initialWord, uint16 maxWords, bytes32 merkleRoot) public {
+contract StartSystem is System {
+    function start(
+        Letter[] memory initialWord,
+        uint16 maxWords,
+        bytes32 merkleRoot,
+        int256 vrgdaTargetPrice,
+        int256 vrgdaPriceDecay,
+        int256 vrgdaPerDay
+    ) public {
         if (LibGame.getGameStatus() != Status.NOT_STARTED) {
             revert GameStartedOrOver();
         }
@@ -19,6 +26,6 @@ contract Start is System {
             Coord memory coord = Coord({x: int32(uint32(i)), y: 0});
             LibTile.setTile(coord, initialWord[i], address(0));
         }
-        LibGame.startGame(maxWords, merkleRoot);
+        LibGame.startGame(maxWords, merkleRoot, vrgdaTargetPrice, vrgdaPriceDecay, vrgdaPerDay);
     }
 }

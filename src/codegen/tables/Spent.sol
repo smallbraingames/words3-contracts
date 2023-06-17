@@ -30,8 +30,10 @@ library Spent {
   }
 
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](1);
+    SchemaType[] memory _schema = new SchemaType[](3);
     _schema[0] = SchemaType.ADDRESS;
+    _schema[1] = SchemaType.UINT256;
+    _schema[2] = SchemaType.UINT256;
 
     return SchemaLib.encode(_schema);
   }
@@ -66,21 +68,25 @@ library Spent {
   }
 
   /** Emit the ephemeral event using individual values */
-  function emitEphemeral(address player, uint256 value) internal {
+  function emitEphemeral(address player, uint256 id, uint256 time, uint256 value) internal {
     bytes memory _data = encode(value);
 
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(id));
+    _keyTuple[2] = bytes32(uint256(time));
 
     StoreSwitch.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
 
   /** Emit the ephemeral event using individual values (using the specified store) */
-  function emitEphemeral(IStore _store, address player, uint256 value) internal {
+  function emitEphemeral(IStore _store, address player, uint256 id, uint256 time, uint256 value) internal {
     bytes memory _data = encode(value);
 
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(id));
+    _keyTuple[2] = bytes32(uint256(time));
 
     _store.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
@@ -91,8 +97,10 @@ library Spent {
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple(address player) internal pure returns (bytes32[] memory _keyTuple) {
-    _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+  function encodeKeyTuple(address player, uint256 id, uint256 time) internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(id));
+    _keyTuple[2] = bytes32(uint256(time));
   }
 }

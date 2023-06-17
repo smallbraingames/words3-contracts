@@ -72,8 +72,8 @@ library TileLetter {
   /** Get value */
   function get(int32 x, int32 y) internal view returns (Letter value) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint32((x))));
-    _keyTuple[1] = bytes32(uint256(uint32((y))));
+    _keyTuple[0] = bytes32(uint256(int256(x)));
+    _keyTuple[1] = bytes32(uint256(int256(y)));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
     return Letter(uint8(Bytes.slice1(_blob, 0)));
@@ -82,8 +82,8 @@ library TileLetter {
   /** Get value (using the specified store) */
   function get(IStore _store, int32 x, int32 y) internal view returns (Letter value) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint32((x))));
-    _keyTuple[1] = bytes32(uint256(uint32((y))));
+    _keyTuple[0] = bytes32(uint256(int256(x)));
+    _keyTuple[1] = bytes32(uint256(int256(y)));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
     return Letter(uint8(Bytes.slice1(_blob, 0)));
@@ -92,8 +92,8 @@ library TileLetter {
   /** Set value */
   function set(int32 x, int32 y, Letter value) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint32((x))));
-    _keyTuple[1] = bytes32(uint256(uint32((y))));
+    _keyTuple[0] = bytes32(uint256(int256(x)));
+    _keyTuple[1] = bytes32(uint256(int256(y)));
 
     StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(value)));
   }
@@ -101,8 +101,8 @@ library TileLetter {
   /** Set value (using the specified store) */
   function set(IStore _store, int32 x, int32 y, Letter value) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint32((x))));
-    _keyTuple[1] = bytes32(uint256(uint32((y))));
+    _keyTuple[0] = bytes32(uint256(int256(x)));
+    _keyTuple[1] = bytes32(uint256(int256(y)));
 
     _store.setField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(value)));
   }
@@ -115,15 +115,15 @@ library TileLetter {
   /** Encode keys as a bytes32 array using this table's schema */
   function encodeKeyTuple(int32 x, int32 y) internal pure returns (bytes32[] memory _keyTuple) {
     _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint32((x))));
-    _keyTuple[1] = bytes32(uint256(uint32((y))));
+    _keyTuple[0] = bytes32(uint256(int256(x)));
+    _keyTuple[1] = bytes32(uint256(int256(y)));
   }
 
   /* Delete all data for given keys */
   function deleteRecord(int32 x, int32 y) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint32((x))));
-    _keyTuple[1] = bytes32(uint256(uint32((y))));
+    _keyTuple[0] = bytes32(uint256(int256(x)));
+    _keyTuple[1] = bytes32(uint256(int256(y)));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -131,8 +131,8 @@ library TileLetter {
   /* Delete all data for given keys (using the specified store) */
   function deleteRecord(IStore _store, int32 x, int32 y) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint32((x))));
-    _keyTuple[1] = bytes32(uint256(uint32((y))));
+    _keyTuple[0] = bytes32(uint256(int256(x)));
+    _keyTuple[1] = bytes32(uint256(int256(y)));
 
     _store.deleteRecord(_tableId, _keyTuple);
   }
