@@ -68,7 +68,7 @@ library Points {
   /** Get value */
   function get(address player) internal view returns (uint32 value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
     return (uint32(Bytes.slice4(_blob, 0)));
@@ -77,7 +77,7 @@ library Points {
   /** Get value (using the specified store) */
   function get(IStore _store, address player) internal view returns (uint32 value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
     return (uint32(Bytes.slice4(_blob, 0)));
@@ -86,7 +86,7 @@ library Points {
   /** Set value */
   function set(address player, uint32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
 
     StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
   }
@@ -94,7 +94,7 @@ library Points {
   /** Set value (using the specified store) */
   function set(IStore _store, address player, uint32 value) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
 
     _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
   }
@@ -107,13 +107,13 @@ library Points {
   /** Encode keys as a bytes32 array using this table's schema */
   function encodeKeyTuple(address player) internal pure returns (bytes32[] memory _keyTuple) {
     _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
   }
 
   /* Delete all data for given keys */
   function deleteRecord(address player) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -121,7 +121,7 @@ library Points {
   /* Delete all data for given keys (using the specified store) */
   function deleteRecord(IStore _store, address player) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160((player))));
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
 
     _store.deleteRecord(_tableId, _keyTuple);
   }

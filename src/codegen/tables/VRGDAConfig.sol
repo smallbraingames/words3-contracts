@@ -20,11 +20,21 @@ import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCou
 bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("VRGDAConfig")));
 bytes32 constant VRGDAConfigTableId = _tableId;
 
+struct VRGDAConfigData {
+  uint256 startTime;
+  int256 targetPrice;
+  int256 priceDecay;
+  int256 perDay;
+}
+
 library VRGDAConfig {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](1);
+    SchemaType[] memory _schema = new SchemaType[](4);
     _schema[0] = SchemaType.UINT256;
+    _schema[1] = SchemaType.INT256;
+    _schema[2] = SchemaType.INT256;
+    _schema[3] = SchemaType.INT256;
 
     return SchemaLib.encode(_schema);
   }
@@ -37,8 +47,11 @@ library VRGDAConfig {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](1);
+    string[] memory _fieldNames = new string[](4);
     _fieldNames[0] = "startTime";
+    _fieldNames[1] = "targetPrice";
+    _fieldNames[2] = "priceDecay";
+    _fieldNames[3] = "perDay";
     return ("VRGDAConfig", _fieldNames);
   }
 
@@ -65,7 +78,7 @@ library VRGDAConfig {
   }
 
   /** Get startTime */
-  function get() internal view returns (uint256 startTime) {
+  function getStartTime() internal view returns (uint256 startTime) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
@@ -73,7 +86,7 @@ library VRGDAConfig {
   }
 
   /** Get startTime (using the specified store) */
-  function get(IStore _store) internal view returns (uint256 startTime) {
+  function getStartTime(IStore _store) internal view returns (uint256 startTime) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
@@ -81,22 +94,172 @@ library VRGDAConfig {
   }
 
   /** Set startTime */
-  function set(uint256 startTime) internal {
+  function setStartTime(uint256 startTime) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((startTime)));
   }
 
   /** Set startTime (using the specified store) */
-  function set(IStore _store, uint256 startTime) internal {
+  function setStartTime(IStore _store, uint256 startTime) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((startTime)));
   }
 
+  /** Get targetPrice */
+  function getTargetPrice() internal view returns (int256 targetPrice) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
+    return (int256(uint256(Bytes.slice32(_blob, 0))));
+  }
+
+  /** Get targetPrice (using the specified store) */
+  function getTargetPrice(IStore _store) internal view returns (int256 targetPrice) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
+    return (int256(uint256(Bytes.slice32(_blob, 0))));
+  }
+
+  /** Set targetPrice */
+  function setTargetPrice(int256 targetPrice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((targetPrice)));
+  }
+
+  /** Set targetPrice (using the specified store) */
+  function setTargetPrice(IStore _store, int256 targetPrice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((targetPrice)));
+  }
+
+  /** Get priceDecay */
+  function getPriceDecay() internal view returns (int256 priceDecay) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
+    return (int256(uint256(Bytes.slice32(_blob, 0))));
+  }
+
+  /** Get priceDecay (using the specified store) */
+  function getPriceDecay(IStore _store) internal view returns (int256 priceDecay) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
+    return (int256(uint256(Bytes.slice32(_blob, 0))));
+  }
+
+  /** Set priceDecay */
+  function setPriceDecay(int256 priceDecay) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    StoreSwitch.setField(_tableId, _keyTuple, 2, abi.encodePacked((priceDecay)));
+  }
+
+  /** Set priceDecay (using the specified store) */
+  function setPriceDecay(IStore _store, int256 priceDecay) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((priceDecay)));
+  }
+
+  /** Get perDay */
+  function getPerDay() internal view returns (int256 perDay) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
+    return (int256(uint256(Bytes.slice32(_blob, 0))));
+  }
+
+  /** Get perDay (using the specified store) */
+  function getPerDay(IStore _store) internal view returns (int256 perDay) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
+    return (int256(uint256(Bytes.slice32(_blob, 0))));
+  }
+
+  /** Set perDay */
+  function setPerDay(int256 perDay) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    StoreSwitch.setField(_tableId, _keyTuple, 3, abi.encodePacked((perDay)));
+  }
+
+  /** Set perDay (using the specified store) */
+  function setPerDay(IStore _store, int256 perDay) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    _store.setField(_tableId, _keyTuple, 3, abi.encodePacked((perDay)));
+  }
+
+  /** Get the full data */
+  function get() internal view returns (VRGDAConfigData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = StoreSwitch.getRecord(_tableId, _keyTuple, getSchema());
+    return decode(_blob);
+  }
+
+  /** Get the full data (using the specified store) */
+  function get(IStore _store) internal view returns (VRGDAConfigData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = _store.getRecord(_tableId, _keyTuple, getSchema());
+    return decode(_blob);
+  }
+
+  /** Set the full data using individual values */
+  function set(uint256 startTime, int256 targetPrice, int256 priceDecay, int256 perDay) internal {
+    bytes memory _data = encode(startTime, targetPrice, priceDecay, perDay);
+
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    StoreSwitch.setRecord(_tableId, _keyTuple, _data);
+  }
+
+  /** Set the full data using individual values (using the specified store) */
+  function set(IStore _store, uint256 startTime, int256 targetPrice, int256 priceDecay, int256 perDay) internal {
+    bytes memory _data = encode(startTime, targetPrice, priceDecay, perDay);
+
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    _store.setRecord(_tableId, _keyTuple, _data);
+  }
+
+  /** Set the full data using the data struct */
+  function set(VRGDAConfigData memory _table) internal {
+    set(_table.startTime, _table.targetPrice, _table.priceDecay, _table.perDay);
+  }
+
+  /** Set the full data using the data struct (using the specified store) */
+  function set(IStore _store, VRGDAConfigData memory _table) internal {
+    set(_store, _table.startTime, _table.targetPrice, _table.priceDecay, _table.perDay);
+  }
+
+  /** Decode the tightly packed blob using this table's schema */
+  function decode(bytes memory _blob) internal pure returns (VRGDAConfigData memory _table) {
+    _table.startTime = (uint256(Bytes.slice32(_blob, 0)));
+
+    _table.targetPrice = (int256(uint256(Bytes.slice32(_blob, 32))));
+
+    _table.priceDecay = (int256(uint256(Bytes.slice32(_blob, 64))));
+
+    _table.perDay = (int256(uint256(Bytes.slice32(_blob, 96))));
+  }
+
   /** Tightly pack full data using this table's schema */
-  function encode(uint256 startTime) internal view returns (bytes memory) {
-    return abi.encodePacked(startTime);
+  function encode(
+    uint256 startTime,
+    int256 targetPrice,
+    int256 priceDecay,
+    int256 perDay
+  ) internal view returns (bytes memory) {
+    return abi.encodePacked(startTime, targetPrice, priceDecay, perDay);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */

@@ -19,3 +19,5 @@ error WordNotInDictionary();
 error InvalidBoundLength();
 error NonzeroEmptyLetterBound();
 error NonemptyBoundEdges();
+
+error NotEnoughValue();

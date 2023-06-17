@@ -1,52 +1,43 @@
-// // SPDX-License-Identifier: Unlicensed
-// pragma solidity >=0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.0;
 
-// import {Direction} from "codegen/Types.sol";
-// import {Letter} from "codegen/Types.sol";
-// import {WeightTable} from "codegen/Tables.sol";
+import {VRGDAConfig, VRGDAConfigData, LetterCount} from "codegen/Tables.sol";
+import {Letter} from "codegen/Types.sol";
 
-// import {LibLetter} from "libraries/LibLetter.sol";
+import {LibPoints} from "libraries/LibPoints.sol";
 
-// import {wadExp, wadMul, wadDiv, toWadUnsafe, toDaysWadUnsafe} from "utils/SignedWadMath.sol";
+import {
+    wadExp,
+    wadLn,
+    wadMul,
+    unsafeWadMul,
+    unsafeWadDiv,
+    toWadUnsafe,
+    toDaysWadUnsafe
+} from "solmate/src/utils/SignedWadMath.sol";
 
-// library LibPrice {
-//     function getLetterPrice(
-//         Letter letter,
-//         int256 totalWeight, // Total weight of all letters
-//         int256 totalPrice // Total price of all letters, scaled by 1e18
-//     ) internal view returns (int256) {
-//         int256 letterWeight = getLetterWeight(letter);
-//         return wadMul(wadDiv(letterWeight, totalWeight), totalPrice);
-//     }
+library LibPrice {
+    function getWordPrice(Letter[] memory word) internal view returns (uint256) {
+        uint256 price = 0;
+        for (uint256 i = 0; i < word.length; i++) {
+            Letter letter = word[i];
+            if (letter != Letter.EMPTY) {
+                price += getLetterPrice(word[i]);
+            }
+        }
+        return price;
+    }
 
-//     function incrementLetterWeight(Letter letter, int256 daysSinceStart) internal {
-//         int256 prevWeight = getLetterWeight(letter);
-//         WeightTable.set(
-//             letter, prevWeight + wadMul(wadExp(daysSinceStart), toWadUnsafe(LibLetter.getPointsForLetter(letter)))
-//         );
-//     }
-
-//     function getLetterWeight(Letter letter) internal view returns (int256) {
-//         return WeightTable.get(letter);
-//     }
-
-//     function getDaysSinceStart(uint256 startTime) internal view returns (int256) {
-//         return toWadUnsafe(1) + toDaysWadUnsafe(block.timestamp - startTime);
-//     }
-
-//     function getTotalWeight() internal view returns (int256) {
-//         int256 totalWeight = 0;
-//         for (uint8 i = 1; i <= 26; i++) {
-//             Letter letter = Letter(i);
-//             totalWeight += getLetterWeight(letter);
-//         }
-//         return totalWeight;
-//     }
-
-//     function setupLetterWeights() internal {
-//         for (uint8 i = 1; i <= 26; i++) {
-//             Letter letter = Letter(i);
-//             WeightTable.set(letter, toWadUnsafe(1));
-//         }
-//     }
-// }
+    // Adapted from transmissions11/VRGDAs (https://github.com/transmissions11/VRGDAs)
+    function getLetterPrice(Letter letter) internal view returns (uint256) {
+        VRGDAConfigData memory vrgdaConfig = VRGDAConfig.get();
+        int256 decayConstant = wadLn(1e18 - vrgdaConfig.priceDecay);
+        int256 daysSinceStart = toDaysWadUnsafe(block.timestamp - vrgdaConfig.startTime);
+        uint256 letterCount = uint256(LetterCount.get(letter));
+        int256 nOverK = unsafeWadDiv(toWadUnsafe(letterCount + 1), vrgdaConfig.perDay);
+        unchecked {
+            return
+                uint256(wadMul(vrgdaConfig.targetPrice, wadExp(unsafeWadMul(decayConstant, daysSinceStart - nOverK))));
+        }
+    }
+}

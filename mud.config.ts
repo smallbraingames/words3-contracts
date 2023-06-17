@@ -21,6 +21,9 @@ export default mudConfig({
       keySchema: {},
       schema: {
         startTime: "uint256",
+        targetPrice: "int256",
+        priceDecay: "int256",
+        perDay: "int256",
       },
     },
 
@@ -38,6 +41,7 @@ export default mudConfig({
       },
     },
     Treasury: {
+      keySchema: {},
       schema: {
         value: "uint256",
       },
@@ -49,11 +53,17 @@ export default mudConfig({
       },
     },
     Spent: {
-      keySchema: { player: "address" },
+      keySchema: { player: "address", id: "uint256", time: "uint256" },
       schema: {
         value: "uint256",
       },
       ephemeral: true,
+    },
+    LetterCount: {
+      keySchema: { letter: "Letter" },
+      schema: {
+        value: "uint32",
+      },
     },
   },
   enums: {

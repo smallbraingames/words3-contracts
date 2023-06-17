@@ -6,11 +6,15 @@ import {Letter} from "codegen/Types.sol";
 
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";
+import {NotEnoughValue} from "common/Errors.sol";
+
 import {LibPlay} from "libraries/LibPlay.sol";
+import {LibPrice} from "libraries/LibPrice.sol";
+import {LibTreasury} from "libraries/LibTreasury.sol";
 
 import {System} from "@latticexyz/world/src/System.sol";
 
-contract Play is System {
+contract PlaySystem is System {
     /// @notice Checks if a move is valid and if so, plays a word on the board
     /// @param word Letters of the word being played, empty letters mean using existing letters on board
     /// @param proof Merkle proof that the word is in the dictionary
@@ -24,8 +28,10 @@ contract Play is System {
         Direction direction,
         Bound[] memory bounds
     ) public payable {
-        // Todo: check payment and treasury logic
-
+        if (msg.value < LibPrice.getWordPrice(word)) {
+            revert NotEnoughValue();
+        }
+        LibTreasury.incrementTreasury(_msgSender(), msg.value);
         LibPlay.play(word, proof, coord, direction, bounds, _msgSender());
     }
 }
