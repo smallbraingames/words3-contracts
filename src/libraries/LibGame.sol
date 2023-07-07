@@ -6,7 +6,15 @@ import {GameConfig, MerkleRootConfig, GameConfigData, VRGDAConfig, VRGDAConfigDa
 
 library LibGame {
     function getGameStatus() internal view returns (Status) {
-        return GameConfig.get().status;
+        return GameConfig.getStatus();
+    }
+
+    function incrementWordsPlayed() internal {
+        GameConfig.setWordsPlayed(GameConfig.getWordsPlayed() + 1);
+    }
+
+    function canPlay() internal view returns (bool) {
+        return getGameStatus() == Status.STARTED && GameConfig.getWordsPlayed() < GameConfig.getMaxWords();
     }
 
     function startGame(
@@ -14,9 +22,17 @@ library LibGame {
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
-        int256 vrgdaPerDay
+        int256 vrgdaPerDay,
+        uint32 crossWordRewardFraction
     ) internal {
-        GameConfig.set(GameConfigData({status: Status.STARTED, maxWords: maxWords, wordsPlayed: 0}));
+        GameConfig.set(
+            GameConfigData({
+                status: Status.STARTED,
+                maxWords: maxWords,
+                wordsPlayed: 0,
+                crossWordRewardFraction: crossWordRewardFraction
+            })
+        );
         MerkleRootConfig.set(merkleRoot);
         VRGDAConfig.set(
             VRGDAConfigData({

@@ -2,6 +2,8 @@
 pragma solidity >=0.8.0;
 
 error GameStartedOrOver();
+error GameNotOver();
+error CannotPlay();
 
 error NoPointsForEmptyLetter();
 
@@ -21,3 +23,7 @@ error NonzeroEmptyLetterBound();
 error NonemptyBoundEdges();
 
 error NotEnoughValue();
+
+error AlreadyClaimed();
+
+error NotEnoughWordsPlayed();

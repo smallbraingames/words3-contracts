@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Direction} from "codegen/Types.sol";
-import {Letter} from "codegen/Types.sol";
+import {Direction, Letter} from "codegen/Types.sol";
+import {GameConfig, Points} from "codegen/Tables.sol";
 
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";
@@ -10,6 +10,8 @@ import {LibBoard} from "libraries/LibBoard.sol";
 import {LibPlayer} from "libraries/LibPlayer.sol";
 
 import {NoPointsForEmptyLetter} from "common/Errors.sol";
+
+address constant SingletonAddress = address(0);
 
 library LibPoints {
     /// @notice Updates the score for a player for the main word and cross words
@@ -19,7 +21,7 @@ library LibPoints {
         Direction direction,
         Bound[] memory bounds,
         address player
-    ) internal {
+    ) internal returns (uint32) {
         uint32 points = getWordPoints(filledWord);
         // Count points for cross words
         // This double counts points on purpose (points are recounted for every valid word)
@@ -33,8 +35,28 @@ library LibPoints {
                 points += getWordPoints(perpendicularWord);
             }
         }
-
         LibPlayer.incrementScore(player, points);
+        return points;
+    }
+
+    function setCrossWordRewards(uint32 points, address[] memory crossWordPlayers) internal {
+        uint32 numCrossWordPlayers = 0;
+        for (uint256 i; i < crossWordPlayers.length; i++) {
+            if (crossWordPlayers[i] != address(0)) {
+                numCrossWordPlayers++;
+            }
+        }
+        if (numCrossWordPlayers == 0) {
+            return;
+        }
+
+        uint32 crossWordPoints = points / GameConfig.getCrossWordRewardFraction() / numCrossWordPlayers;
+
+        for (uint256 i; i < crossWordPlayers.length; i++) {
+            if (crossWordPlayers[i] != address(0)) {
+                LibPlayer.incrementScore(crossWordPlayers[i], crossWordPoints);
+            }
+        }
     }
 
     /// @notice Get the points for a given word, the points are simply a sum of the letter point values
@@ -44,6 +66,10 @@ library LibPoints {
             points += getLetterPoints(word[i]);
         }
         return points;
+    }
+
+    function getTotalPoints() internal view returns (uint32) {
+        return Points.get(SingletonAddress);
     }
 
     function getLetterPoints(Letter letter) internal pure returns (uint32) {

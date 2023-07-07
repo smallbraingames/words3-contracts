@@ -12,6 +12,9 @@ interface IStartSystem {
     bytes32 merkleRoot,
     int256 vrgdaTargetPrice,
     int256 vrgdaPriceDecay,
-    int256 vrgdaPerDay
+    int256 vrgdaPerDay,
+    uint32 crossWordRewardFraction
   ) external;
+
+  function end() external;
 }

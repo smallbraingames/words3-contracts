@@ -12,3 +12,4 @@ import { Treasury, TreasuryTableId } from "./tables/Treasury.sol";
 import { Points, PointsTableId } from "./tables/Points.sol";
 import { Spent, SpentTableId } from "./tables/Spent.sol";
 import { LetterCount, LetterCountTableId } from "./tables/LetterCount.sol";
+import { Claimed, ClaimedTableId } from "./tables/Claimed.sol";

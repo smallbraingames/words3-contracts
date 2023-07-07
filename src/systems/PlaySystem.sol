@@ -6,11 +6,12 @@ import {Letter} from "codegen/Types.sol";
 
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";
-import {NotEnoughValue} from "common/Errors.sol";
+import {NotEnoughValue, CannotPlay} from "common/Errors.sol";
 
 import {LibPlay} from "libraries/LibPlay.sol";
 import {LibPrice} from "libraries/LibPrice.sol";
 import {LibTreasury} from "libraries/LibTreasury.sol";
+import {LibGame} from "libraries/LibGame.sol";
 
 import {System} from "@latticexyz/world/src/System.sol";
 
@@ -31,7 +32,15 @@ contract PlaySystem is System {
         if (msg.value < LibPrice.getWordPrice(word)) {
             revert NotEnoughValue();
         }
+        if (!LibGame.canPlay()) {
+            revert CannotPlay();
+        }
         LibTreasury.incrementTreasury(_msgSender(), msg.value);
+        LibGame.incrementWordsPlayed();
         LibPlay.play(word, proof, coord, direction, bounds, _msgSender());
+    }
+
+    function getWordPrice(Letter[] memory word) public view returns (uint256) {
+        return LibPrice.getWordPrice(word);
     }
 }

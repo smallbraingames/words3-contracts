@@ -38,9 +38,10 @@ library LibPlay {
         address player
     ) internal {
         checkWord(word, proof, coord, direction);
-        checkCrossWords(word, coord, direction, bounds);
+        address[] memory crossWordPlayers = checkCrossWords(word, coord, direction, bounds);
         Letter[] memory filledWord = setTiles(word, coord, direction, player);
-        LibPoints.setScore(filledWord, coord, direction, bounds, player);
+        uint32 points = LibPoints.setScore(filledWord, coord, direction, bounds, player);
+        LibPoints.setCrossWordRewards(points, crossWordPlayers);
     }
 
     function setTiles(Letter[] memory word, Coord memory coord, Direction direction, address player)
@@ -65,11 +66,14 @@ library LibPlay {
     function checkCrossWords(Letter[] memory word, Coord memory coord, Direction direction, Bound[] memory bounds)
         internal
         view
+        returns (address[] memory)
     {
         // Ensure bounds of correct length
         if (bounds.length != word.length) {
             revert InvalidBoundLength();
         }
+
+        address[] memory crossWordPlayers = new address[](word.length);
 
         for (uint256 i; i < word.length; i++) {
             uint16 positive = bounds[i].positive;
@@ -79,32 +83,47 @@ library LibPlay {
                 revert WordTooLong();
             }
 
+            Coord memory letterCoord = LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction);
+
             if (word[i] == Letter.EMPTY) {
                 // Ensure bounds are 0 if letter is empty
                 // since you cannot get points for words formed by letters you did not play
                 if (positive != 0 || negative != 0) {
                     revert NonzeroEmptyLetterBound();
                 }
+                crossWordPlayers[i] = LibTile.getPlayer(letterCoord);
             } else {
                 // Ensure bounds are valid (empty at edges) for nonempty letters
                 // Bounds that are too large will be caught while verifying formed words
+                Bound memory bound = bounds[i];
+
                 (Coord memory start, Coord memory end) = LibBoard.getCoordsOutsideBound(
-                    LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction), direction, bounds[i]
+                    LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction), direction, bound
                 );
                 if (LibTile.getLetter(start) != Letter.EMPTY || LibTile.getLetter(end) != Letter.EMPTY) {
                     revert NonemptyBoundEdges();
                 }
 
-                // Ensure cross word is valid
-                Letter[] memory crossWord = LibBoard.getCrossWord(
-                    LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction), word[i], direction, bounds[i]
-                );
+                if (bound.positive != 0 || bound.negative != 0) {
+                    // Ensure cross word is valid
+                    Letter[] memory crossWord = LibBoard.getCrossWord(letterCoord, word[i], direction, bound);
+                    if (!isWordInDictionary(crossWord, bound.proof)) {
+                        revert WordNotInDictionary();
+                    }
 
-                if (!isWordInDictionary(crossWord, bounds[i].proof)) {
-                    revert WordNotInDictionary();
+                    // Get cross word player
+                    Direction crossDirection = Direction((uint8(direction) + 1) % 2);
+                    if (bound.positive != 0) {
+                        Coord memory crossWordStart = LibBoard.getRelativeCoord(letterCoord, 1, crossDirection);
+                        crossWordPlayers[i] = LibTile.getPlayer(crossWordStart);
+                    } else {
+                        Coord memory crossWordEnd = LibBoard.getRelativeCoord(letterCoord, -1, crossDirection);
+                        crossWordPlayers[i] = LibTile.getPlayer(crossWordEnd);
+                    }
                 }
             }
         }
+        return crossWordPlayers;
     }
 
     /// @notice Checks if a word is a valid move (without checking cross words)
