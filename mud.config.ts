@@ -74,6 +74,7 @@ export default mudConfig({
     },
   },
   enums: {
+    BonusType: ["MULTIPLY_WORD", "MULTIPLY_LETTER"],
     Direction: ["LEFT_TO_RIGHT", "TOP_TO_BOTTOM"],
     Status: ["NOT_STARTED", "STARTED", "OVER"],
     Letter: [

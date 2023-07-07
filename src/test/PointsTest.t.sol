@@ -23,12 +23,15 @@ contract PointsTest is MudV2Test {
         super.setUp();
         world = IWorld(worldAddress);
         m = new Merkle();
+        Letter[] memory hi = new Letter[](2);
+        hi[0] = Letter.H;
+        hi[1] = Letter.I;
         Letter[] memory hello = new Letter[](5);
         hello[0] = Letter.H;
         hello[1] = Letter.E;
-        hello[1] = Letter.L;
-        hello[1] = Letter.L;
-        hello[1] = Letter.O;
+        hello[2] = Letter.L;
+        hello[3] = Letter.L;
+        hello[4] = Letter.O;
         Letter[] memory zone = new Letter[](4);
         zone[0] = Letter.Z;
         zone[1] = Letter.O;
@@ -40,12 +43,15 @@ contract PointsTest is MudV2Test {
         zones[2] = Letter.N;
         zones[3] = Letter.E;
         zones[4] = Letter.S;
+        words.push(keccak256(bytes.concat(keccak256(abi.encode(hi))))); // hi
         words.push(keccak256(bytes.concat(keccak256(abi.encode(hello))))); // hello
         words.push(keccak256(bytes.concat(keccak256(abi.encode(zone))))); // zone
         words.push(keccak256(bytes.concat(keccak256(abi.encode(zones))))); // zones
     }
 
     function testCountPoints() public {
+        // This test function as long as the bonus is < 4
+
         address player1 = address(0x12345);
         address player2 = address(0x22345);
 
@@ -65,7 +71,7 @@ contract PointsTest is MudV2Test {
         word[3] = Letter.E;
 
         Bound[] memory bounds = new Bound[](4);
-        bytes32[] memory proof = m.getProof(words, 1);
+        bytes32[] memory proof = m.getProof(words, 2);
 
         // Play zone
         vm.prank(player1);
@@ -80,11 +86,35 @@ contract PointsTest is MudV2Test {
         ext[3] = Letter.EMPTY;
         ext[4] = Letter.S;
         Bound[] memory extBounds = new Bound[](5);
-        bytes32[] memory extProof = m.getProof(words, 2);
+        bytes32[] memory extProof = m.getProof(words, 3);
         vm.prank(player2);
         world.play(ext, extProof, Coord({x: 4, y: -1}), Direction.TOP_TO_BOTTOM, extBounds);
         assertEq(Points.get(world, player2), 14);
         // We lose 1 because of rounding
         assertEq(Points.get(world, player1), 13 + 3);
+    }
+
+    function testBonus() public {
+        Letter[] memory initialWord = new Letter[](5);
+        initialWord[0] = Letter.H;
+        initialWord[1] = Letter.E;
+        initialWord[2] = Letter.L;
+        initialWord[3] = Letter.L;
+        initialWord[4] = Letter.O;
+
+        world.start(initialWord, 10, m.getRoot(words), 0, 0, 0, 3);
+
+        Letter[] memory word = new Letter[](5);
+        word[0] = Letter.EMPTY;
+        word[1] = Letter.E;
+        word[2] = Letter.L;
+        word[3] = Letter.L;
+        word[4] = Letter.O;
+
+        Bound[] memory bounds = new Bound[](5);
+        bytes32[] memory proof = m.getProof(words, 1);
+
+        world.play(word, proof, Coord({x: 0, y: 0}), Direction.TOP_TO_BOTTOM, bounds);
+        assertEq(Points.get(world, address(this)), 24);
     }
 }
