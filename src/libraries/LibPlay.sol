@@ -40,7 +40,7 @@ library LibPlay {
         checkWord(word, proof, coord, direction);
         address[] memory crossWordPlayers = checkCrossWords(word, coord, direction, bounds);
         Letter[] memory filledWord = setTiles(word, coord, direction, player);
-        uint32 points = LibPoints.setScore(filledWord, coord, direction, bounds, player);
+        uint32 points = LibPoints.setScore(word, filledWord, coord, direction, bounds, player);
         LibPoints.setCrossWordRewards(points, crossWordPlayers);
     }
 
