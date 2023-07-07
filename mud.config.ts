@@ -9,6 +9,7 @@ export default mudConfig({
         status: "Status",
         maxWords: "uint16",
         wordsPlayed: "uint16",
+        crossWordRewardFraction: "uint32",
       },
     },
     MerkleRootConfig: {
@@ -63,6 +64,12 @@ export default mudConfig({
       keySchema: { letter: "Letter" },
       schema: {
         value: "uint32",
+      },
+    },
+    Claimed: {
+      keySchema: { player: "address" },
+      schema: {
+        value: "bool",
       },
     },
   },

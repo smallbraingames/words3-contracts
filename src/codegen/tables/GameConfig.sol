@@ -27,15 +27,17 @@ struct GameConfigData {
   Status status;
   uint16 maxWords;
   uint16 wordsPlayed;
+  uint32 crossWordRewardFraction;
 }
 
 library GameConfig {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](3);
+    SchemaType[] memory _schema = new SchemaType[](4);
     _schema[0] = SchemaType.UINT8;
     _schema[1] = SchemaType.UINT16;
     _schema[2] = SchemaType.UINT16;
+    _schema[3] = SchemaType.UINT32;
 
     return SchemaLib.encode(_schema);
   }
@@ -48,10 +50,11 @@ library GameConfig {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](3);
+    string[] memory _fieldNames = new string[](4);
     _fieldNames[0] = "status";
     _fieldNames[1] = "maxWords";
     _fieldNames[2] = "wordsPlayed";
+    _fieldNames[3] = "crossWordRewardFraction";
     return ("GameConfig", _fieldNames);
   }
 
@@ -167,6 +170,36 @@ library GameConfig {
     _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((wordsPlayed)));
   }
 
+  /** Get crossWordRewardFraction */
+  function getCrossWordRewardFraction() internal view returns (uint32 crossWordRewardFraction) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
+    return (uint32(Bytes.slice4(_blob, 0)));
+  }
+
+  /** Get crossWordRewardFraction (using the specified store) */
+  function getCrossWordRewardFraction(IStore _store) internal view returns (uint32 crossWordRewardFraction) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
+    return (uint32(Bytes.slice4(_blob, 0)));
+  }
+
+  /** Set crossWordRewardFraction */
+  function setCrossWordRewardFraction(uint32 crossWordRewardFraction) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    StoreSwitch.setField(_tableId, _keyTuple, 3, abi.encodePacked((crossWordRewardFraction)));
+  }
+
+  /** Set crossWordRewardFraction (using the specified store) */
+  function setCrossWordRewardFraction(IStore _store, uint32 crossWordRewardFraction) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    _store.setField(_tableId, _keyTuple, 3, abi.encodePacked((crossWordRewardFraction)));
+  }
+
   /** Get the full data */
   function get() internal view returns (GameConfigData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](0);
@@ -184,8 +217,8 @@ library GameConfig {
   }
 
   /** Set the full data using individual values */
-  function set(Status status, uint16 maxWords, uint16 wordsPlayed) internal {
-    bytes memory _data = encode(status, maxWords, wordsPlayed);
+  function set(Status status, uint16 maxWords, uint16 wordsPlayed, uint32 crossWordRewardFraction) internal {
+    bytes memory _data = encode(status, maxWords, wordsPlayed, crossWordRewardFraction);
 
     bytes32[] memory _keyTuple = new bytes32[](0);
 
@@ -193,8 +226,14 @@ library GameConfig {
   }
 
   /** Set the full data using individual values (using the specified store) */
-  function set(IStore _store, Status status, uint16 maxWords, uint16 wordsPlayed) internal {
-    bytes memory _data = encode(status, maxWords, wordsPlayed);
+  function set(
+    IStore _store,
+    Status status,
+    uint16 maxWords,
+    uint16 wordsPlayed,
+    uint32 crossWordRewardFraction
+  ) internal {
+    bytes memory _data = encode(status, maxWords, wordsPlayed, crossWordRewardFraction);
 
     bytes32[] memory _keyTuple = new bytes32[](0);
 
@@ -203,12 +242,12 @@ library GameConfig {
 
   /** Set the full data using the data struct */
   function set(GameConfigData memory _table) internal {
-    set(_table.status, _table.maxWords, _table.wordsPlayed);
+    set(_table.status, _table.maxWords, _table.wordsPlayed, _table.crossWordRewardFraction);
   }
 
   /** Set the full data using the data struct (using the specified store) */
   function set(IStore _store, GameConfigData memory _table) internal {
-    set(_store, _table.status, _table.maxWords, _table.wordsPlayed);
+    set(_store, _table.status, _table.maxWords, _table.wordsPlayed, _table.crossWordRewardFraction);
   }
 
   /** Decode the tightly packed blob using this table's schema */
@@ -218,11 +257,18 @@ library GameConfig {
     _table.maxWords = (uint16(Bytes.slice2(_blob, 1)));
 
     _table.wordsPlayed = (uint16(Bytes.slice2(_blob, 3)));
+
+    _table.crossWordRewardFraction = (uint32(Bytes.slice4(_blob, 5)));
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(Status status, uint16 maxWords, uint16 wordsPlayed) internal view returns (bytes memory) {
-    return abi.encodePacked(status, maxWords, wordsPlayed);
+  function encode(
+    Status status,
+    uint16 maxWords,
+    uint16 wordsPlayed,
+    uint32 crossWordRewardFraction
+  ) internal view returns (bytes memory) {
+    return abi.encodePacked(status, maxWords, wordsPlayed, crossWordRewardFraction);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */

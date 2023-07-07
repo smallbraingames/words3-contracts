@@ -15,4 +15,6 @@ interface IPlaySystem {
     Direction direction,
     Bound[] memory bounds
   ) external payable;
+
+  function getWordPrice(Letter[] memory word) external view returns (uint256);
 }
