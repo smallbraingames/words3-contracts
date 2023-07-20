@@ -25,6 +25,7 @@ library LibPoints {
         address player
     ) internal returns (uint32) {
         uint32 pointsWithoutBonus = getWordPoints(filledWord);
+        uint32 points = addBonusPoints(word, coord, direction, pointsWithoutBonus);
         // Count points for cross words
         // This double counts points on purpose (points are recounted for every valid word)
         for (uint256 i; i < filledWord.length; i++) {
@@ -34,10 +35,12 @@ library LibPoints {
                 Letter[] memory perpendicularWord = LibBoard.getCrossWord(
                     LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction), filledWord[i], direction, bounds[i]
                 );
-                pointsWithoutBonus += getWordPoints(perpendicularWord);
+                uint32 perpendicularPoints = getWordPoints(perpendicularWord);
+                Letter[] memory playWord = new Letter[](1);
+                playWord[0] = word[i];
+                points += perpendicularPoints + addBonusPoints(playWord, coord, direction, perpendicularPoints);
             }
         }
-        uint32 points = addBonusPoints(word, coord, direction, pointsWithoutBonus);
         LibPlayer.incrementScore(player, points);
         return points;
     }

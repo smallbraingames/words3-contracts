@@ -54,11 +54,10 @@ export default mudConfig({
       },
     },
     Spent: {
-      keySchema: { player: "address", id: "uint256", time: "uint256" },
+      keySchema: { player: "address" },
       schema: {
         value: "uint256",
       },
-      ephemeral: true,
     },
     LetterCount: {
       keySchema: { letter: "Letter" },

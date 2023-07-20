@@ -23,6 +23,9 @@ devDependencies:
   '@latticexyz/config':
     specifier: 2.0.0-alpha.1.268
     version: 2.0.0-alpha.1.268(typescript@4.9.5)
+  '@latticexyz/recs':
+    specifier: 2.0.0-alpha.1.268
+    version: 2.0.0-alpha.1.268(typescript@4.9.5)(zod@3.21.4)
   '@latticexyz/schema-type':
     specifier: 2.0.0-alpha.1.268
     version: 2.0.0-alpha.1.268(typescript@4.9.5)(zod@3.21.4)
@@ -749,6 +752,20 @@ packages:
       - bufferutil
       - typescript
       - utf-8-validate
+    dev: true
+
+  /@latticexyz/recs@2.0.0-alpha.1.268(typescript@4.9.5)(zod@3.21.4):
+    resolution: {integrity: sha512-Q7khVy6+gGIVN3uIXlbcRAYc58DQ4dVDa54QzyOz1MHV9Se+YZZ6zmABgLZ8JAgMUoYdALO74JOZicmcgvuqTA==}
+    dependencies:
+      '@latticexyz/schema-type': 2.0.0-alpha.1.268(typescript@4.9.5)(zod@3.21.4)
+      '@latticexyz/utils': 2.0.0-alpha.1.268(typescript@4.9.5)(zod@3.21.4)
+      mobx: 6.9.0
+      rxjs: 7.5.5
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
     dev: true
 
   /@latticexyz/schema-type@2.0.0-alpha.1.268(typescript@4.9.5)(zod@3.21.4):

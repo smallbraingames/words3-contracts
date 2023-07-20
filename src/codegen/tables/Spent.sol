@@ -30,10 +30,8 @@ library Spent {
   }
 
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](3);
+    SchemaType[] memory _schema = new SchemaType[](1);
     _schema[0] = SchemaType.ADDRESS;
-    _schema[1] = SchemaType.UINT256;
-    _schema[2] = SchemaType.UINT256;
 
     return SchemaLib.encode(_schema);
   }
@@ -67,28 +65,38 @@ library Spent {
     _store.setMetadata(_tableId, _tableName, _fieldNames);
   }
 
-  /** Emit the ephemeral event using individual values */
-  function emitEphemeral(address player, uint256 id, uint256 time, uint256 value) internal {
-    bytes memory _data = encode(value);
-
-    bytes32[] memory _keyTuple = new bytes32[](3);
+  /** Get value */
+  function get(address player) internal view returns (uint256 value) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
-    _keyTuple[1] = bytes32(uint256(id));
-    _keyTuple[2] = bytes32(uint256(time));
 
-    StoreSwitch.emitEphemeralRecord(_tableId, _keyTuple, _data);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
+    return (uint256(Bytes.slice32(_blob, 0)));
   }
 
-  /** Emit the ephemeral event using individual values (using the specified store) */
-  function emitEphemeral(IStore _store, address player, uint256 id, uint256 time, uint256 value) internal {
-    bytes memory _data = encode(value);
-
-    bytes32[] memory _keyTuple = new bytes32[](3);
+  /** Get value (using the specified store) */
+  function get(IStore _store, address player) internal view returns (uint256 value) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
-    _keyTuple[1] = bytes32(uint256(id));
-    _keyTuple[2] = bytes32(uint256(time));
 
-    _store.emitEphemeralRecord(_tableId, _keyTuple, _data);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
+    return (uint256(Bytes.slice32(_blob, 0)));
+  }
+
+  /** Set value */
+  function set(address player, uint256 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
+
+    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
+  }
+
+  /** Set value (using the specified store) */
+  function set(IStore _store, address player, uint256 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
+
+    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
   }
 
   /** Tightly pack full data using this table's schema */
@@ -97,10 +105,24 @@ library Spent {
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple(address player, uint256 id, uint256 time) internal pure returns (bytes32[] memory _keyTuple) {
-    _keyTuple = new bytes32[](3);
+  function encodeKeyTuple(address player) internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
-    _keyTuple[1] = bytes32(uint256(id));
-    _keyTuple[2] = bytes32(uint256(time));
+  }
+
+  /* Delete all data for given keys */
+  function deleteRecord(address player) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
+
+    StoreSwitch.deleteRecord(_tableId, _keyTuple);
+  }
+
+  /* Delete all data for given keys (using the specified store) */
+  function deleteRecord(IStore _store, address player) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(player)));
+
+    _store.deleteRecord(_tableId, _keyTuple);
   }
 }

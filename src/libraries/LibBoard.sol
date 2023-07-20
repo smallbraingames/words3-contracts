@@ -91,10 +91,11 @@ library LibBoard {
     function getTileBonus(Coord memory coord) internal pure returns (Bonus memory) {
         int32 x = abs(coord.x);
         int32 y = abs(coord.y);
-        int32 bonusValue = max(x, y) / 4 + 2;
         if (x % 4 == 0 && y % 4 == 0) {
-            return Bonus({bonusValue: uint32(bonusValue), bonusType: BonusType.MULTIPLY_WORD});
+            int32 wordBonusValue = max(x, y) / 4 + 2;
+            return Bonus({bonusValue: uint32(wordBonusValue), bonusType: BonusType.MULTIPLY_WORD});
         }
+        int32 bonusValue = (x + y / 2) % 2 + 2;
         return Bonus({bonusValue: uint32(bonusValue), bonusType: BonusType.MULTIPLY_LETTER});
     }
 

@@ -17,6 +17,6 @@ library LibTreasury {
 
     function incrementTreasury(address msgSender, uint256 msgValue) internal {
         Treasury.set(Treasury.get() + msgValue);
-        Spent.emitEphemeral(msgSender, GameConfig.getWordsPlayed(), block.timestamp, msgValue);
+        Spent.set(msgSender, Spent.get(msgSender) + msgValue);
     }
 }
