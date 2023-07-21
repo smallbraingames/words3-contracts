@@ -34,7 +34,7 @@ library LibPrice {
         int256 decayConstant = wadLn(1e18 - vrgdaConfig.priceDecay);
         int256 daysSinceStart = toDaysWadUnsafe(block.timestamp - vrgdaConfig.startTime);
         uint256 letterCount = uint256(LetterCount.get(letter));
-        uint256 letterWeight = (LibPoints.getLetterPoints(letter) / 2 + 1) * letterCount;
+        uint256 letterWeight = (LibPoints.getBaseLetterPoints(letter) / 2 + 1) * letterCount;
         int256 nOverK = unsafeWadDiv(toWadUnsafe(letterWeight + 1), vrgdaConfig.perDay);
         unchecked {
             return

@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Direction, Letter, BonusType} from "codegen/Types.sol";
+import {Direction, Letter} from "codegen/Types.sol";
 
-import {Bonus} from "common/Bonus.sol";
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";
 import {BoundTooLong, EmptyLetterInBounds, LetterOnExistingLetter} from "common/Errors.sol";
@@ -79,37 +78,5 @@ library LibBoard {
         }
 
         return word;
-    }
-
-    function isBonusTile(Coord memory coord) internal pure returns (bool) {
-        int32 x = abs(coord.x);
-        int32 y = abs(coord.y);
-        return ((x - y) % 4) == 0;
-    }
-
-    /// @notice Assumes that isBonusTile is called to check if the tile is a bonus tile first
-    function getTileBonus(Coord memory coord) internal pure returns (Bonus memory) {
-        int32 x = abs(coord.x);
-        int32 y = abs(coord.y);
-        if (x % 4 == 0 && y % 4 == 0) {
-            int32 wordBonusValue = max(x, y) / 4 + 2;
-            return Bonus({bonusValue: uint32(wordBonusValue), bonusType: BonusType.MULTIPLY_WORD});
-        }
-        int32 bonusValue = (x + y / 2) % 2 + 2;
-        return Bonus({bonusValue: uint32(bonusValue), bonusType: BonusType.MULTIPLY_LETTER});
-    }
-
-    function abs(int32 x) private pure returns (int32) {
-        if (x < 0) {
-            return -x;
-        }
-        return x;
-    }
-
-    function max(int32 x, int32 y) private pure returns (int32) {
-        if (x > y) {
-            return x;
-        }
-        return y;
     }
 }

@@ -7,41 +7,66 @@ import {GameConfig, Points} from "codegen/Tables.sol";
 import {Bonus} from "common/Bonus.sol";
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";
+import {SINGLETON_ADDRESS} from "common/Constants.sol";
 import {LibBoard} from "libraries/LibBoard.sol";
+import {LibBonus} from "libraries/LibBonus.sol";
 import {LibPlayer} from "libraries/LibPlayer.sol";
 
 import {NoPointsForEmptyLetter} from "common/Errors.sol";
 
-address constant SingletonAddress = address(0);
-
 library LibPoints {
     /// @notice Updates the score for a player for the main word and cross words
+
     function setScore(
-        Letter[] memory word,
+        Letter[] memory playWord,
         Letter[] memory filledWord,
-        Coord memory coord,
+        Coord memory start,
         Direction direction,
         Bound[] memory bounds,
         address player
     ) internal returns (uint32) {
-        uint32 pointsWithoutBonus = getWordPoints(filledWord);
-        uint32 points = addBonusPoints(word, coord, direction, pointsWithoutBonus);
-        // Count points for cross words
-        // This double counts points on purpose (points are recounted for every valid word)
-        for (uint256 i; i < filledWord.length; i++) {
+        uint32 points = getPoints(playWord, filledWord, start, direction, bounds);
+        LibPlayer.incrementScore(player, points);
+        return points;
+    }
+
+    function getPoints(
+        Letter[] memory playWord,
+        Letter[] memory filledWord,
+        Coord memory start,
+        Direction direction,
+        Bound[] memory bounds
+    ) internal view returns (uint32) {
+        uint32 points = getWordPoints(playWord, filledWord, start, direction);
+
+        // Count points for cross words (double counts by design)
+        Direction perpendicularDirection =
+            direction == Direction.LEFT_TO_RIGHT ? Direction.TOP_TO_BOTTOM : Direction.LEFT_TO_RIGHT;
+        for (uint256 i; i < playWord.length; i++) {
+            Letter letter = playWord[i];
+            if (letter == Letter.EMPTY) {
+                continue;
+            }
             uint16 positive = bounds[i].positive;
             uint16 negative = bounds[i].negative;
-            if (positive != 0 || negative != 0) {
-                Letter[] memory perpendicularWord = LibBoard.getCrossWord(
-                    LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction), filledWord[i], direction, bounds[i]
-                );
-                uint32 perpendicularPoints = getWordPoints(perpendicularWord);
-                Letter[] memory playWord = new Letter[](1);
-                playWord[0] = word[i];
-                points += perpendicularPoints + addBonusPoints(playWord, coord, direction, perpendicularPoints);
+            if (positive == 0 && negative == 0) {
+                continue;
             }
+
+            Coord memory letterCoord = LibBoard.getRelativeCoord(start, int32(uint32(i)), direction);
+
+            Letter[] memory perpendicularFilledWord = LibBoard.getCrossWord(letterCoord, letter, direction, bounds[i]);
+            Letter[] memory perpendicularPlayWord = new Letter[](perpendicularFilledWord.length);
+            for (uint256 j; j < perpendicularFilledWord.length; j++) {
+                if (j == negative) {
+                    perpendicularPlayWord[j] = letter;
+                } else {
+                    perpendicularPlayWord[j] = Letter.EMPTY;
+                }
+            }
+
+            points += getWordPoints(perpendicularFilledWord, perpendicularPlayWord, letterCoord, perpendicularDirection);
         }
-        LibPlayer.incrementScore(player, points);
         return points;
     }
 
@@ -65,44 +90,43 @@ library LibPoints {
         }
     }
 
-    /// @notice Get the points for a given word, not including bonuses
-    function getWordPoints(Letter[] memory word) internal pure returns (uint32) {
-        uint32 points;
-        for (uint256 i; i < word.length; i++) {
-            points += getLetterPoints(word[i]);
-        }
-        return points;
+    function getTotalPoints() internal view returns (uint32) {
+        return Points.get(SINGLETON_ADDRESS);
     }
 
-    /// @notice Gets the bonus points for a word, takes a word with empty letters in
-    function addBonusPoints(Letter[] memory playWord, Coord memory coord, Direction direction, uint32 baseWordPoints)
+    function getWordPoints(Letter[] memory word, Letter[] memory filledWord, Coord memory start, Direction direction)
         internal
         pure
         returns (uint32)
     {
-        uint32 wordMultiplier = 1;
-        for (uint256 i; i < playWord.length; i++) {
-            Letter letter = playWord[i];
-            if (playWord[i] != Letter.EMPTY) {
-                Coord memory letterCoord = LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction);
-                if (LibBoard.isBonusTile(letterCoord)) {
-                    Bonus memory bonus = LibBoard.getTileBonus(letterCoord);
-                    if (bonus.bonusType == BonusType.MULTIPLY_WORD) {
-                        wordMultiplier *= bonus.bonusValue;
-                    } else if (bonus.bonusType == BonusType.MULTIPLY_LETTER) {
-                        baseWordPoints += getLetterPoints(letter) * (bonus.bonusValue - 1);
-                    }
+        uint32 points = 0;
+        uint32 multiplier = 1;
+
+        for (uint256 i; i < word.length; i++) {
+            Coord memory letterCoord = LibBoard.getRelativeCoord(start, int32(uint32(i)), direction);
+            if (word[i] != Letter.EMPTY && LibBonus.isBonusTile(letterCoord)) {
+                Bonus memory bonus = LibBonus.getTileBonus(letterCoord);
+                if (bonus.bonusType == BonusType.MULTIPLY_WORD) {
+                    multiplier *= bonus.bonusValue;
                 }
+                points += getBonusLetterPoints(word[i], bonus);
+            } else {
+                points += getBaseLetterPoints(filledWord[i]);
             }
         }
-        return baseWordPoints * wordMultiplier;
+
+        return points * multiplier;
     }
 
-    function getTotalPoints() internal view returns (uint32) {
-        return Points.get(SingletonAddress);
+    function getBonusLetterPoints(Letter letter, Bonus memory bonus) internal pure returns (uint32) {
+        uint32 basePoints = getBaseLetterPoints(letter);
+        if (bonus.bonusType == BonusType.MULTIPLY_LETTER) {
+            return basePoints * bonus.bonusValue;
+        }
+        return basePoints;
     }
 
-    function getLetterPoints(Letter letter) internal pure returns (uint32) {
+    function getBaseLetterPoints(Letter letter) internal pure returns (uint32) {
         if (letter == Letter.A) {
             return 1;
         } else if (letter == Letter.B) {

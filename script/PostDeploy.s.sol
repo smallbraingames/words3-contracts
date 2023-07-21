@@ -14,20 +14,20 @@ contract PostDeploy is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        IWorld world = IWorld(worldAddress);
+        // IWorld world = IWorld(worldAddress);
 
-        Letter[] memory infinite = new Letter[](8);
-        infinite[0] = Letter.I;
-        infinite[1] = Letter.N;
-        infinite[2] = Letter.F;
-        infinite[3] = Letter.I;
-        infinite[4] = Letter.N;
-        infinite[5] = Letter.I;
-        infinite[6] = Letter.T;
-        infinite[7] = Letter.E;
-        world.start(
-            infinite, 5000, 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432, 6e15, 7e17, 500e18, 3
-        );
+        // Letter[] memory infinite = new Letter[](8);
+        // infinite[0] = Letter.I;
+        // infinite[1] = Letter.N;
+        // infinite[2] = Letter.F;
+        // infinite[3] = Letter.I;
+        // infinite[4] = Letter.N;
+        // infinite[5] = Letter.I;
+        // infinite[6] = Letter.T;
+        // infinite[7] = Letter.E;
+        // world.start(
+        //     infinite, 5000, 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432, 6e15, 7e17, 500e18, 3
+        // );
 
         vm.stopBroadcast();
     }
