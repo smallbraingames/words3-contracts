@@ -14,7 +14,7 @@ import {MudV2Test} from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
 import {getKeysWithValue} from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
 import {Merkle} from "./murky/src/Merkle.sol";
 
-contract PointsTest is MudV2Test {
+contract TreasuryTest is MudV2Test {
     IWorld world;
     bytes32[] public words;
     Merkle private m;

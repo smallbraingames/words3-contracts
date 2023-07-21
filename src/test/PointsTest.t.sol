@@ -2,12 +2,15 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/Types.sol";
+import {Letter, Direction, BonusType} from "codegen/Types.sol";
 import {MerkleRootConfig, TileLetter, TilePlayer, Points} from "codegen/Tables.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
+import {Bonus} from "common/Bonus.sol";
 import {GameStartedOrOver} from "common/Errors.sol";
+import {LibBonus} from "libraries/LibBonus.sol";
+import {LibPoints} from "libraries/LibPoints.sol";
 
 import "forge-std/Test.sol";
 import {MudV2Test} from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
@@ -43,15 +46,21 @@ contract PointsTest is MudV2Test {
         zones[2] = Letter.N;
         zones[3] = Letter.E;
         zones[4] = Letter.S;
+        Letter[] memory ollie = new Letter[](5);
+        ollie[0] = Letter.O;
+        ollie[1] = Letter.L;
+        ollie[2] = Letter.L;
+        ollie[3] = Letter.I;
+        ollie[4] = Letter.E;
         words.push(keccak256(bytes.concat(keccak256(abi.encode(hi))))); // hi
         words.push(keccak256(bytes.concat(keccak256(abi.encode(hello))))); // hello
         words.push(keccak256(bytes.concat(keccak256(abi.encode(zone))))); // zone
         words.push(keccak256(bytes.concat(keccak256(abi.encode(zones))))); // zones
+        words.push(keccak256(bytes.concat(keccak256(abi.encode(ollie))))); // ollie
     }
 
     function testCountPoints() public {
-        // This test function as long as the bonus is < 4
-
+        // Test works as long as points are not on bonus tiles
         address player1 = address(0x12345);
         address player2 = address(0x22345);
 
@@ -106,15 +115,23 @@ contract PointsTest is MudV2Test {
 
         Letter[] memory word = new Letter[](5);
         word[0] = Letter.EMPTY;
-        word[1] = Letter.E;
+        word[1] = Letter.L;
         word[2] = Letter.L;
-        word[3] = Letter.L;
-        word[4] = Letter.O;
+        word[3] = Letter.I;
+        word[4] = Letter.E;
 
         Bound[] memory bounds = new Bound[](5);
-        bytes32[] memory proof = m.getProof(words, 1);
+        bytes32[] memory proof = m.getProof(words, 4);
 
-        world.play(word, proof, Coord({x: 0, y: 0}), Direction.TOP_TO_BOTTOM, bounds);
-        assertEq(Points.get(world, address(this)), 24);
+        world.play(word, proof, Coord({x: 4, y: 0}), Direction.TOP_TO_BOTTOM, bounds);
+
+        uint32 truePoints = 5;
+        Bonus memory bonus = LibBonus.getTileBonus(Coord({x: 4, y: 4}));
+        if (bonus.bonusType == BonusType.MULTIPLY_WORD) {
+            truePoints *= bonus.bonusValue;
+        } else {
+            truePoints += bonus.bonusValue - 1;
+        }
+        assertEq(Points.get(world, address(this)), truePoints);
     }
 }
