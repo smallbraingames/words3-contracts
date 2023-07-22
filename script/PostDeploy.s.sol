@@ -26,7 +26,7 @@ contract PostDeploy is Script {
         infinite[6] = Letter.T;
         infinite[7] = Letter.E;
         world.start(
-            infinite, 5000, 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432, 6e15, 7e17, 500e18, 3
+            infinite, 5000, 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432, 5e14, 95e16, 20e18, 3
         );
 
         vm.stopBroadcast();
