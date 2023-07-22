@@ -7,6 +7,7 @@
     "build": "forge clean && forge build",
     "deploy": "pnpm run initialize && mud deploy",
     "deploy:testnet": "pnpm run initialize && mud deploy --profile=lattice-testnet",
+    "deploy:base-testnet": "pnpm run initialize && mud deploy --profile=base-testnet",
     "dev": "pnpm mud dev-contracts --tsgenOutput ./mud",
     "dev:phaser": "pnpm mud dev-contracts --tsgenOutput ./mud",
     "initialize": "pnpm run tablegen && pnpm run worldgen && pnpm run build && pnpm run worldtypes && pnpm run tsgen",
