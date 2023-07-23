@@ -65,7 +65,7 @@ library LibPoints {
                 }
             }
 
-            points += getWordPoints(perpendicularFilledWord, perpendicularPlayWord, letterCoord, perpendicularDirection);
+            points += getWordPoints(perpendicularPlayWord, perpendicularFilledWord, letterCoord, perpendicularDirection);
         }
         return points;
     }
