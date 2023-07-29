@@ -172,7 +172,7 @@ library LibPoints {
         } else if (letter == Letter.V) {
             return 4;
         } else if (letter == Letter.W) {
-            return 4;
+            return 3;
         } else if (letter == Letter.X) {
             return 8;
         } else if (letter == Letter.Y) {

@@ -7,8 +7,7 @@ export default mudConfig({
       keySchema: {},
       schema: {
         status: "Status",
-        maxWords: "uint16",
-        wordsPlayed: "uint16",
+        endTime: "uint256",
         crossWordRewardFraction: "uint32",
       },
     },

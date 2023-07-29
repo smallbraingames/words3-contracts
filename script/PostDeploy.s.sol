@@ -14,7 +14,7 @@ contract PostDeploy is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        // IWorld world = IWorld(worldAddress);
+        IWorld world = IWorld(worldAddress);
 
         // Letter[] memory infinite = new Letter[](8);
         // infinite[0] = Letter.I;

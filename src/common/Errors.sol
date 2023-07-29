@@ -26,4 +26,4 @@ error NotEnoughValue();
 
 error AlreadyClaimed();
 
-error NotEnoughWordsPlayed();
+error NotEndTime();

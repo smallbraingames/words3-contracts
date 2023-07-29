@@ -9,16 +9,12 @@ library LibGame {
         return GameConfig.getStatus();
     }
 
-    function incrementWordsPlayed() internal {
-        GameConfig.setWordsPlayed(GameConfig.getWordsPlayed() + 1);
-    }
-
     function canPlay() internal view returns (bool) {
-        return getGameStatus() == Status.STARTED && GameConfig.getWordsPlayed() < GameConfig.getMaxWords();
+        return getGameStatus() == Status.STARTED && block.timestamp < GameConfig.getEndTime();
     }
 
     function startGame(
-        uint16 maxWords,
+        uint256 endTime,
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
@@ -26,12 +22,7 @@ library LibGame {
         uint32 crossWordRewardFraction
     ) internal {
         GameConfig.set(
-            GameConfigData({
-                status: Status.STARTED,
-                maxWords: maxWords,
-                wordsPlayed: 0,
-                crossWordRewardFraction: crossWordRewardFraction
-            })
+            GameConfigData({status: Status.STARTED, endTime: endTime, crossWordRewardFraction: crossWordRewardFraction})
         );
         MerkleRootConfig.set(merkleRoot);
         VRGDAConfig.set(

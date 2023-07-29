@@ -36,7 +36,6 @@ contract PlaySystem is System {
             revert CannotPlay();
         }
         LibTreasury.incrementTreasury(_msgSender(), msg.value);
-        LibGame.incrementWordsPlayed();
         LibPlay.play(word, proof, coord, direction, bounds, _msgSender());
     }
 

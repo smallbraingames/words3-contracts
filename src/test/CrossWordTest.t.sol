@@ -57,7 +57,7 @@ contract CrossWordTest is MudV2Test {
         initialWord[5] = Letter.I;
         initialWord[6] = Letter.T;
         initialWord[7] = Letter.E;
-        world.start(initialWord, 10, m.getRoot(words), 0, 0, 0, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 0, 0, 3);
 
         // Play aunt on the first N
         Letter[] memory word = new Letter[](4);

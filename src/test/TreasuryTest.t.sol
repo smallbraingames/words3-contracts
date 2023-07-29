@@ -48,7 +48,7 @@ contract TreasuryTest is MudV2Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, 1, m.getRoot(words), 1 ether, 1e15, 1e15, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 1 ether, 1e15, 1e15, 3);
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -68,6 +68,7 @@ contract TreasuryTest is MudV2Test {
         assertEq(address(player1).balance, wordPrice);
         assertEq(address(worldAddress).balance, wordPrice);
 
+        vm.warp(block.timestamp + 1e6 + 1);
         world.end();
         world.claim(player1);
         assertEq(address(player1).balance, wordPrice * 2);

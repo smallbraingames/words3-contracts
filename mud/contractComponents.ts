@@ -11,8 +11,7 @@ export function defineContractComponents(world: World) {
         world,
         {
           status: RecsType.Number,
-          maxWords: RecsType.Number,
-          wordsPlayed: RecsType.Number,
+          endTime: RecsType.BigInt,
           crossWordRewardFraction: RecsType.Number,
         },
         {

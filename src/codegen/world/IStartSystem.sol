@@ -8,7 +8,7 @@ import { Letter } from "codegen/Types.sol";
 interface IStartSystem {
   function start(
     Letter[] memory initialWord,
-    uint16 maxWords,
+    uint256 endTime,
     bytes32 merkleRoot,
     int256 vrgdaTargetPrice,
     int256 vrgdaPriceDecay,

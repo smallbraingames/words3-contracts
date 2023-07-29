@@ -5,7 +5,7 @@ import {Letter, Status} from "codegen/Types.sol";
 import {TileLetter, TilePlayer, GameConfig} from "codegen/Tables.sol";
 
 import {Coord} from "common/Coord.sol";
-import {GameStartedOrOver, NotEnoughWordsPlayed} from "common/Errors.sol";
+import {GameStartedOrOver, NotEndTime} from "common/Errors.sol";
 import {LibTile} from "libraries/LibTile.sol";
 import {LibGame} from "libraries/LibGame.sol";
 
@@ -14,7 +14,7 @@ import {System} from "@latticexyz/world/src/System.sol";
 contract StartSystem is System {
     function start(
         Letter[] memory initialWord,
-        uint16 maxWords,
+        uint256 endTime,
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
@@ -29,12 +29,12 @@ contract StartSystem is System {
             TileLetter.set(coord.x, coord.y, initialWord[i]);
             TilePlayer.set(coord.x, coord.y, address(0));
         }
-        LibGame.startGame(maxWords, merkleRoot, vrgdaTargetPrice, vrgdaPriceDecay, vrgdaPerDay, crossWordRewardFraction);
+        LibGame.startGame(endTime, merkleRoot, vrgdaTargetPrice, vrgdaPriceDecay, vrgdaPerDay, crossWordRewardFraction);
     }
 
     function end() public {
-        if (GameConfig.getWordsPlayed() < GameConfig.getMaxWords()) {
-            revert NotEnoughWordsPlayed();
+        if (block.timestamp < GameConfig.getEndTime()) {
+            revert NotEndTime();
         }
         GameConfig.setStatus(Status.OVER);
     }

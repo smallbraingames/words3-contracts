@@ -47,7 +47,7 @@ contract SimpleWordTest is MudV2Test {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start(initialWord, 10, m.getRoot(words), 0, 0, 0, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 0, 0, 3);
 
         Letter[] memory word = new Letter[](2);
         word[0] = Letter.EMPTY;

@@ -25,19 +25,17 @@ bytes32 constant GameConfigTableId = _tableId;
 
 struct GameConfigData {
   Status status;
-  uint16 maxWords;
-  uint16 wordsPlayed;
+  uint256 endTime;
   uint32 crossWordRewardFraction;
 }
 
 library GameConfig {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](4);
+    SchemaType[] memory _schema = new SchemaType[](3);
     _schema[0] = SchemaType.UINT8;
-    _schema[1] = SchemaType.UINT16;
-    _schema[2] = SchemaType.UINT16;
-    _schema[3] = SchemaType.UINT32;
+    _schema[1] = SchemaType.UINT256;
+    _schema[2] = SchemaType.UINT32;
 
     return SchemaLib.encode(_schema);
   }
@@ -50,11 +48,10 @@ library GameConfig {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](4);
+    string[] memory _fieldNames = new string[](3);
     _fieldNames[0] = "status";
-    _fieldNames[1] = "maxWords";
-    _fieldNames[2] = "wordsPlayed";
-    _fieldNames[3] = "crossWordRewardFraction";
+    _fieldNames[1] = "endTime";
+    _fieldNames[2] = "crossWordRewardFraction";
     return ("GameConfig", _fieldNames);
   }
 
@@ -110,71 +107,41 @@ library GameConfig {
     _store.setField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(status)));
   }
 
-  /** Get maxWords */
-  function getMaxWords() internal view returns (uint16 maxWords) {
+  /** Get endTime */
+  function getEndTime() internal view returns (uint256 endTime) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
-    return (uint16(Bytes.slice2(_blob, 0)));
+    return (uint256(Bytes.slice32(_blob, 0)));
   }
 
-  /** Get maxWords (using the specified store) */
-  function getMaxWords(IStore _store) internal view returns (uint16 maxWords) {
+  /** Get endTime (using the specified store) */
+  function getEndTime(IStore _store) internal view returns (uint256 endTime) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
-    return (uint16(Bytes.slice2(_blob, 0)));
+    return (uint256(Bytes.slice32(_blob, 0)));
   }
 
-  /** Set maxWords */
-  function setMaxWords(uint16 maxWords) internal {
+  /** Set endTime */
+  function setEndTime(uint256 endTime) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((maxWords)));
+    StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((endTime)));
   }
 
-  /** Set maxWords (using the specified store) */
-  function setMaxWords(IStore _store, uint16 maxWords) internal {
+  /** Set endTime (using the specified store) */
+  function setEndTime(IStore _store, uint256 endTime) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((maxWords)));
-  }
-
-  /** Get wordsPlayed */
-  function getWordsPlayed() internal view returns (uint16 wordsPlayed) {
-    bytes32[] memory _keyTuple = new bytes32[](0);
-
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
-    return (uint16(Bytes.slice2(_blob, 0)));
-  }
-
-  /** Get wordsPlayed (using the specified store) */
-  function getWordsPlayed(IStore _store) internal view returns (uint16 wordsPlayed) {
-    bytes32[] memory _keyTuple = new bytes32[](0);
-
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
-    return (uint16(Bytes.slice2(_blob, 0)));
-  }
-
-  /** Set wordsPlayed */
-  function setWordsPlayed(uint16 wordsPlayed) internal {
-    bytes32[] memory _keyTuple = new bytes32[](0);
-
-    StoreSwitch.setField(_tableId, _keyTuple, 2, abi.encodePacked((wordsPlayed)));
-  }
-
-  /** Set wordsPlayed (using the specified store) */
-  function setWordsPlayed(IStore _store, uint16 wordsPlayed) internal {
-    bytes32[] memory _keyTuple = new bytes32[](0);
-
-    _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((wordsPlayed)));
+    _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((endTime)));
   }
 
   /** Get crossWordRewardFraction */
   function getCrossWordRewardFraction() internal view returns (uint32 crossWordRewardFraction) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
     return (uint32(Bytes.slice4(_blob, 0)));
   }
 
@@ -182,7 +149,7 @@ library GameConfig {
   function getCrossWordRewardFraction(IStore _store) internal view returns (uint32 crossWordRewardFraction) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
-    bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
     return (uint32(Bytes.slice4(_blob, 0)));
   }
 
@@ -190,14 +157,14 @@ library GameConfig {
   function setCrossWordRewardFraction(uint32 crossWordRewardFraction) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.setField(_tableId, _keyTuple, 3, abi.encodePacked((crossWordRewardFraction)));
+    StoreSwitch.setField(_tableId, _keyTuple, 2, abi.encodePacked((crossWordRewardFraction)));
   }
 
   /** Set crossWordRewardFraction (using the specified store) */
   function setCrossWordRewardFraction(IStore _store, uint32 crossWordRewardFraction) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.setField(_tableId, _keyTuple, 3, abi.encodePacked((crossWordRewardFraction)));
+    _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((crossWordRewardFraction)));
   }
 
   /** Get the full data */
@@ -217,8 +184,8 @@ library GameConfig {
   }
 
   /** Set the full data using individual values */
-  function set(Status status, uint16 maxWords, uint16 wordsPlayed, uint32 crossWordRewardFraction) internal {
-    bytes memory _data = encode(status, maxWords, wordsPlayed, crossWordRewardFraction);
+  function set(Status status, uint256 endTime, uint32 crossWordRewardFraction) internal {
+    bytes memory _data = encode(status, endTime, crossWordRewardFraction);
 
     bytes32[] memory _keyTuple = new bytes32[](0);
 
@@ -226,14 +193,8 @@ library GameConfig {
   }
 
   /** Set the full data using individual values (using the specified store) */
-  function set(
-    IStore _store,
-    Status status,
-    uint16 maxWords,
-    uint16 wordsPlayed,
-    uint32 crossWordRewardFraction
-  ) internal {
-    bytes memory _data = encode(status, maxWords, wordsPlayed, crossWordRewardFraction);
+  function set(IStore _store, Status status, uint256 endTime, uint32 crossWordRewardFraction) internal {
+    bytes memory _data = encode(status, endTime, crossWordRewardFraction);
 
     bytes32[] memory _keyTuple = new bytes32[](0);
 
@@ -242,33 +203,26 @@ library GameConfig {
 
   /** Set the full data using the data struct */
   function set(GameConfigData memory _table) internal {
-    set(_table.status, _table.maxWords, _table.wordsPlayed, _table.crossWordRewardFraction);
+    set(_table.status, _table.endTime, _table.crossWordRewardFraction);
   }
 
   /** Set the full data using the data struct (using the specified store) */
   function set(IStore _store, GameConfigData memory _table) internal {
-    set(_store, _table.status, _table.maxWords, _table.wordsPlayed, _table.crossWordRewardFraction);
+    set(_store, _table.status, _table.endTime, _table.crossWordRewardFraction);
   }
 
   /** Decode the tightly packed blob using this table's schema */
   function decode(bytes memory _blob) internal pure returns (GameConfigData memory _table) {
     _table.status = Status(uint8(Bytes.slice1(_blob, 0)));
 
-    _table.maxWords = (uint16(Bytes.slice2(_blob, 1)));
+    _table.endTime = (uint256(Bytes.slice32(_blob, 1)));
 
-    _table.wordsPlayed = (uint16(Bytes.slice2(_blob, 3)));
-
-    _table.crossWordRewardFraction = (uint32(Bytes.slice4(_blob, 5)));
+    _table.crossWordRewardFraction = (uint32(Bytes.slice4(_blob, 33)));
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(
-    Status status,
-    uint16 maxWords,
-    uint16 wordsPlayed,
-    uint32 crossWordRewardFraction
-  ) internal view returns (bytes memory) {
-    return abi.encodePacked(status, maxWords, wordsPlayed, crossWordRewardFraction);
+  function encode(Status status, uint256 endTime, uint32 crossWordRewardFraction) internal view returns (bytes memory) {
+    return abi.encodePacked(status, endTime, crossWordRewardFraction);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
