@@ -10,9 +10,9 @@ import {BONUS_DISTANCE} from "common/Constants.sol";
 import {LibBonus} from "libraries/LibBonus.sol";
 
 import "forge-std/Test.sol";
-import {MudV2Test} from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
+import {MudTest} from "@latticexyz/store/src/MudTest.sol";
 
-contract LibBonusTest is MudV2Test {
+contract LibBonusTest is MudTest {
     function testIsBonusTile() public {
         int32 bonusDistance = int32(uint32(BONUS_DISTANCE));
         // Bonus tiles

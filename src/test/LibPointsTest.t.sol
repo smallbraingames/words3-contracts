@@ -12,9 +12,9 @@ import {LibBonus} from "libraries/LibPoints.sol";
 import {LibPoints} from "libraries/LibPoints.sol";
 
 import "forge-std/Test.sol";
-import {MudV2Test} from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
+import {MudTest} from "@latticexyz/store/src/MudTest.sol";
 
-contract LibPointsTest is MudV2Test {
+contract LibPointsTest is MudTest {
     function testGetBaseLetterPoints() public {
         assertEq(LibPoints.getBaseLetterPoints(Letter.A), 1);
         assertEq(LibPoints.getBaseLetterPoints(Letter.B), 3);
