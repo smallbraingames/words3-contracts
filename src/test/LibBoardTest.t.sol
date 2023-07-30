@@ -8,7 +8,7 @@ import {TileLetter} from "codegen/Tables.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
-import {BoundTooLong} from "common/Errors.sol";
+import {BoundTooLong, EmptyLetterInBounds} from "common/Errors.sol";
 import {LibBoard} from "libraries/LibBoard.sol";
 
 import "forge-std/Test.sol";
@@ -156,7 +156,95 @@ contract LibBoardTest is MudTest {
     }
 
     function testGetCrossWord() public {
-        vm.prank(worldAddress);
-        TileLetter.get(0, 5);
+        vm.startPrank(worldAddress);
+        TileLetter.set(0, 0, Letter.A);
+        TileLetter.set(1, 0, Letter.B);
+        TileLetter.set(2, 0, Letter.C);
+        TileLetter.set(4, 0, Letter.E);
+        TileLetter.set(5, 0, Letter.F);
+        TileLetter.set(6, 0, Letter.G);
+        vm.stopPrank();
+        bytes32[] memory proof = new bytes32[](1);
+        Letter[] memory word = LibBoard.getCrossWord(
+            Coord({x: 3, y: 0}), Letter.D, Direction.TOP_TO_BOTTOM, Bound({positive: 3, negative: 3, proof: proof})
+        );
+        Letter[] memory expectedWord = new Letter[](7);
+        expectedWord[0] = Letter.A;
+        expectedWord[1] = Letter.B;
+        expectedWord[2] = Letter.C;
+        expectedWord[3] = Letter.D;
+        expectedWord[4] = Letter.E;
+        expectedWord[5] = Letter.F;
+        expectedWord[6] = Letter.G;
+        assertEq(abi.encode(word), abi.encode(expectedWord));
+
+        vm.startPrank(worldAddress);
+        TileLetter.set(0, 0, Letter.EMPTY);
+        vm.stopPrank();
+    }
+
+    function testFailFuzzGetCrossWord(uint8 a, uint8 b, uint256 c, uint8 e, uint8 f, uint8 g) public {
+        bool hasZero = false;
+        if (a == 0 || b == 0 || c == 0 || e == 0 || f == 0 || g == 0) {
+            hasZero = true;
+        }
+        vm.assume(hasZero);
+        vm.assume(a <= 26);
+        vm.assume(b <= 26);
+        vm.assume(c <= 26);
+        vm.assume(e <= 26);
+        vm.assume(f <= 26);
+        vm.assume(g <= 26);
+
+        vm.startPrank(worldAddress);
+        TileLetter.set(0, 0, Letter(a));
+        TileLetter.set(1, 0, Letter(b));
+        TileLetter.set(2, 0, Letter(c));
+        TileLetter.set(4, 0, Letter(e));
+        TileLetter.set(5, 0, Letter(f));
+        TileLetter.set(6, 0, Letter(g));
+        vm.stopPrank();
+        bytes32[] memory proof = new bytes32[](1);
+        LibBoard.getCrossWord(
+            Coord({x: 3, y: 0}), Letter.D, Direction.TOP_TO_BOTTOM, Bound({positive: 3, negative: 3, proof: proof})
+        );
+    }
+
+    function testFuzzGetCrossWord(
+        int32 startX,
+        int32 startY,
+        uint16 crossWordHalfLength,
+        bool wordDirectionLeftToRight,
+        uint8 letterRaw
+    ) public {
+        vm.assume(startX >= -1e8 && startX <= 1e8);
+        vm.assume(startY >= -1e8 && startY <= 1e8);
+        vm.assume(letterRaw > 0 && letterRaw <= 26);
+        Letter letter = Letter(letterRaw);
+        Direction wordDirection = wordDirectionLeftToRight ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
+
+        vm.startPrank(worldAddress);
+        for (int32 i = 1; i <= int32(uint32(crossWordHalfLength)); i++) {
+            if (!wordDirectionLeftToRight) {
+                TileLetter.set(startX + i, startY, letter);
+                TileLetter.set(startX - i, startY, letter);
+            } else {
+                TileLetter.set(startX, startY + i, letter);
+                TileLetter.set(startX, startY - i, letter);
+            }
+        }
+
+        bytes32[] memory proof = new bytes32[](1);
+        Coord memory letterCoord = Coord({x: startX, y: startY});
+        Letter[] memory crossWord = LibBoard.getCrossWord(
+            letterCoord,
+            letter,
+            wordDirection,
+            Bound({positive: crossWordHalfLength, negative: crossWordHalfLength, proof: proof})
+        );
+        assertEq(crossWord.length, crossWordHalfLength * 2 + 1);
+        for (uint256 i = 0; i < crossWord.length; i++) {
+            assertEq(uint8(crossWord[i]), uint8(letter));
+        }
     }
 }
