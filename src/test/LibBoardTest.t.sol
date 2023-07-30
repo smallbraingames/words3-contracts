@@ -8,7 +8,7 @@ import {TileLetter} from "codegen/Tables.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
-import {BoundTooLong} from "common/Errors.sol";
+import {BoundTooLong, EmptyLetterInBounds} from "common/Errors.sol";
 import {LibBoard} from "libraries/LibBoard.sol";
 
 import "forge-std/Test.sol";
@@ -157,6 +157,9 @@ contract LibBoardTest is MudTest {
 
     function testGetCrossWord() public {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> feat: board cross word tests
         vm.startPrank(worldAddress);
         TileLetter.set(0, 0, Letter.A);
         TileLetter.set(1, 0, Letter.B);
@@ -247,9 +250,9 @@ contract LibBoardTest is MudTest {
         for (uint256 i = 0; i < crossWord.length; i++) {
             assertEq(uint8(crossWord[i]), uint8(letter));
         }
-=======
+
         vm.prank(worldAddress);
         TileLetter.get(0, 5);
->>>>>>> feat: board tests, move to v2.0.0-next
+
     }
 }
