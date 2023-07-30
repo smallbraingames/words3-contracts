@@ -67,15 +67,15 @@ library LibBoard {
             LibBoard.getRelativeCoord(letterCoord, -1 * int32(uint32(bound.negative)), crossDirection);
 
         for (uint16 i = 0; i < wordLength; i++) {
-            Coord memory coord = LibBoard.getRelativeCoord(startCoord, int32(uint32(i)), wordDirection);
+            Coord memory coord = LibBoard.getRelativeCoord(startCoord, int32(uint32(i)), crossDirection);
             word[i] = LibTile.getLetter(coord);
-
-            if (word[i] == Letter.EMPTY) {
-                revert EmptyLetterInBounds();
-            }
 
             if (i == bound.negative) {
                 word[i] = letter;
+            }
+
+            if (word[i] == Letter.EMPTY) {
+                revert EmptyLetterInBounds();
             }
         }
 
