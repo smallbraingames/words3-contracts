@@ -10,11 +10,11 @@ import {Bound} from "common/Bound.sol";
 import {GameStartedOrOver} from "common/Errors.sol";
 
 import "forge-std/Test.sol";
-import {MudV2Test} from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
+import {MudTest} from "@latticexyz/store/src/MudTest.sol";
 import {getKeysWithValue} from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
 import {Merkle} from "./murky/src/Merkle.sol";
 
-contract TreasuryTest is MudV2Test {
+contract TreasuryTest is MudTest {
     IWorld world;
     bytes32[] public words;
     Merkle private m;

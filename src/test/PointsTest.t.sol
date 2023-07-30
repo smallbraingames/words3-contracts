@@ -13,11 +13,11 @@ import {LibBonus} from "libraries/LibBonus.sol";
 import {LibPoints} from "libraries/LibPoints.sol";
 
 import "forge-std/Test.sol";
-import {MudV2Test} from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
+import {MudTest} from "@latticexyz/store/src/MudTest.sol";
 import {getKeysWithValue} from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
 import {Merkle} from "./murky/src/Merkle.sol";
 
-contract PointsTest is MudV2Test {
+contract PointsTest is MudTest {
     IWorld world;
     bytes32[] public words;
     Merkle private m;

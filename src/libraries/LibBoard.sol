@@ -9,7 +9,7 @@ import {BoundTooLong, EmptyLetterInBounds, LetterOnExistingLetter} from "common/
 import {LibTile} from "libraries/LibTile.sol";
 
 library LibBoard {
-    uint16 constant MAX_BOUND_LENGTH = 200;
+    uint16 constant MAX_BOUND_LENGTH = 50;
 
     function getRelativeCoord(Coord memory startCoord, int32 distance, Direction direction)
         internal
@@ -32,48 +32,49 @@ library LibBoard {
         if (bound.positive > MAX_BOUND_LENGTH || bound.negative > MAX_BOUND_LENGTH) {
             revert BoundTooLong();
         }
+
         Coord memory start = Coord({x: letterCoord.x, y: letterCoord.y});
         Coord memory end = Coord({x: letterCoord.x, y: letterCoord.y});
+
+        int32 positiveDistance = int32(uint32(bound.positive)) + 1;
+        int32 negativeDistance = int32(uint32(bound.negative)) + 1;
+
         if (wordDirection == Direction.LEFT_TO_RIGHT) {
-            start.y -= (int32(uint32(bound.negative)) + 1);
-            end.y += (int32(uint32(bound.positive)) + 1);
+            start.y -= negativeDistance;
+            end.y += positiveDistance;
         } else {
-            start.x -= (int32(uint32(bound.negative)) + 1);
-            end.x += (int32(uint32(bound.positive)) + 1);
+            start.x -= negativeDistance;
+            end.x += positiveDistance;
         }
+
         return (start, end);
     }
 
     /// @notice Gets the cross word inside a given boundary
-    function getCrossWord(Coord memory letterCoord, Letter letter, Direction direction, Bound memory bound)
+    function getCrossWord(Coord memory letterCoord, Letter letter, Direction wordDirection, Bound memory bound)
         internal
         view
         returns (Letter[] memory)
     {
         uint16 wordLength = bound.positive + bound.negative + 1;
         Letter[] memory word = new Letter[](wordLength);
-        Coord memory coord;
-        // Start at edge of negative bound
-        if (direction == Direction.LEFT_TO_RIGHT) {
-            coord = LibBoard.getRelativeCoord(letterCoord, -1 * int32(uint32(bound.negative)), Direction.TOP_TO_BOTTOM);
-        } else {
-            coord = LibBoard.getRelativeCoord(letterCoord, -1 * int32(uint32(bound.negative)), Direction.LEFT_TO_RIGHT);
-        }
-        for (uint256 i = 0; i < wordLength; i++) {
-            word[i] = LibTile.getLetter(coord);
 
-            if (uint32(i) == uint32(bound.negative)) {
-                word[i] = letter;
-            }
+        Direction crossDirection =
+            wordDirection == Direction.TOP_TO_BOTTOM ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
+
+        Coord memory startCoord =
+            LibBoard.getRelativeCoord(letterCoord, -1 * int32(uint32(bound.negative)), crossDirection);
+
+        for (uint16 i = 0; i < wordLength; i++) {
+            Coord memory coord = LibBoard.getRelativeCoord(startCoord, int32(uint32(i)), wordDirection);
+            word[i] = LibTile.getLetter(coord);
 
             if (word[i] == Letter.EMPTY) {
                 revert EmptyLetterInBounds();
             }
 
-            if (direction == Direction.LEFT_TO_RIGHT) {
-                coord.y += 1;
-            } else {
-                coord.x += 1;
+            if (i == bound.negative) {
+                word[i] = letter;
             }
         }
 
