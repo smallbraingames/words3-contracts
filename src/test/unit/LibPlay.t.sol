@@ -241,4 +241,101 @@ contract LibPlayTest is MudTest {
         assertEq(buildsOnPlayers[3], buildsOnC);
         assertEq(buildsOnPlayers[4], buildsOnB);
     }
+
+    function testStripZeroAddresses() public {
+        address[] memory addresses = new address[](5);
+        addresses[0] = address(0x0);
+        addresses[1] = address(0x1);
+        addresses[2] = address(0x2);
+        addresses[3] = address(0x3);
+        addresses[4] = address(0x4);
+        address[] memory stripped = LibPlay.stripZeroAddresses(addresses);
+        assertEq(stripped.length, 4);
+        assertEq(stripped[0], address(0x1));
+        assertEq(stripped[1], address(0x2));
+        assertEq(stripped[2], address(0x3));
+        assertEq(stripped[3], address(0x4));
+
+        addresses[0] = address(0x0);
+        addresses[1] = address(0x0);
+        addresses[2] = address(0x0);
+        addresses[3] = address(0x0);
+        addresses[4] = address(0x0);
+        stripped = LibPlay.stripZeroAddresses(addresses);
+        assertEq(stripped.length, 0);
+
+        addresses[0] = address(0x0);
+        addresses[1] = address(0x1);
+        addresses[2] = address(0x0);
+        addresses[3] = address(0x3);
+        addresses[4] = address(0x0);
+        stripped = LibPlay.stripZeroAddresses(addresses);
+        assertEq(stripped.length, 2);
+        assertEq(stripped[0], address(0x1));
+        assertEq(stripped[1], address(0x3));
+    }
+
+    function testCheckWord() public {
+        Letter[] memory word = new Letter[](3);
+        word[0] = Letter.EMPTY;
+        word[1] = Letter.C;
+        word[2] = Letter.E;
+
+        vm.startPrank(worldAddress);
+        TileLetter.set(0, 0, Letter.I);
+        MerkleRootConfig.set(m.getRoot(words));
+        vm.stopPrank();
+
+        bytes32[] memory iceProof = m.getProof(words, 1);
+        vm.expectRevert();
+        wrapper.playCheckWord(word, iceProof, Coord({x: 1, y: 0}), Direction.LEFT_TO_RIGHT);
+        vm.expectRevert();
+        wrapper.playCheckWord(word, iceProof, Coord({x: -1, y: 0}), Direction.LEFT_TO_RIGHT);
+        vm.expectRevert();
+        wrapper.playCheckWord(word, iceProof, Coord({x: 0, y: 1}), Direction.TOP_TO_BOTTOM);
+
+        word[0] = Letter.I;
+        vm.expectRevert();
+        wrapper.playCheckWord(word, iceProof, Coord({x: 3, y: 3}), Direction.LEFT_TO_RIGHT);
+
+        Letter[] memory emptyWord = new Letter[](1);
+        emptyWord[0] = Letter.EMPTY;
+        bytes32[] memory emptyProof = new bytes32[](1);
+        emptyProof[0] = bytes32(0x0);
+        vm.expectRevert();
+        wrapper.playCheckWord(emptyWord, emptyProof, Coord({x: 0, y: 0}), Direction.LEFT_TO_RIGHT);
+        vm.expectRevert();
+        wrapper.playCheckWord(emptyWord, emptyProof, Coord({x: 0, y: 0}), Direction.TOP_TO_BOTTOM);
+
+        word[0] = Letter.EMPTY;
+        LibPlay.checkWord(word, iceProof, Coord({x: 0, y: 0}), Direction.LEFT_TO_RIGHT);
+        LibPlay.checkWord(word, iceProof, Coord({x: 0, y: 0}), Direction.TOP_TO_BOTTOM);
+    }
+
+    function testFuzzRevertCheckWord(
+        int32 startX,
+        int32 startY,
+        uint8[] memory wordRaw,
+        bytes32[] memory proof,
+        bool direction
+    ) public {
+        Letter[] memory word = new Letter[](wordRaw.length);
+        for (uint256 i = 0; i < word.length; i++) {
+            word[i] = Letter(uint8(bound(wordRaw[i], 0, 26)));
+        }
+        Direction dir = direction ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
+        vm.expectRevert();
+        wrapper.playCheckWord(word, proof, Coord({x: startX, y: startY}), dir);
+
+        vm.startPrank(worldAddress);
+        MerkleRootConfig.set(m.getRoot(words));
+        vm.stopPrank();
+        bytes32[] memory iceProof = m.getProof(words, 1);
+        vm.expectRevert();
+        Letter[] memory ice = new Letter[](3);
+        ice[0] = Letter.I;
+        ice[1] = Letter.C;
+        ice[2] = Letter.E;
+        wrapper.playCheckWord(ice, iceProof, Coord({x: startX, y: startY}), dir);
+    }
 }
