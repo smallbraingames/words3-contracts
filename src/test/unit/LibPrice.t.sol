@@ -34,13 +34,13 @@ contract LibPriceTest is MudTest {
 
         vm.startPrank(worldAddress);
         VRGDAConfig.set({startTime: block.timestamp, targetPrice: 69.42e18, priceDecay: 0.31e18, perDay: 2e18});
-        LetterCount.set(Letter.C, uint32(numMint));
+        LetterCount.set(Letter.A, uint32(numMint));
         vm.stopPrank();
 
         vm.warp(block.timestamp + timeDelta);
 
-        uint256 cost = LibPrice.getLetterPrice(Letter.C);
-        assertRelApproxEq(cost, uint256(VRGDAConfig.getTargetPrice()), 0.00001e18);
+        uint256 cost = LibPrice.getLetterPrice(Letter.A);
+        assertRelApproxEq(cost, uint256(VRGDAConfig.getTargetPrice()), 0.00000001e18);
     }
 
     function testAlwaysTargetPriceInRightConditions(uint32 sold) public {
@@ -51,7 +51,7 @@ contract LibPriceTest is MudTest {
         vm.stopPrank();
         int256 targetSaleTime = unsafeWadDiv(toWadUnsafe(sold + 1), 2e18);
         vm.warp(block.timestamp + fromDaysWadUnsafe(targetSaleTime));
-        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), uint256(VRGDAConfig.getTargetPrice()), 0.00001e18);
+        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), uint256(VRGDAConfig.getTargetPrice()), 0.00000001e18);
     }
 
     /// ===== Copied from solmate's DSTestPlus (https://github.com/transmissions11/solmate/tree/main/src/test/utils) =====
