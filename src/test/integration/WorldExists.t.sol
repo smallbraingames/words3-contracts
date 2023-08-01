@@ -6,7 +6,7 @@ import {IWorld} from "codegen/world/IWorld.sol";
 import "forge-std/Test.sol";
 import {MudTest} from "@latticexyz/store/src/MudTest.sol";
 
-contract TestWorldExistsTest is MudTest {
+contract WorldExists is MudTest {
     IWorld world;
 
     function setUp() public override {

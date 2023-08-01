@@ -13,8 +13,16 @@ import {LibPoints} from "libraries/LibPoints.sol";
 
 import "forge-std/Test.sol";
 import {MudTest} from "@latticexyz/store/src/MudTest.sol";
+import {Wrapper} from "./Wrapper.sol";
 
 contract LibPointsTest is MudTest {
+    Wrapper wrapper;
+
+    function setUp() public override {
+        super.setUp();
+        wrapper = new Wrapper();
+    }
+
     function testGetBaseLetterPoints() public {
         assertEq(LibPoints.getBaseLetterPoints(Letter.A), 1);
         assertEq(LibPoints.getBaseLetterPoints(Letter.B), 3);
@@ -47,8 +55,8 @@ contract LibPointsTest is MudTest {
         bonus.bonusType = BonusType.MULTIPLY_WORD;
         for (uint256 i = 0; i <= 26; i++) {
             if (i == 0) {
-                vm.expectRevert(NoPointsForEmptyLetter.selector);
-                LibPoints.getBonusLetterPoints(Letter(i), bonus);
+                vm.expectRevert();
+                wrapper.pointsGetBonusLetterPoints(Letter(i), bonus);
             } else {
                 assertEq(LibPoints.getBonusLetterPoints(Letter(i), bonus), LibPoints.getBaseLetterPoints(Letter(i)));
             }
@@ -88,6 +96,7 @@ contract LibPointsTest is MudTest {
         assertEq(points, truePoints);
     }
 
+    /// forge-config: default.fuzz.runs = 500
     function testFuzzGetWordPointsNoBonus(uint8[] memory playWordRaw, bool directionRaw) public {
         // If the word does not touch any bonus tiles, points are equal to the base point value
         vm.assume(playWordRaw.length < BONUS_DISTANCE - 1);

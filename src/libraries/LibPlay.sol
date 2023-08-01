@@ -27,7 +27,7 @@ import {LibTile} from "libraries/LibTile.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 library LibPlay {
-    uint16 constant MAX_WORD_LENGTH = 200;
+    uint16 constant MAX_WORD_LENGTH = 50;
 
     function play(
         Letter[] memory word,
@@ -38,10 +38,10 @@ library LibPlay {
         address player
     ) internal {
         checkWord(word, proof, coord, direction);
-        address[] memory crossWordPlayers = checkCrossWords(word, coord, direction, bounds);
+        address[] memory buildsOnPlayers = checkCrossWords(word, coord, direction, bounds);
         Letter[] memory filledWord = setTiles(word, coord, direction, player);
         uint32 points = LibPoints.setScore(word, filledWord, coord, direction, bounds, player);
-        LibPoints.setCrossWordRewards(points, crossWordPlayers);
+        LibPoints.setBuildsOnWordRewards(points, buildsOnPlayers);
     }
 
     function setTiles(Letter[] memory word, Coord memory coord, Direction direction, address player)
@@ -73,7 +73,7 @@ library LibPlay {
             revert InvalidBoundLength();
         }
 
-        address[] memory crossWordPlayers = new address[](word.length);
+        address[] memory buildsOnPlayers = new address[](word.length * 2);
 
         for (uint256 i; i < word.length; i++) {
             uint16 positive = bounds[i].positive;
@@ -91,39 +91,38 @@ library LibPlay {
                 if (positive != 0 || negative != 0) {
                     revert NonzeroEmptyLetterBound();
                 }
-                crossWordPlayers[i] = LibTile.getPlayer(letterCoord);
+                buildsOnPlayers[i * 2] = LibTile.getPlayer(letterCoord);
             } else {
                 // Ensure bounds are valid (empty at edges) for nonempty letters
                 // Bounds that are too large will be caught while verifying formed words
                 Bound memory bound = bounds[i];
 
-                (Coord memory start, Coord memory end) = LibBoard.getCoordsOutsideBound(
-                    LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction), direction, bound
-                );
+                (Coord memory start, Coord memory end) = LibBoard.getCoordsOutsideBound(letterCoord, direction, bound);
                 if (LibTile.getLetter(start) != Letter.EMPTY || LibTile.getLetter(end) != Letter.EMPTY) {
                     revert NonemptyBoundEdges();
                 }
 
-                if (bound.positive != 0 || bound.negative != 0) {
+                if (positive != 0 || negative != 0) {
                     // Ensure cross word is valid
                     Letter[] memory crossWord = LibBoard.getCrossWord(letterCoord, word[i], direction, bound);
                     if (!isWordInDictionary(crossWord, bound.proof)) {
                         revert WordNotInDictionary();
                     }
 
-                    // Get cross word player
-                    Direction crossDirection = Direction((uint8(direction) + 1) % 2);
-                    if (bound.positive != 0) {
-                        Coord memory crossWordStart = LibBoard.getRelativeCoord(letterCoord, 1, crossDirection);
-                        crossWordPlayers[i] = LibTile.getPlayer(crossWordStart);
-                    } else {
-                        Coord memory crossWordEnd = LibBoard.getRelativeCoord(letterCoord, -1, crossDirection);
-                        crossWordPlayers[i] = LibTile.getPlayer(crossWordEnd);
+                    Direction crossDirection =
+                        direction == Direction.LEFT_TO_RIGHT ? Direction.TOP_TO_BOTTOM : Direction.LEFT_TO_RIGHT;
+                    if (positive > 0) {
+                        Coord memory buildsOnWordPositive = LibBoard.getRelativeCoord(letterCoord, 1, crossDirection);
+                        buildsOnPlayers[i * 2] = LibTile.getPlayer(buildsOnWordPositive);
+                    }
+                    if (negative > 0) {
+                        Coord memory buildsOnWordNegative = LibBoard.getRelativeCoord(letterCoord, -1, crossDirection);
+                        buildsOnPlayers[i * 2 + 1] = LibTile.getPlayer(buildsOnWordNegative);
                     }
                 }
             }
         }
-        return crossWordPlayers;
+        return stripZeroAddresses(buildsOnPlayers);
     }
 
     /// @notice Checks if a word is a valid move (without checking cross words)
@@ -196,5 +195,25 @@ library LibPlay {
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(word))));
         bool isValidLeaf = MerkleProof.verify(proof, merkleRoot, leaf);
         return isValidLeaf;
+    }
+
+    function stripZeroAddresses(address[] memory addresses) internal pure returns (address[] memory) {
+        uint256 numNonZeroAddresses = 0;
+        for (uint256 i = 0; i < addresses.length; i++) {
+            if (addresses[i] != address(0)) {
+                numNonZeroAddresses++;
+            }
+        }
+
+        address[] memory nonZeroAddresses = new address[](numNonZeroAddresses);
+        uint256 nonZeroAddressesIndex = 0;
+        for (uint256 i = 0; i < addresses.length; i++) {
+            if (addresses[i] != address(0)) {
+                nonZeroAddresses[nonZeroAddressesIndex] = addresses[i];
+                nonZeroAddressesIndex++;
+            }
+        }
+
+        return nonZeroAddresses;
     }
 }
