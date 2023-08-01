@@ -70,22 +70,16 @@ library LibPoints {
         return points;
     }
 
-    function setCrossWordRewards(uint32 points, address[] memory crossWordPlayers) internal {
-        uint32 numCrossWordPlayers = 0;
-        for (uint256 i; i < crossWordPlayers.length; i++) {
-            if (crossWordPlayers[i] != address(0)) {
-                numCrossWordPlayers++;
-            }
-        }
-        if (numCrossWordPlayers == 0) {
+    function setBuildsOnWordRewards(uint32 points, address[] memory buildsOnPlayers) internal {
+        if (buildsOnPlayers.length == 0) {
             return;
         }
 
-        uint32 crossWordPoints = points / GameConfig.getCrossWordRewardFraction() / numCrossWordPlayers;
+        uint32 rewardPoints = points / GameConfig.getCrossWordRewardFraction() / uint32(buildsOnPlayers.length);
 
-        for (uint256 i; i < crossWordPlayers.length; i++) {
-            if (crossWordPlayers[i] != address(0)) {
-                LibPlayer.incrementScore(crossWordPlayers[i], crossWordPoints);
+        for (uint256 i; i < buildsOnPlayers.length; i++) {
+            if (buildsOnPlayers[i] != address(0)) {
+                LibPlayer.incrementScore(buildsOnPlayers[i], rewardPoints);
             }
         }
     }

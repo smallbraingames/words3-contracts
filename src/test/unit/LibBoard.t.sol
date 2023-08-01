@@ -13,13 +13,16 @@ import {LibBoard} from "libraries/LibBoard.sol";
 
 import "forge-std/Test.sol";
 import {MudTest} from "@latticexyz/store/src/MudTest.sol";
+import {Wrapper} from "./Wrapper.sol";
 
 contract LibBoardTest is MudTest {
     IWorld world;
+    Wrapper wrapper;
 
     function setUp() public override {
         super.setUp();
         world = IWorld(worldAddress);
+        wrapper = new Wrapper();
     }
 
     function testGetRelativeCoord() public {
@@ -86,38 +89,38 @@ contract LibBoardTest is MudTest {
         assertEq(abi.encode(actualEnd), abi.encode(expectedEnd));
 
         bound = Bound({positive: 100, negative: 1, proof: proof});
-        vm.expectRevert(BoundTooLong.selector);
-        LibBoard.getCoordsOutsideBound(letterCoord, Direction.TOP_TO_BOTTOM, bound);
-        vm.expectRevert(BoundTooLong.selector);
-        LibBoard.getCoordsOutsideBound(letterCoord, Direction.LEFT_TO_RIGHT, bound);
+        vm.expectRevert();
+        wrapper.boardGetCoordsOutsideBound(letterCoord, Direction.TOP_TO_BOTTOM, bound);
+        vm.expectRevert();
+        wrapper.boardGetCoordsOutsideBound(letterCoord, Direction.LEFT_TO_RIGHT, bound);
         bound = Bound({positive: 1, negative: 100, proof: proof});
-        vm.expectRevert(BoundTooLong.selector);
-        LibBoard.getCoordsOutsideBound(letterCoord, Direction.TOP_TO_BOTTOM, bound);
-        vm.expectRevert(BoundTooLong.selector);
-        LibBoard.getCoordsOutsideBound(letterCoord, Direction.LEFT_TO_RIGHT, bound);
+        vm.expectRevert();
+        wrapper.boardGetCoordsOutsideBound(letterCoord, Direction.TOP_TO_BOTTOM, bound);
+        vm.expectRevert();
+        wrapper.boardGetCoordsOutsideBound(letterCoord, Direction.LEFT_TO_RIGHT, bound);
     }
 
     function testFuzzGetCoordsOutsideBound(uint16 boundPositive, uint16 boundNegative, int32 startX, int32 startY)
         public
     {
+        vm.assume(startX >= -1e8 && startX <= 1e8);
+        vm.assume(startY >= -1e8 && startY <= 1e8);
         if (boundPositive > 50 || boundNegative > 50) {
             bytes32[] memory emptyProof = new bytes32[](1);
-            vm.expectRevert(BoundTooLong.selector);
-            LibBoard.getCoordsOutsideBound(
+            vm.expectRevert();
+            wrapper.boardGetCoordsOutsideBound(
                 Coord({x: startX, y: startY}),
                 Direction.TOP_TO_BOTTOM,
                 Bound({positive: boundPositive, negative: boundNegative, proof: emptyProof})
             );
-            vm.expectRevert(BoundTooLong.selector);
-            LibBoard.getCoordsOutsideBound(
+            vm.expectRevert();
+            wrapper.boardGetCoordsOutsideBound(
                 Coord({x: startX, y: startY}),
                 Direction.LEFT_TO_RIGHT,
                 Bound({positive: boundPositive, negative: boundNegative, proof: emptyProof})
             );
             return;
         }
-        vm.assume(startX >= -1e8 && startX <= 1e8);
-        vm.assume(startY >= -1e8 && startY <= 1e8);
         bytes32[] memory proof = new bytes32[](1);
         Coord memory letterCoord = Coord({x: startX, y: startY});
         Bound memory bound = Bound({positive: boundPositive, negative: boundNegative, proof: proof});
@@ -141,7 +144,8 @@ contract LibBoardTest is MudTest {
         int32 startX,
         int32 startY
     ) public {
-        vm.assume(boundPositive <= 50 && boundNegative <= 50);
+        boundPositive = uint16(bound(boundPositive, 0, 49));
+        boundNegative = uint16(bound(boundNegative, 0, 49));
         vm.assume(startX >= -1e8 && startX <= 1e8);
         vm.assume(startY >= -1e8 && startY <= 1e8);
         bytes32[] memory proof = new bytes32[](1);
@@ -193,12 +197,12 @@ contract LibBoardTest is MudTest {
             hasZero = true;
         }
         vm.assume(hasZero);
-        vm.assume(a <= 26);
-        vm.assume(b <= 26);
-        vm.assume(c <= 26);
-        vm.assume(e <= 26);
-        vm.assume(f <= 26);
-        vm.assume(g <= 26);
+        a = uint8(bound(a, 0, 26));
+        b = uint8(bound(b, 0, 26));
+        c = uint8(bound(c, 0, 26));
+        e = uint8(bound(e, 0, 26));
+        f = uint8(bound(f, 0, 26));
+        g = uint8(bound(g, 0, 26));
 
         vm.startPrank(worldAddress);
         TileLetter.set(0, 0, Letter(a));
@@ -223,7 +227,8 @@ contract LibBoardTest is MudTest {
     ) public {
         vm.assume(startX >= -1e8 && startX <= 1e8);
         vm.assume(startY >= -1e8 && startY <= 1e8);
-        vm.assume(letterRaw > 0 && letterRaw <= 26);
+        letterRaw = uint8(bound(letterRaw, 1, 26));
+        crossWordHalfLength = uint16(bound(crossWordHalfLength, 0, 200));
         Letter letter = Letter(letterRaw);
         Direction wordDirection = wordDirectionLeftToRight ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
 

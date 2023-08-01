@@ -15,7 +15,7 @@ import {LibPoints} from "libraries/LibPoints.sol";
 import "forge-std/Test.sol";
 import {MudTest} from "@latticexyz/store/src/MudTest.sol";
 import {getKeysWithValue} from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
-import {Merkle} from "./murky/src/Merkle.sol";
+import {Merkle} from "../murky/src/Merkle.sol";
 
 contract PointsTest is MudTest {
     IWorld world;
