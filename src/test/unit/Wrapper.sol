@@ -17,6 +17,13 @@ contract Wrapper {
         return LibPlay.checkCrossWords(word, coord, direction, bounds);
     }
 
+    function playCheckWord(Letter[] memory word, bytes32[] memory proof, Coord memory coord, Direction direction)
+        public
+        view
+    {
+        LibPlay.checkWord(word, proof, coord, direction);
+    }
+
     function boardGetCoordsOutsideBound(Coord memory coord, Direction direction, Bound memory bound)
         public
         pure

@@ -139,7 +139,6 @@ library LibPlay {
         if (LibTile.getLetter(startEdge) != Letter.EMPTY) {
             revert InvalidWordStart();
         }
-        // Don't need SafeCast because word.length < MAX_WORD_LENGTH < MAX_INT32
         Coord memory endEdge = LibBoard.getRelativeCoord(coord, int32(uint32(word.length)), direction);
         if (LibTile.getLetter(endEdge) != Letter.EMPTY) {
             revert InvalidWordEnd();
