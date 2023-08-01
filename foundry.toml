@@ -1,7 +1,7 @@
 [profile.default]
 solc_version = "0.8.20"
 ffi = false
-fuzz_runs = 256
+fuzz_runs = 1280
 optimizer = true
 optimizer_runs = 3000
 verbosity = 1
