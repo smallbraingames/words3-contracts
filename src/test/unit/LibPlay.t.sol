@@ -131,7 +131,12 @@ contract LibPlayTest is MudTest {
         }
     }
 
-    function testCheckCrossWords() public {
+    function testFuzzCheckCrossWords(int32 startX, int32 startY, bool directionRightToLeft) public {
+        vm.assume(startX >= -1e9 && startX <= 1e9);
+        vm.assume(startY >= -1e9 && startY <= 1e9);
+        Coord memory startCoord = Coord({x: startX, y: startY});
+        Direction direction = directionRightToLeft ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
+
         address directlyBuildsOn = address(0x321);
         address buildsOnA = address(0xface);
         address buildsOnB = address(0xcafe);
@@ -142,21 +147,52 @@ contract LibPlayTest is MudTest {
         word[2] = Letter.A; // (2, 0)
         word[3] = Letter.C; // (3, 0)
         word[4] = Letter.K; // (4, 0)
-        Direction direction = Direction.LEFT_TO_RIGHT;
         vm.startPrank(worldAddress);
         // Q, which is directly built on
-        TileLetter.set(0, 0, Letter.Q);
-        TilePlayer.set(0, 0, directlyBuildsOn);
+        TileLetter.set(startX, startY, Letter.Q);
+        TilePlayer.set(startX, startY, directlyBuildsOn);
         // LAP, made by one player
-        TileLetter.set(2, -1, Letter.L);
-        TileLetter.set(2, 1, Letter.P);
-        TilePlayer.set(2, -1, buildsOnA);
-        TilePlayer.set(2, 1, buildsOnA);
+        TileLetter.set(
+            direction == Direction.LEFT_TO_RIGHT ? startX + 2 : startX - 1,
+            direction == Direction.LEFT_TO_RIGHT ? startY - 1 : startY + 2,
+            Letter.L
+        );
+        TileLetter.set(
+            direction == Direction.LEFT_TO_RIGHT ? startX + 2 : startX + 1,
+            direction == Direction.LEFT_TO_RIGHT ? startY + 1 : startY + 2,
+            Letter.P
+        );
+        TilePlayer.set(
+            direction == Direction.LEFT_TO_RIGHT ? startX + 2 : startX - 1,
+            direction == Direction.LEFT_TO_RIGHT ? startY - 1 : startY + 2,
+            buildsOnA
+        );
+        TilePlayer.set(
+            direction == Direction.LEFT_TO_RIGHT ? startX + 2 : startX + 1,
+            direction == Direction.LEFT_TO_RIGHT ? startY + 1 : startY + 2,
+            buildsOnA
+        );
         // ICE, made by two players
-        TileLetter.set(3, -1, Letter.I);
-        TilePlayer.set(3, -1, buildsOnB);
-        TileLetter.set(3, 1, Letter.E);
-        TilePlayer.set(3, 1, buildsOnC);
+        TileLetter.set(
+            direction == Direction.LEFT_TO_RIGHT ? startX + 3 : startX - 1,
+            direction == Direction.LEFT_TO_RIGHT ? startY - 1 : startY + 3,
+            Letter.I
+        );
+        TilePlayer.set(
+            direction == Direction.LEFT_TO_RIGHT ? startX + 3 : startX - 1,
+            direction == Direction.LEFT_TO_RIGHT ? startY - 1 : startY + 3,
+            buildsOnB
+        );
+        TileLetter.set(
+            direction == Direction.LEFT_TO_RIGHT ? startX + 3 : startX + 1,
+            direction == Direction.LEFT_TO_RIGHT ? startY + 1 : startY + 3,
+            Letter.E
+        );
+        TilePlayer.set(
+            direction == Direction.LEFT_TO_RIGHT ? startX + 3 : startX + 1,
+            direction == Direction.LEFT_TO_RIGHT ? startY + 1 : startY + 3,
+            buildsOnC
+        );
         MerkleRootConfig.set(m.getRoot(words));
         vm.stopPrank();
         Bound[] memory boundsInvalid = new Bound[](6);
@@ -170,7 +206,7 @@ contract LibPlayTest is MudTest {
         boundsInvalid[4] = Bound({positive: 0, negative: 0, proof: emptyProof});
         boundsInvalid[5] = Bound({positive: 0, negative: 0, proof: emptyProof});
         vm.expectRevert();
-        wrapper.playCheckCrossWords(word, Coord({x: 0, y: 0}), direction, boundsInvalid);
+        wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalid);
 
         Bound[] memory boundsInvalidTwo = new Bound[](5);
         boundsInvalidTwo[0] = Bound({positive: 0, negative: 0, proof: emptyProof});
@@ -180,25 +216,24 @@ contract LibPlayTest is MudTest {
         boundsInvalidTwo[4] = Bound({positive: 100, negative: 300, proof: emptyProof});
 
         vm.expectRevert();
-        wrapper.playCheckCrossWords(word, Coord({x: 0, y: 0}), direction, boundsInvalidTwo);
+        wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalidTwo);
 
         boundsInvalidTwo[4] = Bound({positive: 1, negative: 1, proof: emptyProof});
         vm.expectRevert();
-        wrapper.playCheckCrossWords(word, Coord({x: 0, y: 0}), direction, boundsInvalidTwo);
+        wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalidTwo);
 
         boundsInvalidTwo[4] = Bound({positive: 0, negative: 0, proof: emptyProof});
         boundsInvalidTwo[3] = Bound({positive: 0, negative: 1, proof: m.getProof(words, 2)});
         vm.expectRevert();
-        wrapper.playCheckCrossWords(word, Coord({x: 0, y: 0}), direction, boundsInvalidTwo);
+        wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalidTwo);
 
         boundsInvalidTwo[3] = Bound({positive: 1, negative: 1, proof: m.getProof(words, 2)});
         vm.expectRevert();
-        wrapper.playCheckCrossWords(word, Coord({x: 0, y: 9000}), direction, boundsInvalidTwo);
+        wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalidTwo);
 
         boundsInvalidTwo[3] = Bound({positive: 1, negative: 1, proof: m.getProof(words, 1)});
         // Does not revert
-        address[] memory buildsOnPlayers =
-            LibPlay.checkCrossWords(word, Coord({x: 0, y: 0}), direction, boundsInvalidTwo);
+        address[] memory buildsOnPlayers = LibPlay.checkCrossWords(word, startCoord, direction, boundsInvalidTwo);
         assertEq(buildsOnPlayers.length, 5);
         assertEq(buildsOnPlayers[0], directlyBuildsOn);
         assertEq(buildsOnPlayers[1], buildsOnA);

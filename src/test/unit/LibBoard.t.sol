@@ -160,10 +160,6 @@ contract LibBoardTest is MudTest {
     }
 
     function testGetCrossWord() public {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> feat: board cross word tests
         vm.startPrank(worldAddress);
         TileLetter.set(0, 0, Letter.A);
         TileLetter.set(1, 0, Letter.B);
@@ -258,6 +254,5 @@ contract LibBoardTest is MudTest {
 
         vm.prank(worldAddress);
         TileLetter.get(0, 5);
-
     }
 }
