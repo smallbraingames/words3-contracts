@@ -3,12 +3,13 @@ pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
 import {Letter, Direction} from "codegen/Types.sol";
-import {TileLetter, TilePlayer, MerkleRootConfig} from "codegen/Tables.sol";
+import {TileLetter, TilePlayer, MerkleRootConfig, Points, GameConfig} from "codegen/Tables.sol";
 
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";
 import {LibPlay} from "libraries/LibPlay.sol";
 import {LibBoard} from "libraries/LibBoard.sol";
+import {LibPoints} from "libraries/LibPoints.sol";
 import {
     WordTooLong,
     InvalidWordStart,
@@ -129,6 +130,59 @@ contract LibPlayTest is MudTest {
                 assertEq(TilePlayer.get(coord.x, coord.y), player);
             }
         }
+    }
+
+    function testFuzzCheckCrossWordsBuildsOnPlayers(int32 startX, int32 startY, uint8[] memory wordRaw, uint32 points)
+        public
+    {
+        vm.assume(startX >= -1e9 && startX <= 1e9);
+        vm.assume(startY >= -1e9 && startY <= 1e9);
+        vm.assume(wordRaw.length <= 40);
+        vm.assume(wordRaw.length > 0);
+        //points = uint32(bound(points, 1, type(uint32).max));
+        Coord memory startCoord = Coord({x: startX, y: startY});
+        Letter[] memory word = new Letter[](wordRaw.length);
+        for (uint256 i = 0; i < wordRaw.length; i++) {
+            word[i] = Letter(bound(wordRaw[i], 1, 26));
+        }
+        address topPlayer = address(0x123);
+        address leftPlayer = address(0x321);
+        vm.startPrank(worldAddress);
+        words.push(keccak256(bytes.concat(keccak256(abi.encode(word)))));
+        MerkleRootConfig.set(m.getRoot(words));
+        for (uint256 i = 1; i < word.length; i++) {
+            Coord memory coord = LibBoard.getRelativeCoord(startCoord, int32(uint32(i)), Direction.LEFT_TO_RIGHT);
+            TileLetter.set(coord.x, coord.y, word[i]);
+            TilePlayer.set(coord.x, coord.y, topPlayer);
+            coord = LibBoard.getRelativeCoord(startCoord, int32(uint32(i)), Direction.TOP_TO_BOTTOM);
+            TileLetter.set(coord.x, coord.y, word[i]);
+            TilePlayer.set(coord.x, coord.y, leftPlayer);
+        }
+        vm.stopPrank();
+        Bound[] memory bounds = new Bound[](word.length);
+        bounds[0] = Bound({positive: uint16(word.length) - 1, negative: 0, proof: m.getProof(words, words.length - 1)});
+        for (uint256 i = 1; i < word.length; i++) {
+            word[i] = Letter.EMPTY;
+        }
+        address[] memory l2r = LibPlay.checkCrossWords(word, startCoord, Direction.LEFT_TO_RIGHT, bounds);
+        address[] memory t2b = LibPlay.checkCrossWords(word, startCoord, Direction.TOP_TO_BOTTOM, bounds);
+        uint32 p1pointsl2r;
+        uint32 p2pointsl2r;
+        uint32 p1pointst2b;
+        uint32 p2pointst2b;
+        vm.startPrank(worldAddress);
+        GameConfig.setCrossWordRewardFraction(3);
+        LibPoints.setBuildsOnWordRewards(points, l2r);
+        p1pointsl2r = Points.get(topPlayer);
+        p2pointsl2r = Points.get(leftPlayer);
+        Points.set(topPlayer, 0);
+        Points.set(leftPlayer, 0);
+        LibPoints.setBuildsOnWordRewards(points, t2b);
+        p1pointst2b = Points.get(topPlayer);
+        p2pointst2b = Points.get(leftPlayer);
+        vm.stopPrank();
+        assertEq(p1pointsl2r, p1pointst2b);
+        assertEq(p2pointsl2r, p2pointst2b);
     }
 
     function testFuzzCheckCrossWords(int32 startX, int32 startY, bool directionRightToLeft) public {
