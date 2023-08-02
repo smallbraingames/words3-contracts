@@ -1,6 +1,7 @@
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
+  worldContractName: "GatedWorld",
   tables: {
     // Config
     GameConfig: {

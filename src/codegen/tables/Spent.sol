@@ -100,7 +100,7 @@ library Spent {
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(uint256 value) internal view returns (bytes memory) {
+  function encode(uint256 value) internal pure returns (bytes memory) {
     return abi.encodePacked(value);
   }
 

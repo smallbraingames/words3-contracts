@@ -133,5 +133,5 @@ contract PointsTest is MudTest {
             truePoints += bonus.bonusValue - 1;
         }
         assertEq(Points.get(world, address(this)), truePoints);
-    }
+   }
 }

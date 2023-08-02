@@ -95,7 +95,7 @@ library MerkleRootConfig {
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(bytes32 value) internal view returns (bytes memory) {
+  function encode(bytes32 value) internal pure returns (bytes memory) {
     return abi.encodePacked(value);
   }
 

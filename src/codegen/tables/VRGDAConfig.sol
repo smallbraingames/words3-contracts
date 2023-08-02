@@ -258,7 +258,7 @@ library VRGDAConfig {
     int256 targetPrice,
     int256 priceDecay,
     int256 perDay
-  ) internal view returns (bytes memory) {
+  ) internal pure returns (bytes memory) {
     return abi.encodePacked(startTime, targetPrice, priceDecay, perDay);
   }
 

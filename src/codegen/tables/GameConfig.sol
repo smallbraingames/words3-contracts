@@ -221,7 +221,7 @@ library GameConfig {
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(Status status, uint256 endTime, uint32 crossWordRewardFraction) internal view returns (bytes memory) {
+  function encode(Status status, uint256 endTime, uint32 crossWordRewardFraction) internal pure returns (bytes memory) {
     return abi.encodePacked(status, endTime, crossWordRewardFraction);
   }
 
