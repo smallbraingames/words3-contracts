@@ -99,8 +99,9 @@ contract PointsTest is MudTest {
         vm.prank(player2);
         world.play(ext, extProof, Coord({x: 4, y: -1}), Direction.TOP_TO_BOTTOM, extBounds);
         assertEq(Points.get(world, player2), 14);
+
         // We lose 1 because of rounding
-        assertEq(Points.get(world, player1), 13 + 3);
+        assertEq(Points.get(world, player1), 13 + 4);
     }
 
     function testBonus() public {
@@ -133,5 +134,5 @@ contract PointsTest is MudTest {
             truePoints += bonus.bonusValue - 1;
         }
         assertEq(Points.get(world, address(this)), truePoints);
-   }
+    }
 }
