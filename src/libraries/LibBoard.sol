@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 
 import {Direction, Letter} from "codegen/Types.sol";
 
+import {MAX_WORD_LENGTH} from "common/Constants.sol";
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";
 import {BoundTooLong, EmptyLetterInBounds} from "common/Errors.sol";
@@ -10,8 +11,6 @@ import {LibTile} from "libraries/LibTile.sol";
 import "forge-std/Test.sol";
 
 library LibBoard {
-    uint16 constant MAX_BOUND_LENGTH = 50;
-
     function getRelativeCoord(Coord memory startCoord, int32 distance, Direction direction)
         internal
         pure
@@ -30,7 +29,7 @@ library LibBoard {
         pure
         returns (Coord memory, Coord memory)
     {
-        if (bound.positive > MAX_BOUND_LENGTH || bound.negative > MAX_BOUND_LENGTH) {
+        if (bound.positive > MAX_WORD_LENGTH || bound.negative > MAX_WORD_LENGTH) {
             revert BoundTooLong();
         }
 

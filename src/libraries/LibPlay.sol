@@ -5,6 +5,7 @@ import {Direction} from "codegen/Types.sol";
 import {Letter} from "codegen/Types.sol";
 import {MerkleRootConfig} from "codegen/Tables.sol";
 
+import {MAX_WORD_LENGTH} from "common/Constants.sol";
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";
 import {
@@ -27,8 +28,6 @@ import {LibTile} from "libraries/LibTile.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 library LibPlay {
-    uint16 constant MAX_WORD_LENGTH = 50;
-
     function play(
         Letter[] memory word,
         bytes32[] memory proof,

@@ -139,7 +139,6 @@ contract LibPlayTest is MudTest {
         vm.assume(startY >= -1e9 && startY <= 1e9);
         vm.assume(wordRaw.length <= 40);
         vm.assume(wordRaw.length > 0);
-        //points = uint32(bound(points, 1, type(uint32).max));
         Coord memory startCoord = Coord({x: startX, y: startY});
         Letter[] memory word = new Letter[](wordRaw.length);
         for (uint256 i = 0; i < wordRaw.length; i++) {
