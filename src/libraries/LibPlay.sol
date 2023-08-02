@@ -91,7 +91,12 @@ library LibPlay {
                 if (positive != 0 || negative != 0) {
                     revert NonzeroEmptyLetterBound();
                 }
-                buildsOnPlayers[i * 2] = LibTile.getPlayer(letterCoord);
+
+                bool hasPlayedLetterNegative = i > 0 && word[i - 1] != Letter.EMPTY;
+                bool hasPlayedLetterPositive = i < word.length - 1 && word[i + 1] != Letter.EMPTY;
+                if (hasPlayedLetterNegative || hasPlayedLetterPositive) {
+                    buildsOnPlayers[i * 2] = LibTile.getPlayer(letterCoord);
+                }
             } else {
                 // Ensure bounds are valid (empty at edges) for nonempty letters
                 // Bounds that are too large will be caught while verifying formed words
