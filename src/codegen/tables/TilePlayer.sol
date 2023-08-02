@@ -105,7 +105,7 @@ library TilePlayer {
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(address value) internal view returns (bytes memory) {
+  function encode(address value) internal pure returns (bytes memory) {
     return abi.encodePacked(value);
   }
 

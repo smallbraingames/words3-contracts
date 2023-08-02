@@ -27,3 +27,5 @@ error NotEnoughValue();
 error AlreadyClaimed();
 
 error NotEndTime();
+
+error Stop();

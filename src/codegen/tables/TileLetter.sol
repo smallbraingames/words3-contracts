@@ -108,7 +108,7 @@ library TileLetter {
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(Letter value) internal view returns (bytes memory) {
+  function encode(Letter value) internal pure returns (bytes memory) {
     return abi.encodePacked(value);
   }
 
