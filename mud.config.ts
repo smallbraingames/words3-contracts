@@ -71,6 +71,31 @@ export default mudConfig({
         value: "bool",
       },
     },
+    // Activity
+    PlayResult: {
+      keySchema: {
+        id: "uint256",
+      },
+      schema: {
+        player: "address",
+        direction: "Direction",
+        x: "int32",
+        y: "int32",
+        word: "uint8[]",
+        filledWord: "uint8[]",
+      },
+      ephemeral: true,
+    },
+    PointsResult: {
+      keySchema: {
+        id: "uint256",
+        player: "address",
+      },
+      schema: {
+        points: "uint32",
+      },
+      ephemeral: true,
+    },
   },
   enums: {
     BonusType: ["MULTIPLY_WORD", "MULTIPLY_LETTER"],

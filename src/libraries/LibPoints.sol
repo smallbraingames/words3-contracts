@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import {Direction, Letter, BonusType} from "codegen/Types.sol";
-import {GameConfig, Points} from "codegen/Tables.sol";
+import {GameConfig, Points, PointsResult} from "codegen/Tables.sol";
 
 import {Bonus} from "common/Bonus.sol";
 import {Bound} from "common/Bound.sol";
@@ -23,10 +23,12 @@ library LibPoints {
         Coord memory start,
         Direction direction,
         Bound[] memory bounds,
-        address player
+        address player,
+        uint256 playResultId
     ) internal returns (uint32) {
         uint32 points = getPoints(playWord, filledWord, start, direction, bounds);
         LibPlayer.incrementScore(player, points);
+        PointsResult.emitEphemeral(playResultId, player, points);
         return points;
     }
 
@@ -70,7 +72,7 @@ library LibPoints {
         return points;
     }
 
-    function setBuildsOnWordRewards(uint32 points, address[] memory buildsOnPlayers) internal {
+    function setBuildsOnWordRewards(uint32 points, address[] memory buildsOnPlayers, uint256 playResultId) internal {
         if (buildsOnPlayers.length == 0) {
             return;
         }
@@ -79,7 +81,9 @@ library LibPoints {
 
         for (uint256 i; i < buildsOnPlayers.length; i++) {
             if (buildsOnPlayers[i] != address(0)) {
-                LibPlayer.incrementScore(buildsOnPlayers[i], rewardPoints);
+                address player = buildsOnPlayers[i];
+                LibPlayer.incrementScore(player, rewardPoints);
+                PointsResult.emitEphemeral(playResultId, player, rewardPoints);
             }
         }
     }
