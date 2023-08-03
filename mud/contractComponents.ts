@@ -192,5 +192,51 @@ export function defineContractComponents(world: World) {
         } as const
       );
     })(),
+    PlayResult: (() => {
+      return defineComponent(
+        world,
+        {
+          player: RecsType.String,
+          direction: RecsType.Number,
+          x: RecsType.Number,
+          y: RecsType.Number,
+          word: RecsType.NumberArray,
+          filledWord: RecsType.NumberArray,
+        },
+        {
+          id: "0x00000000000000000000000000000000506c6179526573756c74000000000000",
+          metadata: {
+            componentName: "PlayResult",
+            tableName: ":PlayResult",
+            keySchema: { id: "uint256" },
+            valueSchema: {
+              player: "address",
+              direction: "uint8",
+              x: "int32",
+              y: "int32",
+              word: "uint8[]",
+              filledWord: "uint8[]",
+            },
+          },
+        } as const
+      );
+    })(),
+    PointsResult: (() => {
+      return defineComponent(
+        world,
+        {
+          points: RecsType.Number,
+        },
+        {
+          id: "0x00000000000000000000000000000000506f696e7473526573756c7400000000",
+          metadata: {
+            componentName: "PointsResult",
+            tableName: ":PointsResult",
+            keySchema: { id: "uint256", player: "address" },
+            valueSchema: { points: "uint32" },
+          },
+        } as const
+      );
+    })(),
   };
 }

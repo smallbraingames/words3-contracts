@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import {Direction} from "codegen/Types.sol";
 import {Letter} from "codegen/Types.sol";
-import {MerkleRootConfig} from "codegen/Tables.sol";
+import {MerkleRootConfig, PlayResult} from "codegen/Tables.sol";
 
 import {MAX_WORD_LENGTH} from "common/Constants.sol";
 import {Bound} from "common/Bound.sol";
@@ -39,8 +39,23 @@ library LibPlay {
         checkWord(word, proof, coord, direction);
         address[] memory buildsOnPlayers = checkCrossWords(word, coord, direction, bounds);
         Letter[] memory filledWord = setTiles(word, coord, direction, player);
-        uint32 points = LibPoints.setScore(word, filledWord, coord, direction, bounds, player);
-        LibPoints.setBuildsOnWordRewards(points, buildsOnPlayers);
+        uint256 playResultId = getPlayResultId(word, coord, direction);
+        uint32 points = LibPoints.setScore(word, filledWord, coord, direction, bounds, player, playResultId);
+        LibPoints.setBuildsOnWordRewards(points, buildsOnPlayers, playResultId);
+        emitPlayResult(word, filledWord, coord, direction, player, playResultId);
+    }
+
+    function emitPlayResult(
+        Letter[] memory word,
+        Letter[] memory filledWord,
+        Coord memory coord,
+        Direction direction,
+        address player,
+        uint256 playResultId
+    ) internal {
+        PlayResult.emitEphemeral(
+            playResultId, player, direction, coord.x, coord.y, wordToUint8Array(word), wordToUint8Array(filledWord)
+        );
     }
 
     function setTiles(Letter[] memory word, Coord memory coord, Direction direction, address player)
@@ -218,5 +233,21 @@ library LibPlay {
         }
 
         return nonZeroAddresses;
+    }
+
+    function wordToUint8Array(Letter[] memory word) internal pure returns (uint8[] memory) {
+        uint8[] memory uint8Word = new uint8[](word.length);
+        for (uint256 i = 0; i < word.length; i++) {
+            uint8Word[i] = uint8(word[i]);
+        }
+        return uint8Word;
+    }
+
+    function getPlayResultId(Letter[] memory word, Coord memory coord, Direction direction)
+        internal
+        pure
+        returns (uint256)
+    {
+        return uint256(keccak256(abi.encode(word, coord, direction)));
     }
 }

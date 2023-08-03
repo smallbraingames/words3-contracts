@@ -171,12 +171,12 @@ contract LibPlayTest is MudTest {
         uint32 p2pointst2b;
         vm.startPrank(worldAddress);
         GameConfig.setCrossWordRewardFraction(3);
-        LibPoints.setBuildsOnWordRewards(points, l2r);
+        LibPoints.setBuildsOnWordRewards(points, l2r, 1);
         p1pointsl2r = Points.get(topPlayer);
         p2pointsl2r = Points.get(leftPlayer);
         Points.set(topPlayer, 0);
         Points.set(leftPlayer, 0);
-        LibPoints.setBuildsOnWordRewards(points, t2b);
+        LibPoints.setBuildsOnWordRewards(points, t2b, 2);
         p1pointst2b = Points.get(topPlayer);
         p2pointst2b = Points.get(leftPlayer);
         vm.stopPrank();

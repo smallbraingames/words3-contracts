@@ -13,3 +13,5 @@ import { Points, PointsTableId } from "./tables/Points.sol";
 import { Spent, SpentTableId } from "./tables/Spent.sol";
 import { LetterCount, LetterCountTableId } from "./tables/LetterCount.sol";
 import { Claimed, ClaimedTableId } from "./tables/Claimed.sol";
+import { PlayResult, PlayResultData, PlayResultTableId } from "./tables/PlayResult.sol";
+import { PointsResult, PointsResultTableId } from "./tables/PointsResult.sol";
