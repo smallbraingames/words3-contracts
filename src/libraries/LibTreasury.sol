@@ -16,7 +16,8 @@ library LibTreasury {
     }
 
     function incrementTreasury(address msgSender, uint256 msgValue) internal {
-        Treasury.set(Treasury.get() + msgValue);
-        Spent.set(msgSender, Spent.get(msgSender) + msgValue);
+        uint256 incrementedTreasury = Treasury.get() + msgValue;
+        Treasury.set(incrementedTreasury);
+        Spent.emitEphemeral(msgSender, incrementedTreasury, msgValue);
     }
 }

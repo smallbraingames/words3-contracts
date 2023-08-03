@@ -27,7 +27,6 @@ export default mudConfig({
         perDay: "int256",
       },
     },
-
     // Game
     TileLetter: {
       keySchema: { x: "int32", y: "int32" },
@@ -54,10 +53,11 @@ export default mudConfig({
       },
     },
     Spent: {
-      keySchema: { player: "address" },
+      keySchema: { player: "address", id: "uint256" },
       schema: {
         value: "uint256",
       },
+      ephemeral: true,
     },
     LetterCount: {
       keySchema: { letter: "Letter" },
