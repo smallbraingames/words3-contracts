@@ -91,6 +91,7 @@ export default mudConfig({
       keySchema: {
         id: "uint256",
         player: "address",
+        pointsId: "int16",
       },
       schema: {
         points: "uint32",

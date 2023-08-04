@@ -30,9 +30,10 @@ library PointsResult {
   }
 
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](2);
+    SchemaType[] memory _schema = new SchemaType[](3);
     _schema[0] = SchemaType.UINT256;
     _schema[1] = SchemaType.ADDRESS;
+    _schema[2] = SchemaType.INT16;
 
     return SchemaLib.encode(_schema);
   }
@@ -67,23 +68,25 @@ library PointsResult {
   }
 
   /** Emit the ephemeral event using individual values */
-  function emitEphemeral(uint256 id, address player, uint32 points) internal {
+  function emitEphemeral(uint256 id, address player, int16 pointsId, uint32 points) internal {
     bytes memory _data = encode(points);
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
+    bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = bytes32(uint256(id));
     _keyTuple[1] = bytes32(uint256(uint160(player)));
+    _keyTuple[2] = bytes32(uint256(int256(pointsId)));
 
     StoreSwitch.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
 
   /** Emit the ephemeral event using individual values (using the specified store) */
-  function emitEphemeral(IStore _store, uint256 id, address player, uint32 points) internal {
+  function emitEphemeral(IStore _store, uint256 id, address player, int16 pointsId, uint32 points) internal {
     bytes memory _data = encode(points);
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
+    bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = bytes32(uint256(id));
     _keyTuple[1] = bytes32(uint256(uint160(player)));
+    _keyTuple[2] = bytes32(uint256(int256(pointsId)));
 
     _store.emitEphemeralRecord(_tableId, _keyTuple, _data);
   }
@@ -94,9 +97,14 @@ library PointsResult {
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple(uint256 id, address player) internal pure returns (bytes32[] memory _keyTuple) {
-    _keyTuple = new bytes32[](2);
+  function encodeKeyTuple(
+    uint256 id,
+    address player,
+    int16 pointsId
+  ) internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](3);
     _keyTuple[0] = bytes32(uint256(id));
     _keyTuple[1] = bytes32(uint256(uint160(player)));
+    _keyTuple[2] = bytes32(uint256(int256(pointsId)));
   }
 }

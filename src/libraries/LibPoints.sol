@@ -28,7 +28,7 @@ library LibPoints {
     ) internal returns (uint32) {
         uint32 points = getPoints(playWord, filledWord, start, direction, bounds);
         LibPlayer.incrementScore(player, points);
-        PointsResult.emitEphemeral(playResultId, player, points);
+        PointsResult.emitEphemeral(playResultId, player, -1, points);
         return points;
     }
 
@@ -83,7 +83,7 @@ library LibPoints {
             if (buildsOnPlayers[i] != address(0)) {
                 address player = buildsOnPlayers[i];
                 LibPlayer.incrementScore(player, rewardPoints);
-                PointsResult.emitEphemeral(playResultId, player, rewardPoints);
+                PointsResult.emitEphemeral(playResultId, player, int16(uint16(i)), rewardPoints);
             }
         }
     }

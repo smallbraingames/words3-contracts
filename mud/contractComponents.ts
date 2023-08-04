@@ -234,7 +234,7 @@ export function defineContractComponents(world: World) {
           metadata: {
             componentName: "PointsResult",
             tableName: ":PointsResult",
-            keySchema: { id: "uint256", player: "address" },
+            keySchema: { id: "uint256", player: "address", pointsId: "int16" },
             valueSchema: { points: "uint32" },
           },
         } as const
