@@ -54,7 +54,14 @@ library LibPlay {
         uint256 playResultId
     ) internal {
         PlayResult.emitEphemeral(
-            playResultId, player, direction, coord.x, coord.y, wordToUint8Array(word), wordToUint8Array(filledWord)
+            playResultId,
+            player,
+            direction,
+            block.timestamp,
+            coord.x,
+            coord.y,
+            wordToUint8Array(word),
+            wordToUint8Array(filledWord)
         );
     }
 

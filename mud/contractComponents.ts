@@ -198,6 +198,7 @@ export function defineContractComponents(world: World) {
         {
           player: RecsType.String,
           direction: RecsType.Number,
+          timestamp: RecsType.BigInt,
           x: RecsType.Number,
           y: RecsType.Number,
           word: RecsType.NumberArray,
@@ -212,6 +213,7 @@ export function defineContractComponents(world: World) {
             valueSchema: {
               player: "address",
               direction: "uint8",
+              timestamp: "uint256",
               x: "int32",
               y: "int32",
               word: "uint8[]",

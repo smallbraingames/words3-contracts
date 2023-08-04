@@ -26,6 +26,7 @@ bytes32 constant PlayResultTableId = _tableId;
 struct PlayResultData {
   address player;
   Direction direction;
+  uint256 timestamp;
   int32 x;
   int32 y;
   uint8[] word;
@@ -35,13 +36,14 @@ struct PlayResultData {
 library PlayResult {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](6);
+    SchemaType[] memory _schema = new SchemaType[](7);
     _schema[0] = SchemaType.ADDRESS;
     _schema[1] = SchemaType.UINT8;
-    _schema[2] = SchemaType.INT32;
+    _schema[2] = SchemaType.UINT256;
     _schema[3] = SchemaType.INT32;
-    _schema[4] = SchemaType.UINT8_ARRAY;
+    _schema[4] = SchemaType.INT32;
     _schema[5] = SchemaType.UINT8_ARRAY;
+    _schema[6] = SchemaType.UINT8_ARRAY;
 
     return SchemaLib.encode(_schema);
   }
@@ -55,13 +57,14 @@ library PlayResult {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](6);
+    string[] memory _fieldNames = new string[](7);
     _fieldNames[0] = "player";
     _fieldNames[1] = "direction";
-    _fieldNames[2] = "x";
-    _fieldNames[3] = "y";
-    _fieldNames[4] = "word";
-    _fieldNames[5] = "filledWord";
+    _fieldNames[2] = "timestamp";
+    _fieldNames[3] = "x";
+    _fieldNames[4] = "y";
+    _fieldNames[5] = "word";
+    _fieldNames[6] = "filledWord";
     return ("PlayResult", _fieldNames);
   }
 
@@ -92,12 +95,13 @@ library PlayResult {
     uint256 id,
     address player,
     Direction direction,
+    uint256 timestamp,
     int32 x,
     int32 y,
     uint8[] memory word,
     uint8[] memory filledWord
   ) internal {
-    bytes memory _data = encode(player, direction, x, y, word, filledWord);
+    bytes memory _data = encode(player, direction, timestamp, x, y, word, filledWord);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -111,12 +115,13 @@ library PlayResult {
     uint256 id,
     address player,
     Direction direction,
+    uint256 timestamp,
     int32 x,
     int32 y,
     uint8[] memory word,
     uint8[] memory filledWord
   ) internal {
-    bytes memory _data = encode(player, direction, x, y, word, filledWord);
+    bytes memory _data = encode(player, direction, timestamp, x, y, word, filledWord);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -126,18 +131,38 @@ library PlayResult {
 
   /** Emit the ephemeral event using the data struct */
   function emitEphemeral(uint256 id, PlayResultData memory _table) internal {
-    emitEphemeral(id, _table.player, _table.direction, _table.x, _table.y, _table.word, _table.filledWord);
+    emitEphemeral(
+      id,
+      _table.player,
+      _table.direction,
+      _table.timestamp,
+      _table.x,
+      _table.y,
+      _table.word,
+      _table.filledWord
+    );
   }
 
   /** Emit the ephemeral event using the data struct (using the specified store) */
   function emitEphemeral(IStore _store, uint256 id, PlayResultData memory _table) internal {
-    emitEphemeral(_store, id, _table.player, _table.direction, _table.x, _table.y, _table.word, _table.filledWord);
+    emitEphemeral(
+      _store,
+      id,
+      _table.player,
+      _table.direction,
+      _table.timestamp,
+      _table.x,
+      _table.y,
+      _table.word,
+      _table.filledWord
+    );
   }
 
   /** Tightly pack full data using this table's schema */
   function encode(
     address player,
     Direction direction,
+    uint256 timestamp,
     int32 x,
     int32 y,
     uint8[] memory word,
@@ -152,6 +177,7 @@ library PlayResult {
       abi.encodePacked(
         player,
         direction,
+        timestamp,
         x,
         y,
         _encodedLengths.unwrap(),

@@ -79,6 +79,7 @@ export default mudConfig({
       schema: {
         player: "address",
         direction: "Direction",
+        timestamp: "uint256",
         x: "int32",
         y: "int32",
         word: "uint8[]",
