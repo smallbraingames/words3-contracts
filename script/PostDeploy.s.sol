@@ -11,8 +11,8 @@ import {ResourceSelector} from "@latticexyz/world/src/ResourceSelector.sol";
 
 contract PostDeploy is Script {
     function run(address worldAddress) external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
+        // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        // vm.startBroadcast(deployerPrivateKey);
 
         // IWorld world = IWorld(worldAddress);
 
@@ -27,7 +27,7 @@ contract PostDeploy is Script {
         // infinite[7] = Letter.E;
         // world.start(
         //     infinite,
-        //     block.timestamp + 3600,
+        //     block.timestamp + 3600 * 20,
         //     0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
         //     5e14,
         //     95e16,
@@ -35,6 +35,6 @@ contract PostDeploy is Script {
         //     3
         // );
 
-        vm.stopBroadcast();
+        // vm.stopBroadcast();
     }
 }
