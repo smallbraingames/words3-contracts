@@ -6,6 +6,7 @@ import {IWorld} from "codegen/world/IWorld.sol";
 import {Letter, Direction} from "codegen/Types.sol";
 import {VRGDAConfig, LetterCount} from "codegen/Tables.sol";
 
+import {NotEnoughValue} from "common/Errors.sol";
 import {LibPrice} from "libraries/LibPrice.sol";
 
 import "forge-std/Test.sol";

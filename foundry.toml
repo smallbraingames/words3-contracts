@@ -1,7 +1,6 @@
 [profile.default]
 solc_version = "0.8.20"
 ffi = false
-fuzz_runs = 1280
 optimizer = true
 optimizer_runs = 3000
 verbosity = 1
@@ -15,8 +14,14 @@ extra_output_files = [
 ]
 fs_permissions = [{ access = "read", path = "./"}]
 
+[fuzz]
+runs = 1028
+
 [profile.lattice-testnet]
 eth_rpc_url = "https://follower.testnet-chain.linfra.xyz"
 
 [profile.base-testnet]
 eth_rpc_url = "https://goerli.base.org"
+
+[profile.base-mainnet]
+eth_rpc_url = "https://mainnet.base.org"

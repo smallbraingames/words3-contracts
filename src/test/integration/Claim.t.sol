@@ -3,10 +3,11 @@ pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
 import {Letter, Direction} from "codegen/Types.sol";
-import {MerkleRootConfig, TileLetter, TilePlayer, Points} from "codegen/Tables.sol";
+import {MerkleRootConfig, TileLetter, TilePlayer, Points, Treasury} from "codegen/Tables.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
+import {SINGLETON_ADDRESS} from "common/Constants.sol";
 import {GameStartedOrOver} from "common/Errors.sol";
 
 import "forge-std/Test.sol";
@@ -73,5 +74,41 @@ contract Claim is MudTest {
         world.claim(player1);
         assertEq(address(player1).balance, wordPrice * 2);
         assertEq(address(worldAddress).balance, 0);
+    }
+
+    function testFuzzDuplicateClaim(address winner, address attacker) public {
+        vm.assume(uint160(winner) > 100 && uint160(attacker) > 100);
+        vm.assume(winner != attacker);
+        vm.assume(winner != address(0) && attacker != address(0));
+        vm.assume(winner != worldAddress && attacker != worldAddress);
+        Letter[] memory initialWord = new Letter[](5);
+        initialWord[0] = Letter.H;
+        initialWord[1] = Letter.E;
+        initialWord[2] = Letter.L;
+        initialWord[3] = Letter.L;
+        initialWord[4] = Letter.O;
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 1 ether, 1e15, 1e15, 3);
+        payable(worldAddress).transfer(2 ether);
+        vm.startPrank(worldAddress);
+        Treasury.set(1 ether);
+        Points.set(winner, 10);
+        Points.set(SINGLETON_ADDRESS, 10);
+        vm.stopPrank();
+        vm.warp(block.timestamp + 1e6 + 1);
+        vm.expectRevert();
+        world.claim(winner);
+        vm.expectRevert();
+        world.claim(attacker);
+        world.end();
+        vm.expectRevert();
+        world.claim(attacker);
+        world.claim(winner);
+        assertEq(address(worldAddress).balance, 1 ether);
+        assertEq(address(winner).balance, 1 ether);
+        assertEq(address(attacker).balance, 0);
+        vm.expectRevert();
+        world.claim(winner);
+        vm.expectRevert();
+        world.claim(attacker);
     }
 }

@@ -29,3 +29,5 @@ error AlreadyClaimed();
 error NotEndTime();
 
 error Stop();
+
+error NoPoints();
