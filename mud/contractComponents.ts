@@ -55,7 +55,8 @@ export function defineContractComponents(world: World) {
           startTime: RecsType.BigInt,
           targetPrice: RecsType.BigInt,
           priceDecay: RecsType.BigInt,
-          perDay: RecsType.BigInt,
+          perDayInitial: RecsType.BigInt,
+          power: RecsType.BigInt,
         },
         {
           id: "0x000000000000000000000000000000005652474441436f6e6669670000000000",
@@ -67,7 +68,8 @@ export function defineContractComponents(world: World) {
               startTime: "uint256",
               targetPrice: "int256",
               priceDecay: "int256",
-              perDay: "int256",
+              perDayInitial: "int256",
+              power: "int256",
             },
           },
         } as const

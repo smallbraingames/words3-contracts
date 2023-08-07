@@ -34,9 +34,7 @@ library LibPrice {
         int256 daysSinceStart = toDaysWadUnsafe(block.timestamp - vrgdaConfig.startTime);
         uint256 letterCount = uint256(LetterCount.get(letter));
         uint256 letterWeight = (LibPoints.getBaseLetterPoints(letter) / LETTER_WEIGHT_FRACTION + 1) * letterCount;
-        int256 nOverK = wadDiv(toWadUnsafe(letterWeight + 1), vrgdaConfig.perDay);
-        unchecked {
-            return uint256(wadMul(vrgdaConfig.targetPrice, wadExp(wadMul(decayConstant, daysSinceStart - nOverK))));
-        }
+        int256 inverse = wadRoot(wadDiv(toWadUnsafe(letterWeight + 1), vrgdaConfig.perDayInitial), vrgdaConfig.power);
+        return uint256(wadMul(vrgdaConfig.targetPrice, wadExp(wadMul(decayConstant, daysSinceStart - inverse))));
     }
 }

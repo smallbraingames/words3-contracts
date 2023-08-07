@@ -24,7 +24,8 @@ export default mudConfig({
         startTime: "uint256",
         targetPrice: "int256",
         priceDecay: "int256",
-        perDay: "int256",
+        perDayInitial: "int256",
+        power: "int256",
       },
     },
     // Game

@@ -18,7 +18,8 @@ contract StartSystem is System {
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
-        int256 vrgdaPerDay,
+        int256 vrgdaPerDayInitial,
+        int256 vrgdaPower,
         uint32 crossWordRewardFraction
     ) public {
         if (LibGame.getGameStatus() != Status.NOT_STARTED) {
@@ -29,7 +30,15 @@ contract StartSystem is System {
             TileLetter.set(coord.x, coord.y, initialWord[i]);
             TilePlayer.set(coord.x, coord.y, address(0));
         }
-        LibGame.startGame(endTime, merkleRoot, vrgdaTargetPrice, vrgdaPriceDecay, vrgdaPerDay, crossWordRewardFraction);
+        LibGame.startGame(
+            endTime,
+            merkleRoot,
+            vrgdaTargetPrice,
+            vrgdaPriceDecay,
+            vrgdaPerDayInitial,
+            vrgdaPower,
+            crossWordRewardFraction
+        );
     }
 
     function end() public {
