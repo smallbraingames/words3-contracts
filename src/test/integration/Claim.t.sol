@@ -81,6 +81,8 @@ contract Claim is MudTest {
         vm.assume(winner != attacker);
         vm.assume(winner != address(0) && attacker != address(0));
         vm.assume(winner != worldAddress && attacker != worldAddress);
+        uint256 winnerPrev = address(winner).balance;
+        uint256 attackerPrev = address(attacker).balance;
         Letter[] memory initialWord = new Letter[](5);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.E;
@@ -104,8 +106,8 @@ contract Claim is MudTest {
         world.claim(attacker);
         world.claim(winner);
         assertEq(address(worldAddress).balance, 1 ether);
-        assertEq(address(winner).balance, 1 ether);
-        assertEq(address(attacker).balance, 0);
+        assertEq(address(winner).balance, winnerPrev + 1 ether);
+        assertEq(address(attacker).balance, attackerPrev);
         vm.expectRevert();
         world.claim(winner);
         vm.expectRevert();

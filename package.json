@@ -8,7 +8,7 @@
     "deploy": "pnpm run initialize && mud deploy --debug",
     "deploy:testnet": "pnpm run initialize && mud deploy --profile=lattice-testnet --debug",
     "deploy:base-testnet": "pnpm run initialize && mud deploy --priority-fee-multiplier 0.1 --profile=base-testnet",
-    "deploy:base-mainnet": "pnpm run initialize && mud deploy --profile=base-mainnet",
+    "deploy:base-mainnet": "pnpm run initialize && mud deploy --priority-fee-multiplier 0.1 --profile=base-mainnet",
     "dev": "pnpm mud dev-contracts --tsgenOutput ./mud",
     "dev:phaser": "pnpm mud dev-contracts --tsgenOutput ./mud",
     "initialize": "pnpm run tablegen && pnpm run worldgen && pnpm run build && pnpm run worldtypes && pnpm run tsgen",
@@ -48,7 +48,7 @@
     "solhint": "^3.4.1",
     "solhint-config-mud": "2.0.0-next.0",
     "solhint-plugin-mud": "2.0.0-next.0",
-    "solmate": "^6.7.0",
+    "solmate": "6.1.0",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1",
     "typescript": "^4.9.5"
