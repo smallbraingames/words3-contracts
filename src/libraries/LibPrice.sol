@@ -8,13 +8,7 @@ import {LETTER_WEIGHT_FRACTION} from "common/Constants.sol";
 import {LibPoints} from "libraries/LibPoints.sol";
 
 import {
-    wadExp,
-    wadLn,
-    wadMul,
-    unsafeWadMul,
-    unsafeWadDiv,
-    toWadUnsafe,
-    toDaysWadUnsafe
+    wadExp, wadDiv, wadLn, wadMul, wadPow, toWadUnsafe, toDaysWadUnsafe
 } from "solmate/src/utils/SignedWadMath.sol";
 
 library LibPrice {
@@ -29,6 +23,10 @@ library LibPrice {
         return price;
     }
 
+    function wadRoot(int256 x, int256 root) internal pure returns (int256) {
+        return wadPow(x, wadDiv(1e18, root));
+    }
+
     // Adapted from transmissions11/VRGDAs (https://github.com/transmissions11/VRGDAs)
     function getLetterPrice(Letter letter) internal view returns (uint256) {
         VRGDAConfigData memory vrgdaConfig = VRGDAConfig.get();
@@ -36,10 +34,9 @@ library LibPrice {
         int256 daysSinceStart = toDaysWadUnsafe(block.timestamp - vrgdaConfig.startTime);
         uint256 letterCount = uint256(LetterCount.get(letter));
         uint256 letterWeight = (LibPoints.getBaseLetterPoints(letter) / LETTER_WEIGHT_FRACTION + 1) * letterCount;
-        int256 nOverK = unsafeWadDiv(toWadUnsafe(letterWeight + 1), vrgdaConfig.perDay);
+        int256 nOverK = wadDiv(toWadUnsafe(letterWeight + 1), vrgdaConfig.perDay);
         unchecked {
-            return
-                uint256(wadMul(vrgdaConfig.targetPrice, wadExp(unsafeWadMul(decayConstant, daysSinceStart - nOverK))));
+            return uint256(wadMul(vrgdaConfig.targetPrice, wadExp(wadMul(decayConstant, daysSinceStart - nOverK))));
         }
     }
 }
