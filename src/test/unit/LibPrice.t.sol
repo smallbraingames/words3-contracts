@@ -11,9 +11,42 @@ import {LibPrice} from "libraries/LibPrice.sol";
 
 import "forge-std/Test.sol";
 import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-import {toWadUnsafe, toDaysWadUnsafe, fromDaysWadUnsafe, unsafeWadDiv} from "solmate/src/utils/SignedWadMath.sol";
+import {
+    toWadUnsafe, toDaysWadUnsafe, fromDaysWadUnsafe, unsafeWadDiv, wadPow
+} from "solmate/src/utils/SignedWadMath.sol";
 
 contract LibPriceTest is MudTest {
+    function testWadRoot() public {
+        assertRelApproxEq(uint256(LibPrice.wadRoot(1e18, 2e18)), 1e18, 1);
+        assertRelApproxEq(uint256(LibPrice.wadRoot(1e18, 3e18)), 1e18, 1);
+        assertRelApproxEq(uint256(LibPrice.wadRoot(1e18, 4e18)), 1e18, 1);
+        assertRelApproxEq(uint256(LibPrice.wadRoot(4e18, 2e18)), 2e18, 1);
+        assertRelApproxEq(uint256(LibPrice.wadRoot(9e18, 2e18)), 3e18, 1);
+        assertRelApproxEq(uint256(LibPrice.wadRoot(16e18, 4e18)), 2e18, 1);
+    }
+
+    function testFuzzWadRootWhole(uint128 a, uint128 power) public {
+        vm.assume(power < 20 && power > 0);
+        vm.assume(a < 50 && a > 0);
+        uint128 b = a ** power;
+        int256 c = LibPrice.wadRoot(toWadUnsafe(b), toWadUnsafe(power));
+        assertRelApproxEq(uint256(c), uint256(toWadUnsafe(uint256(a))), 1e3);
+    }
+
+    function testFuzzWadRootFraction(uint128 a, uint32 power) public {
+        power = uint32(bound(power, 10, 90));
+        a = uint128(bound(a, 1, 50));
+        int256 wadPower = int256(uint256(power)) * 1e17;
+        int256 b = wadPow(toWadUnsafe(a), wadPower);
+        int256 c = LibPrice.wadRoot(b, wadPower);
+        assertRelApproxEq(uint256(c), uint256(toWadUnsafe(uint256(a))), 1e3);
+    }
+
+    function testWadRootFraction() public {
+        assertRelApproxEq(uint256(LibPrice.wadRoot(4e18, 1.5e18)), 2.51984209979e18, 1e8);
+        assertRelApproxEq(uint256(LibPrice.wadRoot(12e18, 3.6e18)), 1.99421770808e18, 1e8);
+    }
+
     /// ===== Modified tests from t11s https://github.com/transmissions11/VRGDAs/blob/master/test/LinearVRGDA.t.sol =====
 
     function testTargetPrice() public {
