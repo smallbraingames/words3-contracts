@@ -38,7 +38,7 @@ contract SimpleWord is MudTest {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start(initialWord, 10, m.getRoot(words), 0, 0, 0, 3);
+        world.start(initialWord, 10, m.getRoot(words), 0, 0, 0, 1e16, 3);
         assertEq(uint8(TileLetter.get(world, 0, 0)), uint8(Letter.H));
         assertEq(uint8(TileLetter.get(world, 1, 0)), uint8(Letter.I));
     }
@@ -47,7 +47,7 @@ contract SimpleWord is MudTest {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 0, 0, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
 
         Letter[] memory word = new Letter[](2);
         word[0] = Letter.EMPTY;

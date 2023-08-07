@@ -51,7 +51,13 @@ contract LibPriceTest is MudTest {
 
     function testTargetPrice() public {
         vm.startPrank(worldAddress);
-        VRGDAConfig.set({startTime: block.timestamp, targetPrice: 69.42e18, priceDecay: 0.31e18, perDay: 2e18});
+        VRGDAConfig.set({
+            startTime: block.timestamp,
+            targetPrice: 69.42e18,
+            priceDecay: 0.31e18,
+            perDayInitial: 2e18,
+            power: 1e18
+        });
         vm.stopPrank();
 
         // Warp to the target sale time so that the VRGDA price equals the target price.
@@ -67,7 +73,13 @@ contract LibPriceTest is MudTest {
         uint256 numMint = 239;
 
         vm.startPrank(worldAddress);
-        VRGDAConfig.set({startTime: block.timestamp, targetPrice: 69.42e18, priceDecay: 0.31e18, perDay: 2e18});
+        VRGDAConfig.set({
+            startTime: block.timestamp,
+            targetPrice: 69.42e18,
+            priceDecay: 0.31e18,
+            perDayInitial: 2e18,
+            power: 1e18
+        });
         LetterCount.set(Letter.A, uint32(numMint));
         vm.stopPrank();
 
@@ -80,7 +92,13 @@ contract LibPriceTest is MudTest {
     function testAlwaysTargetPriceInRightConditions(uint32 sold) public {
         sold = uint32(bound(sold, 0, type(uint16).max));
         vm.startPrank(worldAddress);
-        VRGDAConfig.set({startTime: block.timestamp, targetPrice: 69.42e18, priceDecay: 0.31e18, perDay: 2e18});
+        VRGDAConfig.set({
+            startTime: block.timestamp,
+            targetPrice: 69.42e18,
+            priceDecay: 0.31e18,
+            perDayInitial: 2e18,
+            power: 1e18
+        });
         LetterCount.set(Letter.A, sold);
         vm.stopPrank();
         int256 targetSaleTime = unsafeWadDiv(toWadUnsafe(sold + 1), 2e18);

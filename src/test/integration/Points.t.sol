@@ -71,7 +71,7 @@ contract PointsTest is MudTest {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 0, 0, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -112,7 +112,7 @@ contract PointsTest is MudTest {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 0, 0, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
 
         Letter[] memory word = new Letter[](5);
         word[0] = Letter.EMPTY;

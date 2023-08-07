@@ -31,7 +31,7 @@ contract LibGameTest is MudTest {
 
     function testCanPlayAfterGameStart() public {
         vm.startPrank(worldAddress);
-        LibGame.startGame(block.timestamp + 100, bytes32(0), 0, 0, 0, 3);
+        LibGame.startGame(block.timestamp + 100, bytes32(0), 0, 0, 0, 0, 3);
         vm.stopPrank();
         assertTrue(LibGame.canPlay());
         vm.warp(block.timestamp + 100);
@@ -41,7 +41,7 @@ contract LibGameTest is MudTest {
     function testFuzzCanPlay(uint256 endTime) public {
         vm.assume(endTime > block.timestamp);
         vm.startPrank(worldAddress);
-        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 3);
+        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3);
         vm.stopPrank();
         assertTrue(LibGame.canPlay());
         vm.warp(endTime);
@@ -52,7 +52,7 @@ contract LibGameTest is MudTest {
         vm.assume(endTime > block.timestamp);
         vm.assume(callTime > endTime);
         vm.startPrank(worldAddress);
-        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 3);
+        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3);
         vm.stopPrank();
         vm.warp(callTime);
         assertFalse(LibGame.canPlay());
@@ -75,18 +75,28 @@ contract LibGameTest is MudTest {
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
-        int256 vrgdaPerDay,
+        int256 vrgdaPerDayInitial,
+        int256 vrgdaPower,
         uint32 crossWordRewardFraction
     ) public {
         vm.assume(endTime > block.timestamp);
         vm.startPrank(worldAddress);
-        LibGame.startGame(endTime, merkleRoot, vrgdaTargetPrice, vrgdaPriceDecay, vrgdaPerDay, crossWordRewardFraction);
+        LibGame.startGame(
+            endTime,
+            merkleRoot,
+            vrgdaTargetPrice,
+            vrgdaPriceDecay,
+            vrgdaPerDayInitial,
+            vrgdaPower,
+            crossWordRewardFraction
+        );
         vm.stopPrank();
         assertEq(endTime, GameConfig.getEndTime());
         assertEq(merkleRoot, MerkleRootConfig.get());
         assertEq(vrgdaTargetPrice, VRGDAConfig.getTargetPrice());
         assertEq(vrgdaPriceDecay, VRGDAConfig.getPriceDecay());
-        assertEq(vrgdaPerDay, VRGDAConfig.getPerDay());
+        assertEq(vrgdaPerDayInitial, VRGDAConfig.getPerDayInitial());
+        assertEq(vrgdaPower, VRGDAConfig.getPower());
         assertEq(crossWordRewardFraction, GameConfig.getCrossWordRewardFraction());
     }
 }

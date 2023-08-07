@@ -18,7 +18,8 @@ library LibGame {
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
-        int256 vrgdaPerDay,
+        int256 vrgdaPerDayInitial,
+        int256 vrgdaPower,
         uint32 crossWordRewardFraction
     ) internal {
         GameConfig.set(
@@ -30,7 +31,8 @@ library LibGame {
                 startTime: block.timestamp,
                 targetPrice: vrgdaTargetPrice,
                 priceDecay: vrgdaPriceDecay,
-                perDay: vrgdaPerDay
+                perDayInitial: vrgdaPerDayInitial,
+                power: vrgdaPower
             })
         );
     }

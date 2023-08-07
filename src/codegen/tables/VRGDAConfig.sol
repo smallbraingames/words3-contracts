@@ -24,17 +24,19 @@ struct VRGDAConfigData {
   uint256 startTime;
   int256 targetPrice;
   int256 priceDecay;
-  int256 perDay;
+  int256 perDayInitial;
+  int256 power;
 }
 
 library VRGDAConfig {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](4);
+    SchemaType[] memory _schema = new SchemaType[](5);
     _schema[0] = SchemaType.UINT256;
     _schema[1] = SchemaType.INT256;
     _schema[2] = SchemaType.INT256;
     _schema[3] = SchemaType.INT256;
+    _schema[4] = SchemaType.INT256;
 
     return SchemaLib.encode(_schema);
   }
@@ -47,11 +49,12 @@ library VRGDAConfig {
 
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
-    string[] memory _fieldNames = new string[](4);
+    string[] memory _fieldNames = new string[](5);
     _fieldNames[0] = "startTime";
     _fieldNames[1] = "targetPrice";
     _fieldNames[2] = "priceDecay";
-    _fieldNames[3] = "perDay";
+    _fieldNames[3] = "perDayInitial";
+    _fieldNames[4] = "power";
     return ("VRGDAConfig", _fieldNames);
   }
 
@@ -167,34 +170,64 @@ library VRGDAConfig {
     _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((priceDecay)));
   }
 
-  /** Get perDay */
-  function getPerDay() internal view returns (int256 perDay) {
+  /** Get perDayInitial */
+  function getPerDayInitial() internal view returns (int256 perDayInitial) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
     return (int256(uint256(Bytes.slice32(_blob, 0))));
   }
 
-  /** Get perDay (using the specified store) */
-  function getPerDay(IStore _store) internal view returns (int256 perDay) {
+  /** Get perDayInitial (using the specified store) */
+  function getPerDayInitial(IStore _store) internal view returns (int256 perDayInitial) {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
     return (int256(uint256(Bytes.slice32(_blob, 0))));
   }
 
-  /** Set perDay */
-  function setPerDay(int256 perDay) internal {
+  /** Set perDayInitial */
+  function setPerDayInitial(int256 perDayInitial) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
-    StoreSwitch.setField(_tableId, _keyTuple, 3, abi.encodePacked((perDay)));
+    StoreSwitch.setField(_tableId, _keyTuple, 3, abi.encodePacked((perDayInitial)));
   }
 
-  /** Set perDay (using the specified store) */
-  function setPerDay(IStore _store, int256 perDay) internal {
+  /** Set perDayInitial (using the specified store) */
+  function setPerDayInitial(IStore _store, int256 perDayInitial) internal {
     bytes32[] memory _keyTuple = new bytes32[](0);
 
-    _store.setField(_tableId, _keyTuple, 3, abi.encodePacked((perDay)));
+    _store.setField(_tableId, _keyTuple, 3, abi.encodePacked((perDayInitial)));
+  }
+
+  /** Get power */
+  function getPower() internal view returns (int256 power) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 4);
+    return (int256(uint256(Bytes.slice32(_blob, 0))));
+  }
+
+  /** Get power (using the specified store) */
+  function getPower(IStore _store) internal view returns (int256 power) {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 4);
+    return (int256(uint256(Bytes.slice32(_blob, 0))));
+  }
+
+  /** Set power */
+  function setPower(int256 power) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    StoreSwitch.setField(_tableId, _keyTuple, 4, abi.encodePacked((power)));
+  }
+
+  /** Set power (using the specified store) */
+  function setPower(IStore _store, int256 power) internal {
+    bytes32[] memory _keyTuple = new bytes32[](0);
+
+    _store.setField(_tableId, _keyTuple, 4, abi.encodePacked((power)));
   }
 
   /** Get the full data */
@@ -214,8 +247,8 @@ library VRGDAConfig {
   }
 
   /** Set the full data using individual values */
-  function set(uint256 startTime, int256 targetPrice, int256 priceDecay, int256 perDay) internal {
-    bytes memory _data = encode(startTime, targetPrice, priceDecay, perDay);
+  function set(uint256 startTime, int256 targetPrice, int256 priceDecay, int256 perDayInitial, int256 power) internal {
+    bytes memory _data = encode(startTime, targetPrice, priceDecay, perDayInitial, power);
 
     bytes32[] memory _keyTuple = new bytes32[](0);
 
@@ -223,8 +256,15 @@ library VRGDAConfig {
   }
 
   /** Set the full data using individual values (using the specified store) */
-  function set(IStore _store, uint256 startTime, int256 targetPrice, int256 priceDecay, int256 perDay) internal {
-    bytes memory _data = encode(startTime, targetPrice, priceDecay, perDay);
+  function set(
+    IStore _store,
+    uint256 startTime,
+    int256 targetPrice,
+    int256 priceDecay,
+    int256 perDayInitial,
+    int256 power
+  ) internal {
+    bytes memory _data = encode(startTime, targetPrice, priceDecay, perDayInitial, power);
 
     bytes32[] memory _keyTuple = new bytes32[](0);
 
@@ -233,12 +273,12 @@ library VRGDAConfig {
 
   /** Set the full data using the data struct */
   function set(VRGDAConfigData memory _table) internal {
-    set(_table.startTime, _table.targetPrice, _table.priceDecay, _table.perDay);
+    set(_table.startTime, _table.targetPrice, _table.priceDecay, _table.perDayInitial, _table.power);
   }
 
   /** Set the full data using the data struct (using the specified store) */
   function set(IStore _store, VRGDAConfigData memory _table) internal {
-    set(_store, _table.startTime, _table.targetPrice, _table.priceDecay, _table.perDay);
+    set(_store, _table.startTime, _table.targetPrice, _table.priceDecay, _table.perDayInitial, _table.power);
   }
 
   /** Decode the tightly packed blob using this table's schema */
@@ -249,7 +289,9 @@ library VRGDAConfig {
 
     _table.priceDecay = (int256(uint256(Bytes.slice32(_blob, 64))));
 
-    _table.perDay = (int256(uint256(Bytes.slice32(_blob, 96))));
+    _table.perDayInitial = (int256(uint256(Bytes.slice32(_blob, 96))));
+
+    _table.power = (int256(uint256(Bytes.slice32(_blob, 128))));
   }
 
   /** Tightly pack full data using this table's schema */
@@ -257,9 +299,10 @@ library VRGDAConfig {
     uint256 startTime,
     int256 targetPrice,
     int256 priceDecay,
-    int256 perDay
+    int256 perDayInitial,
+    int256 power
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(startTime, targetPrice, priceDecay, perDay);
+    return abi.encodePacked(startTime, targetPrice, priceDecay, perDayInitial, power);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */

@@ -49,7 +49,7 @@ contract Claim is MudTest {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 1 ether, 1e15, 1e15, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -89,7 +89,7 @@ contract Claim is MudTest {
         initialWord[2] = Letter.L;
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 1 ether, 1e15, 1e15, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
         payable(worldAddress).transfer(2 ether);
         vm.startPrank(worldAddress);
         Treasury.set(1 ether);
