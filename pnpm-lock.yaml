@@ -84,8 +84,8 @@ devDependencies:
     specifier: 2.0.0-next.0
     version: 2.0.0-next.0
   solmate:
-    specifier: ^6.7.0
-    version: 6.7.0
+    specifier: 6.1.0
+    version: 6.1.0
   ts-node:
     specifier: ^10.9.1
     version: 10.9.1(@types/node@18.15.11)(typescript@4.9.5)
@@ -2303,8 +2303,8 @@ packages:
     resolution: {integrity: sha512-wciNMLg/Irp8OKGrh3S2tfvZiZ0NEyILfcRCXCD4mp7SgK/i9gzLfhY2hY7VMCQJ3kH9UB9BzNdibIVMchzyYw==}
     dev: true
 
-  /solmate@6.7.0:
-    resolution: {integrity: sha512-iMPr+gKbKjXBB12a+Iz5Tua5r7T4yugHaGXDWSJbBZB4Gr3vLeUUvKeLyMxCWWqk1xlLhFDFFuAmOzeyVBuyvQ==}
+  /solmate@6.1.0:
+    resolution: {integrity: sha512-gxG4YU5nnAQ+Ac23R44GS3Xo3+X0+8XCe4/P1KvVobL5ERBzQBG/xMv7NSvVo/pkHSYGufgUAPjiueYxujKJAA==}
     dev: true
 
   /string-format@2.0.0:
