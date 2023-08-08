@@ -47,9 +47,113 @@ contract LibPriceTest is MudTest {
         assertRelApproxEq(uint256(LibPrice.wadRoot(12e18, 3.6e18)), 1.99421770808e18, 1e8);
     }
 
-    /// ===== Modified tests from t11s https://github.com/transmissions11/VRGDAs/blob/master/test/LinearVRGDA.t.sol =====
-
+    // Test with true values
     function testTargetPrice() public {
+        vm.startPrank(worldAddress);
+        VRGDAConfig.set({
+            startTime: block.timestamp,
+            targetPrice: 1e18,
+            priceDecay: 0.5e18,
+            perDayInitial: 20e18,
+            power: 1.3e18
+        });
+
+        uint256 start = block.timestamp;
+
+        LetterCount.set(Letter.A, uint32(20));
+        vm.warp(start + 1 days);
+        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+
+        LetterCount.set(Letter.A, uint32(49));
+        vm.warp(start + 2 days);
+        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+
+        LetterCount.set(Letter.A, uint32(83));
+        vm.warp(start + 3 days);
+        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+
+        LetterCount.set(Letter.A, uint32(121));
+        vm.warp(start + 4 days);
+        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+
+        LetterCount.set(Letter.A, uint32(162));
+        vm.warp(start + 5 days);
+        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+
+        LetterCount.set(Letter.A, uint32(205));
+        vm.warp(start + 6 days);
+        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+
+        vm.stopPrank();
+    }
+
+    function testFuzzDoesNotRevertWithReasonableValues(
+        uint256 targetPriceRaw,
+        uint256 priceDecayRaw,
+        uint256 perDayInitialRaw,
+        uint256 powerRaw,
+        uint256 time,
+        uint32 letterCount
+    ) public {
+        int256 targetPrice = int256(bound(targetPriceRaw, 0.003e18, 1e19));
+        int256 priceDecay = int256(bound(priceDecayRaw, 0.003e18, 0.999e18));
+        uint256 perDayInitialNonWad = bound(perDayInitialRaw, 1, 1000);
+        int256 power = int256(bound(powerRaw, 1e18, 5e18));
+        time = bound(time, 1, 1000 days);
+        letterCount = uint32(bound(letterCount, 0, uint256(perDayInitialNonWad * 5)));
+
+        vm.startPrank(worldAddress);
+        VRGDAConfig.set({
+            startTime: block.timestamp,
+            targetPrice: targetPrice,
+            priceDecay: priceDecay,
+            perDayInitial: toWadUnsafe(perDayInitialNonWad),
+            power: power
+        });
+        LetterCount.set(Letter.D, letterCount);
+        vm.stopPrank();
+        vm.warp(block.timestamp + time);
+
+        // This should not revert
+        LibPrice.getLetterPrice(Letter.D);
+    }
+
+    function testFuzzAroundConstantsDoNotRevertWithReasonableValues(
+        uint256 targetPriceRaw,
+        uint256 priceDecayRaw,
+        uint256 perDayInitialRaw,
+        uint256 powerRaw,
+        uint256 time,
+        uint32 letterCount
+    ) public {
+        int256 targetPrice = int256(bound(targetPriceRaw, 0.003e18, 0.06e18));
+        int256 priceDecay = int256(bound(priceDecayRaw, 0.3e18, 0.8e18));
+        uint256 perDayInitialNonWad = bound(perDayInitialRaw, 10, 100);
+        int256 power = int256(bound(powerRaw, 1.2e18, 5e18));
+        uint256 timeDays = bound(time, 0, 8);
+        time = bound(time, 1 + timeDays * 86400, 9 days);
+        letterCount = uint32(bound(letterCount, 0, perDayInitialNonWad * 5 * (timeDays + 1)));
+
+        vm.startPrank(worldAddress);
+        VRGDAConfig.set({
+            startTime: block.timestamp,
+            targetPrice: targetPrice,
+            priceDecay: priceDecay,
+            perDayInitial: toWadUnsafe(perDayInitialNonWad),
+            power: power
+        });
+        LetterCount.set(Letter.D, letterCount);
+        vm.stopPrank();
+        vm.warp(block.timestamp + time);
+
+        // This should not revert
+        LibPrice.getLetterPrice(Letter.D);
+    }
+
+    /// ===== Modified tests from t11s https://github.com/transmissions11/VRGDAs/blob/master/test/LinearVRGDA.t.sol =====
+    /// When power is set to 1, the VRGDA is linear
+
+    function testLinearTargetPrice() public {
         vm.startPrank(worldAddress);
         VRGDAConfig.set({
             startTime: block.timestamp,
@@ -68,7 +172,7 @@ contract LibPriceTest is MudTest {
         assertRelApproxEq(cost, uint256(69.42e18), 0.00000000001e18);
     }
 
-    function testPricingBasic() public {
+    function testLinearPricingBasic() public {
         uint256 timeDelta = 120 days;
         uint256 numMint = 239;
 
@@ -89,7 +193,7 @@ contract LibPriceTest is MudTest {
         assertRelApproxEq(cost, uint256(VRGDAConfig.getTargetPrice()), 0.00000001e18);
     }
 
-    function testAlwaysTargetPriceInRightConditions(uint32 sold) public {
+    function testLinearAlwaysTargetPriceInRightConditions(uint32 sold) public {
         sold = uint32(bound(sold, 0, type(uint16).max));
         vm.startPrank(worldAddress);
         VRGDAConfig.set({
