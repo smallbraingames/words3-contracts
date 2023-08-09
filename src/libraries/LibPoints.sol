@@ -42,7 +42,7 @@ library LibPoints {
         uint32 points = getWordPoints(playWord, filledWord, start, direction);
 
         // Count points for cross words (double counts by design)
-        Direction perpendicularDirection =
+        Direction crossDirection =
             direction == Direction.LEFT_TO_RIGHT ? Direction.TOP_TO_BOTTOM : Direction.LEFT_TO_RIGHT;
         for (uint256 i; i < playWord.length; i++) {
             Letter letter = playWord[i];
@@ -57,22 +57,20 @@ library LibPoints {
 
             Coord memory letterCoord = LibBoard.getRelativeCoord(start, int32(uint32(i)), direction);
 
-            Letter[] memory perpendicularFilledWord = LibBoard.getCrossWord(letterCoord, letter, direction, bounds[i]);
-            Letter[] memory perpendicularPlayWord = new Letter[](perpendicularFilledWord.length);
-            for (uint256 j; j < perpendicularFilledWord.length; j++) {
+            Letter[] memory crossFilledWord = LibBoard.getCrossWord(letterCoord, letter, direction, bounds[i]);
+            Letter[] memory crossPlayWord = new Letter[](crossFilledWord.length);
+            for (uint256 j; j < crossFilledWord.length; j++) {
                 if (j == negative) {
-                    perpendicularPlayWord[j] = letter;
+                    crossPlayWord[j] = letter;
                 } else {
-                    perpendicularPlayWord[j] = Letter.EMPTY;
+                    crossPlayWord[j] = Letter.EMPTY;
                 }
             }
 
-            Coord memory perpendicularStart =
-                LibBoard.getRelativeCoord(letterCoord, -1 * int32(uint32(negative)), perpendicularDirection);
+            Coord memory crossStart =
+                LibBoard.getRelativeCoord(letterCoord, -1 * int32(uint32(negative)), crossDirection);
 
-            points += getWordPoints(
-                perpendicularPlayWord, perpendicularFilledWord, perpendicularStart, perpendicularDirection
-            );
+            points += getWordPoints(crossPlayWord, crossFilledWord, crossStart, crossDirection);
         }
         return points;
     }
@@ -112,6 +110,7 @@ library LibPoints {
                 if (bonus.bonusType == BonusType.MULTIPLY_WORD) {
                     multiplier *= bonus.bonusValue;
                 }
+
                 points += getBonusLetterPoints(word[i], bonus);
             } else {
                 points += getBaseLetterPoints(filledWord[i]);

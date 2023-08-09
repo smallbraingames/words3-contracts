@@ -114,7 +114,9 @@ contract Claim is MudTest {
         assertEq(address(worldAddress).balance, 0);
     }
 
-    function testFuzzDuplicateClaim(address winner, address attacker) public {
+    function testFuzzDuplicateClaim(uint64 winnerRaw, uint64 attackerRaw) public {
+        address winner = address(uint160(winnerRaw));
+        address attacker = address(uint160(attackerRaw));
         vm.assume(
             winner != 0xCe71065D4017F316EC606Fe4422e11eB2c47c246 && winner != 0x4e59b44847b379578588920cA78FbF26c0B4956C
                 && winner != 0xb4c79daB8f259C7Aee6E5b2Aa729821864227e84
@@ -262,7 +264,7 @@ contract Claim is MudTest {
         assertEq(address(player4).balance, 2 ether + 1 ether);
     }
 
-    function testClaimSingleton() public {
+    function testRevertClaimSingleton() public {
         address player1 = address(0x12345);
 
         Letter[] memory initialWord = new Letter[](5);
