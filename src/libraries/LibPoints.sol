@@ -67,7 +67,12 @@ library LibPoints {
                 }
             }
 
-            points += getWordPoints(perpendicularPlayWord, perpendicularFilledWord, letterCoord, perpendicularDirection);
+            Coord memory perpendicularStart =
+                LibBoard.getRelativeCoord(letterCoord, -1 * int32(uint32(negative)), perpendicularDirection);
+
+            points += getWordPoints(
+                perpendicularPlayWord, perpendicularFilledWord, perpendicularStart, perpendicularDirection
+            );
         }
         return points;
     }

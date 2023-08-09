@@ -26,7 +26,7 @@ contract Wrapper {
 
     function boardGetCoordsOutsideBound(Coord memory coord, Direction direction, Bound memory bound)
         public
-        pure
+        view
         returns (Coord memory, Coord memory)
     {
         return LibBoard.getCoordsOutsideBound(coord, direction, bound);

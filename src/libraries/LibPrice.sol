@@ -11,8 +11,6 @@ import {
     wadExp, wadDiv, wadLn, wadMul, wadPow, toWadUnsafe, toDaysWadUnsafe
 } from "solmate/src/utils/SignedWadMath.sol";
 
-import "forge-std/Test.sol";
-
 library LibPrice {
     function getWordPrice(Letter[] memory word) internal view returns (uint256) {
         uint256 price = 0;
@@ -37,12 +35,6 @@ library LibPrice {
         uint256 letterCount = uint256(LetterCount.get(letter));
         uint256 letterWeight = (LibPoints.getBaseLetterPoints(letter) / LETTER_WEIGHT_FRACTION + 1) * letterCount;
         int256 inverse = wadRoot(wadDiv(toWadUnsafe(letterWeight + 1), vrgdaConfig.perDayInitial), vrgdaConfig.power);
-        console.logInt(inverse);
-        console.logInt(daysSinceStart);
-        console.logInt(decayConstant);
-        console.logInt(wadMul(decayConstant, daysSinceStart - inverse));
-        console.logInt(wadExp(wadMul(decayConstant, daysSinceStart - inverse)));
-
         return uint256(wadMul(vrgdaConfig.targetPrice, wadExp(wadMul(decayConstant, daysSinceStart - inverse))));
     }
 }
