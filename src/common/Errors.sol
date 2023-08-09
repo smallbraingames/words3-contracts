@@ -25,6 +25,7 @@ error NonemptyBoundEdges();
 error NotEnoughValue();
 
 error AlreadyClaimed();
+error InvalidAddress();
 
 error NotEndTime();
 

@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
 import {Letter, Direction} from "codegen/Types.sol";
-import {MerkleRootConfig, TileLetter, TilePlayer} from "codegen/Tables.sol";
+import {MerkleRootConfig, TileLetter, TilePlayer, Points} from "codegen/Tables.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
@@ -68,6 +68,7 @@ contract CrossWord is MudTest {
         Bound[] memory bounds = new Bound[](4);
         bytes32[] memory proof = m.getProof(words, 1);
         world.play(word, proof, Coord({x: 1, y: -2}), Direction.TOP_TO_BOTTOM, bounds);
+        assertEq(Points.get(address(this)), 8);
 
         // Now play craft using the t from aunt, and making an if cross word
         Letter[] memory crossWord = new Letter[](5);

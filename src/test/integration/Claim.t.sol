@@ -261,4 +261,44 @@ contract Claim is MudTest {
         world.claim(player4);
         assertEq(address(player4).balance, 2 ether + 1 ether);
     }
+
+    function testClaimSingleton() public {
+        address player1 = address(0x12345);
+
+        Letter[] memory initialWord = new Letter[](5);
+        initialWord[0] = Letter.H;
+        initialWord[1] = Letter.E;
+        initialWord[2] = Letter.L;
+        initialWord[3] = Letter.L;
+        initialWord[4] = Letter.O;
+
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
+
+        Letter[] memory word = new Letter[](4);
+        word[0] = Letter.Z;
+        word[1] = Letter.EMPTY;
+        word[2] = Letter.N;
+        word[3] = Letter.E;
+
+        uint256 wordPrice = world.getWordPrice(word);
+        vm.deal(player1, wordPrice * 2);
+
+        Bound[] memory bounds = new Bound[](4);
+        bytes32[] memory proof = m.getProof(words, 1);
+
+        // Play zone
+        vm.prank(player1);
+        world.play{value: wordPrice}(word, proof, Coord({x: 4, y: -1}), Direction.TOP_TO_BOTTOM, bounds);
+        assertEq(address(player1).balance, wordPrice);
+        assertEq(address(worldAddress).balance, wordPrice);
+
+        vm.warp(block.timestamp + 1e6 + 1);
+        world.end();
+
+        vm.expectRevert();
+        world.claim(address(0));
+
+        vm.expectRevert();
+        world.claim(SINGLETON_ADDRESS);
+    }
 }
