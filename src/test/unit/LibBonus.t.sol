@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {BonusType} from "codegen/Types.sol";
+import {BonusType} from "codegen/common.sol";
 
 import {Bonus} from "common/Bonus.sol";
 import {Coord} from "common/Coord.sol";
@@ -10,9 +10,8 @@ import {BONUS_DISTANCE} from "common/Constants.sol";
 import {LibBonus} from "libraries/LibBonus.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-
-contract LibBonusTest is MudTest {
+import {Words3Test} from "../Words3Test.t.sol";
+contract LibBonusTest is Words3Test {
     function testIsBonusTile() public {
         int32 bonusDistance = int32(uint32(BONUS_DISTANCE));
         // Bonus tiles

@@ -3,19 +3,18 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/Types.sol";
-import {VRGDAConfig, LetterCount} from "codegen/Tables.sol";
+import {Letter, Direction} from "codegen/common.sol";
+import {VRGDAConfig, LetterCount} from "codegen/index.sol";
 
 import {NotEnoughValue} from "common/Errors.sol";
 import {LibPrice} from "libraries/LibPrice.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-import {
+import {Words3Test} from "../Words3Test.t.sol";import {
     toWadUnsafe, toDaysWadUnsafe, fromDaysWadUnsafe, unsafeWadDiv, wadPow
 } from "solmate/src/utils/SignedWadMath.sol";
 
-contract LibPriceTest is MudTest {
+contract LibPriceTest is Words3Test {
     function testWadRoot() public {
         assertRelApproxEq(uint256(LibPrice.wadRoot(1e18, 2e18)), 1e18, 1);
         assertRelApproxEq(uint256(LibPrice.wadRoot(1e18, 3e18)), 1e18, 1);
@@ -49,7 +48,7 @@ contract LibPriceTest is MudTest {
 
     // Test with true values
     function testTargetPrice() public {
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         VRGDAConfig.set({
             startTime: block.timestamp,
             targetPrice: 1e18,
@@ -102,7 +101,7 @@ contract LibPriceTest is MudTest {
         time = bound(time, 1, 1000 days);
         letterCount = uint32(bound(letterCount, 0, uint256(perDayInitialNonWad * 5)));
 
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         VRGDAConfig.set({
             startTime: block.timestamp,
             targetPrice: targetPrice,
@@ -134,7 +133,7 @@ contract LibPriceTest is MudTest {
         time = bound(time, 1 + timeDays * 86400, 9 days);
         letterCount = uint32(bound(letterCount, 0, perDayInitialNonWad * 5 * (timeDays + 1)));
 
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         VRGDAConfig.set({
             startTime: block.timestamp,
             targetPrice: targetPrice,
@@ -154,7 +153,7 @@ contract LibPriceTest is MudTest {
     /// When power is set to 1, the VRGDA is linear
 
     function testLinearTargetPrice() public {
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         VRGDAConfig.set({
             startTime: block.timestamp,
             targetPrice: 69.42e18,
@@ -176,7 +175,7 @@ contract LibPriceTest is MudTest {
         uint256 timeDelta = 120 days;
         uint256 numMint = 239;
 
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         VRGDAConfig.set({
             startTime: block.timestamp,
             targetPrice: 69.42e18,
@@ -195,7 +194,7 @@ contract LibPriceTest is MudTest {
 
     function testLinearAlwaysTargetPriceInRightConditions(uint32 sold) public {
         sold = uint32(bound(sold, 0, type(uint16).max));
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         VRGDAConfig.set({
             startTime: block.timestamp,
             targetPrice: 69.42e18,

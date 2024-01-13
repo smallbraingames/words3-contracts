@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Direction, Letter, BonusType} from "codegen/Types.sol";
-import {GameConfig, Points, PointsResult} from "codegen/Tables.sol";
+import {Direction, Letter, BonusType} from "codegen/common.sol";
+import {GameConfig, Points, PointsResult} from "codegen/index.sol";
 
 import {Bonus} from "common/Bonus.sol";
 import {Bound} from "common/Bound.sol";
@@ -28,7 +28,7 @@ library LibPoints {
     ) internal returns (uint32) {
         uint32 points = getPoints(playWord, filledWord, start, direction, bounds);
         LibPlayer.incrementScore(player, points);
-        PointsResult.emitEphemeral(playResultId, player, -1, points);
+        PointsResult.set(playResultId, player, -1, points);
         return points;
     }
 
@@ -86,7 +86,7 @@ library LibPoints {
             if (buildsOnPlayers[i] != address(0)) {
                 address player = buildsOnPlayers[i];
                 LibPlayer.incrementScore(player, rewardPoints);
-                PointsResult.emitEphemeral(playResultId, player, int16(uint16(i)), rewardPoints);
+                PointsResult.set(playResultId, player, int16(uint16(i)), rewardPoints);
             }
         }
     }

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Letter, Status} from "codegen/Types.sol";
-import {TileLetter, TilePlayer, GameConfig} from "codegen/Tables.sol";
+import {Letter, Status} from "codegen/common.sol";
+import {TileLetter, TilePlayer, GameConfig} from "codegen/index.sol";
 
 import {Coord} from "common/Coord.sol";
 import {GameStartedOrOver, NotEndTime} from "common/Errors.sol";

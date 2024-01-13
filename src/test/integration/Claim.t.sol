@@ -2,8 +2,8 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/Types.sol";
-import {MerkleRootConfig, TileLetter, TilePlayer, Points, Treasury} from "codegen/Tables.sol";
+import {Letter, Direction} from "codegen/common.sol";
+import {MerkleRootConfig, TileLetter, TilePlayer, Points, Treasury} from "codegen/index.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
@@ -11,11 +11,9 @@ import {SINGLETON_ADDRESS} from "common/Constants.sol";
 import {GameStartedOrOver} from "common/Errors.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-import {getKeysWithValue} from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
-import {Merkle} from "../murky/src/Merkle.sol";
+import {Words3Test} from "../Words3Test.t.sol";import {Merkle} from "../murky/src/Merkle.sol";
 
-contract Claim is MudTest {
+contract Claim is Words3Test {
     IWorld world;
     bytes32[] public words;
     Merkle private m;
@@ -146,7 +144,7 @@ contract Claim is MudTest {
         initialWord[4] = Letter.O;
         world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
         payable(worldAddress).transfer(2 ether);
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         Treasury.set(1 ether);
         Points.set(winner, 10);
         Points.set(SINGLETON_ADDRESS, 10);

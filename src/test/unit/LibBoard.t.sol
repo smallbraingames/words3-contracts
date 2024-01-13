@@ -3,8 +3,8 @@ pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
 
-import {Direction, Letter} from "codegen/Types.sol";
-import {TileLetter} from "codegen/Tables.sol";
+import {Direction, Letter} from "codegen/common.sol";
+import {TileLetter} from "codegen/index.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
@@ -12,10 +12,9 @@ import {BoundTooLong, EmptyLetterInBounds} from "common/Errors.sol";
 import {LibBoard} from "libraries/LibBoard.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-import {Wrapper} from "./Wrapper.sol";
+import {Words3Test} from "../Words3Test.t.sol";import {Wrapper} from "./Wrapper.sol";
 
-contract LibBoardTest is MudTest {
+contract LibBoardTest is Words3Test {
     IWorld world;
     Wrapper wrapper;
 
@@ -160,7 +159,7 @@ contract LibBoardTest is MudTest {
     }
 
     function testGetCrossWord() public {
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         TileLetter.set(0, 0, Letter.A);
         TileLetter.set(1, 0, Letter.B);
         TileLetter.set(2, 0, Letter.C);
@@ -182,7 +181,7 @@ contract LibBoardTest is MudTest {
         expectedWord[6] = Letter.G;
         assertEq(abi.encode(word), abi.encode(expectedWord));
 
-        vm.startPrank(worldAddress);
+        vm.startPrank(address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266));
         TileLetter.set(0, 0, Letter.EMPTY);
         vm.stopPrank();
     }
@@ -200,7 +199,7 @@ contract LibBoardTest is MudTest {
         f = uint8(bound(f, 0, 26));
         g = uint8(bound(g, 0, 26));
 
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         TileLetter.set(0, 0, Letter(a));
         TileLetter.set(1, 0, Letter(b));
         TileLetter.set(2, 0, Letter(c));
@@ -228,7 +227,7 @@ contract LibBoardTest is MudTest {
         Letter letter = Letter(letterRaw);
         Direction wordDirection = wordDirectionLeftToRight ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
 
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         for (int32 i = 1; i <= int32(uint32(crossWordHalfLength)); i++) {
             if (!wordDirectionLeftToRight) {
                 TileLetter.set(startX + i, startY, letter);
@@ -252,7 +251,7 @@ contract LibBoardTest is MudTest {
             assertEq(uint8(crossWord[i]), uint8(letter));
         }
 
-        vm.prank(worldAddress);
+        vm.prank(deployerAddress);
         TileLetter.get(0, 5);
     }
 }

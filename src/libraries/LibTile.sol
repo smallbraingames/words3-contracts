@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Direction, Letter, BonusType} from "codegen/Types.sol";
-import {TileLetter, TilePlayer, LetterCount} from "codegen/Tables.sol";
+import {Direction, Letter, BonusType} from "codegen/common.sol";
+import {TileLetter, TilePlayer, LetterCount} from "codegen/index.sol";
 
 import {Coord} from "common/Coord.sol";
 

@@ -1,4 +1,5 @@
-import {Letter, Direction} from "codegen/Types.sol";
+// SPDX-License-Identifier: MIT
+import {Letter, Direction} from "codegen/common.sol";
 
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";

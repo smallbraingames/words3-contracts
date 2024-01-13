@@ -2,8 +2,8 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction, BonusType} from "codegen/Types.sol";
-import {MerkleRootConfig, TileLetter, TilePlayer, Points} from "codegen/Tables.sol";
+import {Letter, Direction, BonusType} from "codegen/common.sol";
+import {MerkleRootConfig, TileLetter, TilePlayer, Points} from "codegen/index.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
@@ -13,11 +13,9 @@ import {LibBonus} from "libraries/LibBonus.sol";
 import {LibPoints} from "libraries/LibPoints.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-import {getKeysWithValue} from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
-import {Merkle} from "../murky/src/Merkle.sol";
+import {Words3Test} from "../Words3Test.t.sol";import {Merkle} from "../murky/src/Merkle.sol";
 
-contract PointsTest is MudTest {
+contract PointsTest is Words3Test {
     IWorld world;
     bytes32[] public words;
     Merkle private m;
@@ -85,7 +83,7 @@ contract PointsTest is MudTest {
         // Play zone
         vm.prank(player1);
         world.play(word, proof, Coord({x: 4, y: -1}), Direction.TOP_TO_BOTTOM, bounds);
-        assertEq(Points.get(world, player1), 13);
+        assertEq(Points.get(player1), 13);
 
         // Play zones
         Letter[] memory ext = new Letter[](5);
@@ -98,10 +96,10 @@ contract PointsTest is MudTest {
         bytes32[] memory extProof = m.getProof(words, 3);
         vm.prank(player2);
         world.play(ext, extProof, Coord({x: 4, y: -1}), Direction.TOP_TO_BOTTOM, extBounds);
-        assertEq(Points.get(world, player2), 14);
+        assertEq(Points.get(player2), 14);
 
         // We lose 1 because of rounding
-        assertEq(Points.get(world, player1), 13 + 4);
+        assertEq(Points.get(player1), 13 + 4);
     }
 
     function testBonus() public {
@@ -133,6 +131,6 @@ contract PointsTest is MudTest {
         } else {
             truePoints += bonus.bonusValue - 1;
         }
-        assertEq(Points.get(world, address(this)), truePoints);
+        assertEq(Points.get(address(this)), truePoints);
     }
 }

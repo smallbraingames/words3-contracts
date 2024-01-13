@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Points} from "codegen/Tables.sol";
+import {Points} from "codegen/index.sol";
 
 import {SINGLETON_ADDRESS} from "common/Constants.sol";
 

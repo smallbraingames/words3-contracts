@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {BonusType, Letter, Direction} from "codegen/Types.sol";
+import {BonusType, Letter, Direction} from "codegen/common.sol";
 
 import {Bonus} from "common/Bonus.sol";
 import {Coord} from "common/Coord.sol";
@@ -12,10 +12,9 @@ import {LibBonus} from "libraries/LibPoints.sol";
 import {LibPoints} from "libraries/LibPoints.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-import {Wrapper} from "./Wrapper.sol";
+import {Words3Test} from "../Words3Test.t.sol";import {Wrapper} from "./Wrapper.sol";
 
-contract LibPointsTest is MudTest {
+contract LibPointsTest is Words3Test {
     Wrapper wrapper;
 
     function setUp() public override {

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Status} from "codegen/Types.sol";
-import {Claimed} from "codegen/Tables.sol";
+import {Status} from "codegen/common.sol";
+import {Claimed} from "codegen/index.sol";
 
 import {GameNotOver, AlreadyClaimed, InvalidAddress} from "common/Errors.sol";
 import {SINGLETON_ADDRESS} from "common/Constants.sol";
