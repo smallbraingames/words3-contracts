@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {MudTest} from "@latticexyz/world/test/MudTest.t.sol";
+import { MudTest } from "@latticexyz/world/test/MudTest.t.sol";
 
 contract Words3Test is MudTest {
     address deployerAddress;

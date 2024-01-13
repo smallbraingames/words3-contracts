@@ -1,8 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Status} from "codegen/common.sol";
-import {GameConfig, MerkleRootConfig, GameConfigData, VRGDAConfig, VRGDAConfigData} from "codegen/index.sol";
+import { Status } from "codegen/common.sol";
+import {
+    GameConfig,
+    GameConfigData,
+    HostConfig,
+    HostConfigData,
+    MerkleRootConfig,
+    VRGDAConfig,
+    VRGDAConfigData
+} from "codegen/index.sol";
 
 library LibGame {
     function getGameStatus() internal view returns (Status) {
@@ -20,10 +28,14 @@ library LibGame {
         int256 vrgdaPriceDecay,
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
-        uint32 crossWordRewardFraction
-    ) internal {
+        uint32 crossWordRewardFraction,
+        address host,
+        uint256 hostFeePercent
+    )
+        internal
+    {
         GameConfig.set(
-            GameConfigData({status: Status.STARTED, endTime: endTime, crossWordRewardFraction: crossWordRewardFraction})
+            GameConfigData({ status: Status.STARTED, endTime: endTime, crossWordRewardFraction: crossWordRewardFraction })
         );
         MerkleRootConfig.set(merkleRoot);
         VRGDAConfig.set(
@@ -35,5 +47,6 @@ library LibGame {
                 power: vrgdaPower
             })
         );
+        HostConfig.set(HostConfigData({ host: host, hostFeePercent: hostFeePercent }));
     }
 }

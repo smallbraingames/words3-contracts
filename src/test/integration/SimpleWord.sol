@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/common.sol";
-import {MerkleRootConfig, TileLetter, TilePlayer} from "codegen/index.sol";
+import { Direction, Letter } from "codegen/common.sol";
+import { MerkleRootConfig, TileLetter, TilePlayer } from "codegen/index.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 
-import {Coord} from "common/Coord.sol";
-import {Bound} from "common/Bound.sol";
-import {GameStartedOrOver} from "common/Errors.sol";
+import { Bound } from "common/Bound.sol";
+import { Coord } from "common/Coord.sol";
+import { GameStartedOrOver } from "common/Errors.sol";
 
+import { Words3Test } from "../Words3Test.t.sol";
+import { Merkle } from "../murky/src/Merkle.sol";
 import "forge-std/Test.sol";
-import {Words3Test} from "../Words3Test.t.sol";import {Merkle} from "../murky/src/Merkle.sol";
 
 contract SimpleWord is Words3Test {
     IWorld world;
@@ -53,6 +54,6 @@ contract SimpleWord is Words3Test {
         Bound[] memory bounds = new Bound[](2);
         bytes32[] memory proof = m.getProof(words, 0);
 
-        world.play(word, proof, Coord({x: 0, y: 0}), Direction.TOP_TO_BOTTOM, bounds);
+        world.play(word, proof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
     }
 }

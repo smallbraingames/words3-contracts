@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {BonusType} from "codegen/common.sol";
-
-import {Bonus} from "common/Bonus.sol";
-import {Coord} from "common/Coord.sol";
-import {BONUS_DISTANCE} from "common/Constants.sol";
+import { BonusType } from "codegen/common.sol";
+import { Bonus } from "common/Bonus.sol";
+import { BONUS_DISTANCE } from "common/Constants.sol";
+import { Coord } from "common/Coord.sol";
 
 library LibBonus {
     function isBonusTile(Coord memory coord) internal pure returns (bool) {
@@ -27,7 +26,7 @@ library LibBonus {
         } else if (n < 6) {
             bonusValue = 3;
         }
-        return Bonus({bonusValue: bonusValue, bonusType: bonusType});
+        return Bonus({ bonusValue: bonusValue, bonusType: bonusType });
     }
 
     function abs(int32 x) private pure returns (int32) {

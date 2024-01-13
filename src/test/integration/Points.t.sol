@@ -1,19 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction, BonusType} from "codegen/common.sol";
-import {MerkleRootConfig, TileLetter, TilePlayer, Points} from "codegen/index.sol";
+import { BonusType, Direction, Letter } from "codegen/common.sol";
+import { MerkleRootConfig, Points, TileLetter, TilePlayer } from "codegen/index.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 
-import {Coord} from "common/Coord.sol";
-import {Bound} from "common/Bound.sol";
-import {Bonus} from "common/Bonus.sol";
-import {GameStartedOrOver} from "common/Errors.sol";
-import {LibBonus} from "libraries/LibBonus.sol";
-import {LibPoints} from "libraries/LibPoints.sol";
+import { Bonus } from "common/Bonus.sol";
+import { Bound } from "common/Bound.sol";
+import { Coord } from "common/Coord.sol";
 
+import { GameStartedOrOver } from "common/Errors.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
+import { LibPoints } from "libraries/LibPoints.sol";
+
+import { Words3Test } from "../Words3Test.t.sol";
+import { Merkle } from "../murky/src/Merkle.sol";
 import "forge-std/Test.sol";
-import {Words3Test} from "../Words3Test.t.sol";import {Merkle} from "../murky/src/Merkle.sol";
 
 contract PointsTest is Words3Test {
     IWorld world;
@@ -82,7 +84,7 @@ contract PointsTest is Words3Test {
 
         // Play zone
         vm.prank(player1);
-        world.play(word, proof, Coord({x: 4, y: -1}), Direction.TOP_TO_BOTTOM, bounds);
+        world.play(word, proof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, bounds);
         assertEq(Points.get(player1), 13);
 
         // Play zones
@@ -95,7 +97,7 @@ contract PointsTest is Words3Test {
         Bound[] memory extBounds = new Bound[](5);
         bytes32[] memory extProof = m.getProof(words, 3);
         vm.prank(player2);
-        world.play(ext, extProof, Coord({x: 4, y: -1}), Direction.TOP_TO_BOTTOM, extBounds);
+        world.play(ext, extProof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, extBounds);
         assertEq(Points.get(player2), 14);
 
         // We lose 1 because of rounding
@@ -122,10 +124,10 @@ contract PointsTest is Words3Test {
         Bound[] memory bounds = new Bound[](5);
         bytes32[] memory proof = m.getProof(words, 4);
 
-        world.play(word, proof, Coord({x: 4, y: 0}), Direction.TOP_TO_BOTTOM, bounds);
+        world.play(word, proof, Coord({ x: 4, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
 
         uint32 truePoints = 5;
-        Bonus memory bonus = LibBonus.getTileBonus(Coord({x: 4, y: 4}));
+        Bonus memory bonus = LibBonus.getTileBonus(Coord({ x: 4, y: 4 }));
         if (bonus.bonusType == BonusType.MULTIPLY_WORD) {
             truePoints *= bonus.bonusValue;
         } else {

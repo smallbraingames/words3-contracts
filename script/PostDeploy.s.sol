@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {IWorld} from "codegen/world/IWorld.sol";
-import {VRGDAConfig, VRGDAConfigData, GameConfig, GameConfigData, MerkleRootConfig} from "codegen/index.sol";
-import {Status, Letter} from "codegen/common.sol";
+import { Letter, Status } from "codegen/common.sol";
+import { GameConfig, GameConfigData, MerkleRootConfig, VRGDAConfig, VRGDAConfigData } from "codegen/index.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 
-import {Script} from "forge-std/Script.sol";
-import {console} from "forge-std/console.sol";
+import { Script } from "forge-std/Script.sol";
+import { console } from "forge-std/console.sol";
 
 contract PostDeploy is Script {
     function run(address worldAddress) external {

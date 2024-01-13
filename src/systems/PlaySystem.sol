@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Direction, Letter} from "codegen/common.sol";
-
-import {Bound} from "common/Bound.sol";
-import {Coord} from "common/Coord.sol";
-import {NotEnoughValue, CannotPlay} from "common/Errors.sol";
-
-import {LibPlay} from "libraries/LibPlay.sol";
-import {LibPrice} from "libraries/LibPrice.sol";
-import {LibTreasury} from "libraries/LibTreasury.sol";
-import {LibGame} from "libraries/LibGame.sol";
-
-import {System} from "@latticexyz/world/src/System.sol";
+import { System } from "@latticexyz/world/src/System.sol";
+import { Direction, Letter } from "codegen/common.sol";
+import { Bound } from "common/Bound.sol";
+import { Coord } from "common/Coord.sol";
+import { CannotPlay, NotEnoughValue } from "common/Errors.sol";
+import { LibGame } from "libraries/LibGame.sol";
+import { LibPlay } from "libraries/LibPlay.sol";
+import { LibPrice } from "libraries/LibPrice.sol";
+import { LibTreasury } from "libraries/LibTreasury.sol";
 
 contract PlaySystem is System {
     /// @notice Checks if a move is valid and if so, plays a word on the board
@@ -27,7 +24,10 @@ contract PlaySystem is System {
         Coord memory coord,
         Direction direction,
         Bound[] memory bounds
-    ) public payable {
+    )
+        public
+        payable
+    {
         if (msg.value < LibPrice.getWordPrice(word)) {
             revert NotEnoughValue();
         }

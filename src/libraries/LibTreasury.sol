@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import {Direction} from "codegen/common.sol";
-import {Treasury, Spent, Points, GameConfig} from "codegen/index.sol";
-
-import {NoPoints} from "common/Errors.sol";
-import {LibPoints} from "libraries/LibPoints.sol";
+import { Points, Spent, Treasury } from "codegen/index.sol";
+import { NoPoints } from "common/Errors.sol";
+import { LibPoints } from "libraries/LibPoints.sol";
 
 library LibTreasury {
     function getClaimAmount(address player) internal view returns (uint256) {

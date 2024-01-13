@@ -18,7 +18,9 @@ interface IStartSystem {
     int256 vrgdaPriceDecay,
     int256 vrgdaPerDayInitial,
     int256 vrgdaPower,
-    uint32 crossWordRewardFraction
+    uint32 crossWordRewardFraction,
+    address host,
+    uint256 hostFeePercent
   ) external;
 
   function end() external;
