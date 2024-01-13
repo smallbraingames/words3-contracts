@@ -250,6 +250,7 @@ contract LibBoardTest is Words3Test {
         for (uint256 i = 0; i < crossWord.length; i++) {
             assertEq(uint8(crossWord[i]), uint8(letter));
         }
+        vm.stopPrank();
 
         vm.prank(deployerAddress);
         TileLetter.get(0, 5);
