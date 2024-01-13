@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import {Direction} from "codegen/Types.sol";
-import {Treasury, Spent, Points, GameConfig} from "codegen/Tables.sol";
+import {Direction} from "codegen/common.sol";
+import {Treasury, Spent, Points, GameConfig} from "codegen/index.sol";
 
 import {NoPoints} from "common/Errors.sol";
 import {LibPoints} from "libraries/LibPoints.sol";
@@ -22,6 +22,6 @@ library LibTreasury {
     function incrementTreasury(address msgSender, uint256 msgValue) internal {
         uint256 incrementedTreasury = Treasury.get() + msgValue;
         Treasury.set(incrementedTreasury);
-        Spent.emitEphemeral(msgSender, incrementedTreasury, msgValue);
+        Spent.set(msgSender, incrementedTreasury, msgValue);
     }
 }

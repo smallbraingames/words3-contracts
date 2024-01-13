@@ -2,15 +2,14 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {GameConfig, MerkleRootConfig, VRGDAConfig} from "codegen/Tables.sol";
-import {Status} from "codegen/Types.sol";
+import {GameConfig, MerkleRootConfig, VRGDAConfig} from "codegen/index.sol";
+import {Status} from "codegen/common.sol";
 
 import {LibGame} from "libraries/LibGame.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-
-contract LibGameTest is MudTest {
+import {Words3Test} from "../Words3Test.t.sol";
+contract LibGameTest is Words3Test {
     IWorld world;
 
     function setUp() public override {
@@ -20,7 +19,7 @@ contract LibGameTest is MudTest {
 
     function testCanPlay() public {
         assertFalse(LibGame.canPlay());
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         GameConfig.setEndTime(block.timestamp + 100);
         GameConfig.setStatus(Status.STARTED);
         vm.stopPrank();
@@ -30,7 +29,7 @@ contract LibGameTest is MudTest {
     }
 
     function testCanPlayAfterGameStart() public {
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         LibGame.startGame(block.timestamp + 100, bytes32(0), 0, 0, 0, 0, 3);
         vm.stopPrank();
         assertTrue(LibGame.canPlay());
@@ -40,7 +39,7 @@ contract LibGameTest is MudTest {
 
     function testFuzzCanPlay(uint256 endTime) public {
         vm.assume(endTime > block.timestamp);
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3);
         vm.stopPrank();
         assertTrue(LibGame.canPlay());
@@ -51,7 +50,7 @@ contract LibGameTest is MudTest {
     function testFuzzCanPlayFalseIfPastTime(uint256 endTime, uint256 callTime) public {
         vm.assume(endTime > block.timestamp);
         vm.assume(callTime > endTime);
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3);
         vm.stopPrank();
         vm.warp(callTime);
@@ -62,7 +61,7 @@ contract LibGameTest is MudTest {
         statusRaw = uint8(bound(statusRaw, 0, 2));
         Status status = Status(statusRaw);
         vm.assume(status != Status.STARTED);
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         GameConfig.setEndTime(endTime);
         GameConfig.setStatus(status);
         vm.stopPrank();
@@ -80,7 +79,7 @@ contract LibGameTest is MudTest {
         uint32 crossWordRewardFraction
     ) public {
         vm.assume(endTime > block.timestamp);
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         LibGame.startGame(
             endTime,
             merkleRoot,

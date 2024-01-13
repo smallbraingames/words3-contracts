@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Direction, Letter} from "codegen/Types.sol";
+import {Direction, Letter} from "codegen/common.sol";
 
 import {MAX_WORD_LENGTH} from "common/Constants.sol";
 import {Bound} from "common/Bound.sol";

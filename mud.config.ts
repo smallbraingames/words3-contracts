@@ -1,12 +1,11 @@
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
-  worldContractName: "GatedWorld",
   tables: {
     // Config
     GameConfig: {
       keySchema: {},
-      schema: {
+      valueSchema: {
         status: "Status",
         endTime: "uint256",
         crossWordRewardFraction: "uint32",
@@ -14,13 +13,13 @@ export default mudConfig({
     },
     MerkleRootConfig: {
       keySchema: {},
-      schema: {
+      valueSchema: {
         value: "bytes32",
       },
     },
     VRGDAConfig: {
       keySchema: {},
-      schema: {
+      valueSchema: {
         startTime: "uint256",
         targetPrice: "int256",
         priceDecay: "int256",
@@ -31,44 +30,44 @@ export default mudConfig({
     // Game
     TileLetter: {
       keySchema: { x: "int32", y: "int32" },
-      schema: {
+      valueSchema: {
         value: "Letter",
       },
     },
     TilePlayer: {
       keySchema: { x: "int32", y: "int32" },
-      schema: {
+      valueSchema: {
         value: "address",
       },
     },
     Treasury: {
       keySchema: {},
-      schema: {
+      valueSchema: {
         value: "uint256",
       },
     },
     Points: {
       keySchema: { player: "address" },
-      schema: {
+      valueSchema: {
         value: "uint32",
       },
     },
     Spent: {
       keySchema: { player: "address", id: "uint256" },
-      schema: {
+      valueSchema: {
         value: "uint256",
       },
-      ephemeral: true,
+      offchainOnly: true,
     },
     LetterCount: {
       keySchema: { letter: "Letter" },
-      schema: {
+      valueSchema: {
         value: "uint32",
       },
     },
     Claimed: {
       keySchema: { player: "address" },
-      schema: {
+      valueSchema: {
         value: "bool",
       },
     },
@@ -77,7 +76,7 @@ export default mudConfig({
       keySchema: {
         id: "uint256",
       },
-      schema: {
+      valueSchema: {
         player: "address",
         direction: "Direction",
         timestamp: "uint256",
@@ -86,7 +85,7 @@ export default mudConfig({
         word: "uint8[]",
         filledWord: "uint8[]",
       },
-      ephemeral: true,
+      offchainOnly: true,
     },
     PointsResult: {
       keySchema: {
@@ -94,10 +93,10 @@ export default mudConfig({
         player: "address",
         pointsId: "int16",
       },
-      schema: {
+      valueSchema: {
         points: "uint32",
       },
-      ephemeral: true,
+      offchainOnly: true,
     },
   },
   enums: {

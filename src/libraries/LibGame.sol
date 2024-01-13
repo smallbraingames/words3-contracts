@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Status} from "codegen/Types.sol";
-import {GameConfig, MerkleRootConfig, GameConfigData, VRGDAConfig, VRGDAConfigData} from "codegen/Tables.sol";
+import {Status} from "codegen/common.sol";
+import {GameConfig, MerkleRootConfig, GameConfigData, VRGDAConfig, VRGDAConfigData} from "codegen/index.sol";
 
 library LibGame {
     function getGameStatus() internal view returns (Status) {

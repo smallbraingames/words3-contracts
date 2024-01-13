@@ -2,8 +2,8 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/Types.sol";
-import {TileLetter, TilePlayer, MerkleRootConfig, Points, GameConfig} from "codegen/Tables.sol";
+import {Letter, Direction} from "codegen/common.sol";
+import {TileLetter, TilePlayer, MerkleRootConfig, Points, GameConfig} from "codegen/index.sol";
 
 import {Bound} from "common/Bound.sol";
 import {Coord} from "common/Coord.sol";
@@ -25,11 +25,10 @@ import {
 } from "common/Errors.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-import {Merkle} from "../murky/src/Merkle.sol";
+import {Words3Test} from "../Words3Test.t.sol";import {Merkle} from "../murky/src/Merkle.sol";
 import {Wrapper} from "./Wrapper.sol";
 
-contract LibPlayTest is MudTest {
+contract LibPlayTest is Words3Test {
     IWorld world;
     bytes32[] public words;
     Merkle private m;
@@ -63,7 +62,7 @@ contract LibPlayTest is MudTest {
     }
 
     function testSetTiles() public {
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         TileLetter.set(0, 0, Letter.E);
         TilePlayer.set(0, 0, address(0x123));
         Letter[] memory word = new Letter[](4);
@@ -102,7 +101,7 @@ contract LibPlayTest is MudTest {
         vm.assume(startY >= -1e9 && startY <= 1e9);
         fill = uint8(bound(fill, 1, 26));
         Coord memory startCoord = Coord({x: startX, y: startY});
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         Direction direction = directionRightToLeft ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
         Letter[] memory word = new Letter[](wordRaw.length);
         Letter[] memory expectedFilledWord = new Letter[](wordRaw.length);
@@ -146,7 +145,7 @@ contract LibPlayTest is MudTest {
         }
         address topPlayer = address(0x123);
         address leftPlayer = address(0x321);
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         words.push(keccak256(bytes.concat(keccak256(abi.encode(word)))));
         MerkleRootConfig.set(m.getRoot(words));
         for (uint256 i = 1; i < word.length; i++) {
@@ -169,7 +168,7 @@ contract LibPlayTest is MudTest {
         uint32 p2pointsl2r;
         uint32 p1pointst2b;
         uint32 p2pointst2b;
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         GameConfig.setCrossWordRewardFraction(3);
         LibPoints.setBuildsOnWordRewards(points, l2r, 1);
         p1pointsl2r = Points.get(topPlayer);
@@ -200,7 +199,7 @@ contract LibPlayTest is MudTest {
         word[2] = Letter.A; // (2, 0)
         word[3] = Letter.C; // (3, 0)
         word[4] = Letter.K; // (4, 0)
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         // Q, which is directly built on
         TileLetter.set(startX, startY, Letter.Q);
         TilePlayer.set(startX, startY, directlyBuildsOn);
@@ -334,7 +333,7 @@ contract LibPlayTest is MudTest {
         word[1] = Letter.C;
         word[2] = Letter.E;
 
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         TileLetter.set(0, 0, Letter.I);
         MerkleRootConfig.set(m.getRoot(words));
         vm.stopPrank();
@@ -380,7 +379,7 @@ contract LibPlayTest is MudTest {
         vm.expectRevert();
         wrapper.playCheckWord(word, proof, Coord({x: startX, y: startY}), dir);
 
-        vm.startPrank(worldAddress);
+        vm.startPrank(deployerAddress);
         MerkleRootConfig.set(m.getRoot(words));
         vm.stopPrank();
         bytes32[] memory iceProof = m.getProof(words, 1);

@@ -2,19 +2,17 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/Types.sol";
-import {MerkleRootConfig, TileLetter, TilePlayer, Points} from "codegen/Tables.sol";
+import {Letter, Direction} from "codegen/common.sol";
+import {MerkleRootConfig, TileLetter, TilePlayer, Points} from "codegen/index.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
 import {GameStartedOrOver} from "common/Errors.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-import {getKeysWithValue} from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
-import {Merkle} from "../murky/src/Merkle.sol";
+import {Words3Test} from "../Words3Test.t.sol";import {Merkle} from "../murky/src/Merkle.sol";
 
-contract CrossWord is MudTest {
+contract CrossWord is Words3Test {
     IWorld world;
     bytes32[] public words;
     Merkle private m;

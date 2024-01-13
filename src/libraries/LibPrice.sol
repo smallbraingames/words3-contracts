@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {VRGDAConfig, VRGDAConfigData, LetterCount} from "codegen/Tables.sol";
-import {Letter} from "codegen/Types.sol";
+import {VRGDAConfig, VRGDAConfigData, LetterCount} from "codegen/index.sol";
+import {Letter} from "codegen/common.sol";
 
 import {LETTER_WEIGHT_FRACTION} from "common/Constants.sol";
 import {LibPoints} from "libraries/LibPoints.sol";

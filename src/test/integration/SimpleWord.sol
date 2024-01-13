@@ -2,19 +2,17 @@
 pragma solidity >=0.8.0;
 
 import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/Types.sol";
-import {MerkleRootConfig, TileLetter, TilePlayer} from "codegen/Tables.sol";
+import {Letter, Direction} from "codegen/common.sol";
+import {MerkleRootConfig, TileLetter, TilePlayer} from "codegen/index.sol";
 
 import {Coord} from "common/Coord.sol";
 import {Bound} from "common/Bound.sol";
 import {GameStartedOrOver} from "common/Errors.sol";
 
 import "forge-std/Test.sol";
-import {MudTest} from "@latticexyz/store/src/MudTest.sol";
-import {getKeysWithValue} from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
-import {Merkle} from "../murky/src/Merkle.sol";
+import {Words3Test} from "../Words3Test.t.sol";import {Merkle} from "../murky/src/Merkle.sol";
 
-contract SimpleWord is MudTest {
+contract SimpleWord is Words3Test {
     IWorld world;
     bytes32[] public words;
     Merkle private m;
@@ -39,8 +37,8 @@ contract SimpleWord is MudTest {
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
         world.start(initialWord, 10, m.getRoot(words), 0, 0, 0, 1e16, 3);
-        assertEq(uint8(TileLetter.get(world, 0, 0)), uint8(Letter.H));
-        assertEq(uint8(TileLetter.get(world, 1, 0)), uint8(Letter.I));
+        assertEq(uint8(TileLetter.get(0, 0)), uint8(Letter.H));
+        assertEq(uint8(TileLetter.get(1, 0)), uint8(Letter.I));
     }
 
     function testPlayHi() public {
