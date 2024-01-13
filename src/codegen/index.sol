@@ -6,6 +6,7 @@ pragma solidity >=0.8.21;
 import { GameConfig, GameConfigData, GameConfigTableId } from "./tables/GameConfig.sol";
 import { MerkleRootConfig, MerkleRootConfigTableId } from "./tables/MerkleRootConfig.sol";
 import { VRGDAConfig, VRGDAConfigData, VRGDAConfigTableId } from "./tables/VRGDAConfig.sol";
+import { HostConfig, HostConfigData, HostConfigTableId } from "./tables/HostConfig.sol";
 import { TileLetter, TileLetterTableId } from "./tables/TileLetter.sol";
 import { TilePlayer, TilePlayerTableId } from "./tables/TilePlayer.sol";
 import { Treasury, TreasuryTableId } from "./tables/Treasury.sol";

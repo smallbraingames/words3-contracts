@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/common.sol";
-import {MerkleRootConfig, TileLetter, TilePlayer, Points} from "codegen/index.sol";
+import { Direction, Letter } from "codegen/common.sol";
+import { MerkleRootConfig, Points, TileLetter, TilePlayer } from "codegen/index.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 
-import {Coord} from "common/Coord.sol";
-import {Bound} from "common/Bound.sol";
-import {GameStartedOrOver} from "common/Errors.sol";
+import { Bound } from "common/Bound.sol";
+import { Coord } from "common/Coord.sol";
+import { GameStartedOrOver } from "common/Errors.sol";
 
+import { Words3Test } from "../Words3Test.t.sol";
+import { Merkle } from "../murky/src/Merkle.sol";
 import "forge-std/Test.sol";
-import {Words3Test} from "../Words3Test.t.sol";import {Merkle} from "../murky/src/Merkle.sol";
 
 contract CrossWord is Words3Test {
     IWorld world;
@@ -109,7 +110,7 @@ contract CrossWord is Words3Test {
         word[3] = Letter.T;
         Bound[] memory bounds = new Bound[](4);
         bytes32[] memory proof = m.getProof(words, 1);
-        world.play(word, proof, Coord({x: 1, y: -2}), Direction.TOP_TO_BOTTOM, bounds);
+        world.play(word, proof, Coord({ x: 1, y: -2 }), Direction.TOP_TO_BOTTOM, bounds);
         assertEq(Points.get(address(0xface)), 9);
         assertEq(Points.get(address(0)), 9);
 
@@ -123,8 +124,8 @@ contract CrossWord is Words3Test {
         bytes32[] memory mainCrossWordProof = m.getProof(words, 0);
         bytes32[] memory crossCrossWordProof = m.getProof(words, 2);
         Bound[] memory crossWordBounds = new Bound[](5);
-        crossWordBounds[3] = Bound({positive: 0, negative: 1, proof: crossCrossWordProof});
-        world.play(crossWord, mainCrossWordProof, Coord({x: -3, y: 1}), Direction.LEFT_TO_RIGHT, crossWordBounds);
+        crossWordBounds[3] = Bound({ positive: 0, negative: 1, proof: crossCrossWordProof });
+        world.play(crossWord, mainCrossWordProof, Coord({ x: -3, y: 1 }), Direction.LEFT_TO_RIGHT, crossWordBounds);
         assertEq(Points.get(address(0xface)), 31);
         assertEq(Points.get(address(0)), 31);
         vm.stopPrank();
@@ -142,7 +143,7 @@ contract CrossWord is Words3Test {
         bytes32[] memory itProof = m.getProof(words, 7);
         Bound[] memory itBounds = new Bound[](7);
         vm.prank(player2);
-        world.play(itWord, itProof, Coord({x: -5, y: 1}), Direction.LEFT_TO_RIGHT, itBounds);
+        world.play(itWord, itProof, Coord({ x: -5, y: 1 }), Direction.LEFT_TO_RIGHT, itBounds);
         assertEq(Points.get(player2), 12);
         assertEq(Points.get(address(0xface)), 35);
 
@@ -157,10 +158,10 @@ contract CrossWord is Words3Test {
 
         vm.startPrank(player2);
         vm.expectRevert();
-        world.play(ahiWord, ahiProof, Coord({x: -5, y: 1}), Direction.TOP_TO_BOTTOM, ahiBounds);
+        world.play(ahiWord, ahiProof, Coord({ x: -5, y: 1 }), Direction.TOP_TO_BOTTOM, ahiBounds);
         vm.expectRevert();
-        world.play(ahiWord, ahiProof, Coord({x: -5, y: 0}), Direction.LEFT_TO_RIGHT, ahiBounds);
-        world.play(ahiWord, ahiProof, Coord({x: -5, y: -1}), Direction.TOP_TO_BOTTOM, ahiBounds);
+        world.play(ahiWord, ahiProof, Coord({ x: -5, y: 0 }), Direction.LEFT_TO_RIGHT, ahiBounds);
+        world.play(ahiWord, ahiProof, Coord({ x: -5, y: -1 }), Direction.TOP_TO_BOTTOM, ahiBounds);
         vm.stopPrank();
         assertEq(Points.get(player2), 41);
         assertEq(Points.get(address(0xface)), 35);
@@ -172,7 +173,7 @@ contract CrossWord is Words3Test {
         taWord[1] = Letter.EMPTY;
         bytes32[] memory taProof = m.getProof(words, 6);
         Bound[] memory taBounds = new Bound[](2);
-        world.play(taWord, taProof, Coord({x: -6, y: -1}), Direction.LEFT_TO_RIGHT, taBounds);
+        world.play(taWord, taProof, Coord({ x: -6, y: -1 }), Direction.LEFT_TO_RIGHT, taBounds);
         assertEq(Points.get(player2), 42);
         assertEq(Points.get(address(0xface)), 38);
         vm.stopPrank();
@@ -185,19 +186,19 @@ contract CrossWord is Words3Test {
         tabWord[2] = Letter.B;
         bytes32[] memory tabProof = m.getProof(words, 5);
         Bound[] memory tabBounds = new Bound[](3);
-        tabBounds[1] = Bound({positive: 1, negative: 0, proof: m.getProof(words, 8)});
-        tabBounds[2] = Bound({positive: 8, negative: 0, proof: m.getProof(words, 3)});
+        tabBounds[1] = Bound({ positive: 1, negative: 0, proof: m.getProof(words, 8) });
+        tabBounds[2] = Bound({ positive: 8, negative: 0, proof: m.getProof(words, 3) });
         vm.expectRevert();
-        world.play(tabWord, tabProof, Coord({x: -6, y: -1}), Direction.TOP_TO_BOTTOM, tabBounds);
-        tabBounds[2] = Bound({positive: 7, negative: 0, proof: m.getProof(words, 3)});
-        world.play(tabWord, tabProof, Coord({x: -6, y: -1}), Direction.TOP_TO_BOTTOM, tabBounds);
+        world.play(tabWord, tabProof, Coord({ x: -6, y: -1 }), Direction.TOP_TO_BOTTOM, tabBounds);
+        tabBounds[2] = Bound({ positive: 7, negative: 0, proof: m.getProof(words, 3) });
+        world.play(tabWord, tabProof, Coord({ x: -6, y: -1 }), Direction.TOP_TO_BOTTOM, tabBounds);
         // 105
         assertEq(Points.get(player2), 64);
         assertEq(Points.get(address(0xface)), 154);
         vm.stopPrank();
 
         world.donate();
-        world.donate{value: 218 ether}();
+        world.donate{ value: 218 ether }();
 
         vm.expectRevert();
         world.end();
@@ -206,7 +207,7 @@ contract CrossWord is Words3Test {
         world.end();
 
         vm.expectRevert();
-        world.donate{value: 100 ether}();
+        world.donate{ value: 100 ether }();
 
         vm.expectRevert();
         world.claim(address(0));

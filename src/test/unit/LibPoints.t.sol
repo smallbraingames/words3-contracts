@@ -1,18 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {IWorld} from "codegen/world/IWorld.sol";
-import {BonusType, Letter, Direction} from "codegen/common.sol";
+import { BonusType, Direction, Letter } from "codegen/common.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 
-import {Bonus} from "common/Bonus.sol";
-import {Coord} from "common/Coord.sol";
-import {NoPointsForEmptyLetter} from "common/Errors.sol";
-import {BONUS_DISTANCE} from "common/Constants.sol";
-import {LibBonus} from "libraries/LibPoints.sol";
-import {LibPoints} from "libraries/LibPoints.sol";
+import { Bonus } from "common/Bonus.sol";
 
+import { BONUS_DISTANCE } from "common/Constants.sol";
+import { Coord } from "common/Coord.sol";
+import { NoPointsForEmptyLetter } from "common/Errors.sol";
+import { LibBonus } from "libraries/LibPoints.sol";
+import { LibPoints } from "libraries/LibPoints.sol";
+
+import { Words3Test } from "../Words3Test.t.sol";
+import { Wrapper } from "./Wrapper.sol";
 import "forge-std/Test.sol";
-import {Words3Test} from "../Words3Test.t.sol";import {Wrapper} from "./Wrapper.sol";
 
 contract LibPointsTest is Words3Test {
     Wrapper wrapper;
@@ -34,7 +36,7 @@ contract LibPointsTest is Words3Test {
     }
 
     function testGetBonusLetterPoints() public {
-        Bonus memory bonus = Bonus({bonusValue: 2, bonusType: BonusType.MULTIPLY_LETTER});
+        Bonus memory bonus = Bonus({ bonusValue: 2, bonusType: BonusType.MULTIPLY_LETTER });
         assertEq(LibPoints.getBonusLetterPoints(Letter.A, bonus), 2);
         assertEq(LibPoints.getBonusLetterPoints(Letter.B, bonus), 6);
         assertEq(LibPoints.getBonusLetterPoints(Letter.C, bonus), 6);
@@ -64,7 +66,7 @@ contract LibPointsTest is Words3Test {
 
     function testFuzzGetBonusLetterPoints(uint8 multiplier) public {
         vm.assume(multiplier > 0);
-        Bonus memory bonus = Bonus({bonusValue: uint32(multiplier), bonusType: BonusType.MULTIPLY_LETTER});
+        Bonus memory bonus = Bonus({ bonusValue: uint32(multiplier), bonusType: BonusType.MULTIPLY_LETTER });
         for (uint256 i = 1; i <= 26; i++) {
             assertEq(
                 LibPoints.getBonusLetterPoints(Letter(i), bonus), LibPoints.getBaseLetterPoints(Letter(i)) * multiplier
@@ -81,7 +83,7 @@ contract LibPointsTest is Words3Test {
         }
         playWord[BONUS_DISTANCE - 1] = Letter.EMPTY;
 
-        Coord memory coord = Coord({x: 0, y: 0});
+        Coord memory coord = Coord({ x: 0, y: 0 });
         Direction direction = Direction.LEFT_TO_RIGHT;
         uint32 points = LibPoints.getWordPoints(playWord, filledWord, coord, direction);
 
@@ -115,7 +117,7 @@ contract LibPointsTest is Words3Test {
             }
         }
         Direction direction = Direction(directionRaw ? 1 : 0);
-        Coord memory coord = direction == Direction.LEFT_TO_RIGHT ? Coord({x: 1, y: 0}) : Coord({x: 0, y: 1});
+        Coord memory coord = direction == Direction.LEFT_TO_RIGHT ? Coord({ x: 1, y: 0 }) : Coord({ x: 0, y: 1 });
         uint32 points = LibPoints.getWordPoints(playWord, filledWord, coord, direction);
 
         uint32 basePoints = 0;

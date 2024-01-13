@@ -1,18 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Direction, Letter, BonusType} from "codegen/common.sol";
-import {GameConfig, Points, PointsResult} from "codegen/index.sol";
+import { BonusType, Direction, Letter } from "codegen/common.sol";
+import { GameConfig, Points, PointsResult } from "codegen/index.sol";
+import { Bonus } from "common/Bonus.sol";
+import { Bound } from "common/Bound.sol";
+import { SINGLETON_ADDRESS } from "common/Constants.sol";
+import { Coord } from "common/Coord.sol";
 
-import {Bonus} from "common/Bonus.sol";
-import {Bound} from "common/Bound.sol";
-import {Coord} from "common/Coord.sol";
-import {SINGLETON_ADDRESS} from "common/Constants.sol";
-import {LibBoard} from "libraries/LibBoard.sol";
-import {LibBonus} from "libraries/LibBonus.sol";
-import {LibPlayer} from "libraries/LibPlayer.sol";
-
-import {NoPointsForEmptyLetter} from "common/Errors.sol";
+import { NoPointsForEmptyLetter } from "common/Errors.sol";
+import { LibBoard } from "libraries/LibBoard.sol";
+import { LibBonus } from "libraries/LibBonus.sol";
+import { LibPlayer } from "libraries/LibPlayer.sol";
 
 library LibPoints {
     /// @notice Updates the score for a player for the main word and cross words
@@ -25,7 +24,10 @@ library LibPoints {
         Bound[] memory bounds,
         address player,
         uint256 playResultId
-    ) internal returns (uint32) {
+    )
+        internal
+        returns (uint32)
+    {
         uint32 points = getPoints(playWord, filledWord, start, direction, bounds);
         LibPlayer.incrementScore(player, points);
         PointsResult.set(playResultId, player, -1, points);
@@ -38,7 +40,11 @@ library LibPoints {
         Coord memory start,
         Direction direction,
         Bound[] memory bounds
-    ) internal view returns (uint32) {
+    )
+        internal
+        view
+        returns (uint32)
+    {
         uint32 points = getWordPoints(playWord, filledWord, start, direction);
 
         // Count points for cross words (double counts by design)
@@ -95,7 +101,12 @@ library LibPoints {
         return Points.get(SINGLETON_ADDRESS);
     }
 
-    function getWordPoints(Letter[] memory word, Letter[] memory filledWord, Coord memory start, Direction direction)
+    function getWordPoints(
+        Letter[] memory word,
+        Letter[] memory filledWord,
+        Coord memory start,
+        Direction direction
+    )
         internal
         pure
         returns (uint32)

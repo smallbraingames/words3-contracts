@@ -1,30 +1,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Direction, Letter} from "codegen/common.sol";
-import {MerkleRootConfig, PlayResult} from "codegen/index.sol";
-
-import {MAX_WORD_LENGTH} from "common/Constants.sol";
-import {Bound} from "common/Bound.sol";
-import {Coord} from "common/Coord.sol";
+import { Direction, Letter } from "codegen/common.sol";
+import { MerkleRootConfig, PlayResult } from "codegen/index.sol";
+import { Bound } from "common/Bound.sol";
+import { MAX_WORD_LENGTH } from "common/Constants.sol";
+import { Coord } from "common/Coord.sol";
 import {
-    WordTooLong,
-    InvalidWordStart,
-    InvalidWordEnd,
     EmptyLetterNotOnExistingLetter,
+    InvalidBoundLength,
+    InvalidWordEnd,
+    InvalidWordStart,
     LetterOnExistingLetter,
     LonelyWord,
     NoLettersPlayed,
-    WordNotInDictionary,
-    InvalidBoundLength,
+    NonemptyBoundEdges,
     NonzeroEmptyLetterBound,
-    NonemptyBoundEdges
+    WordNotInDictionary,
+    WordTooLong
 } from "common/Errors.sol";
-import {LibBoard} from "libraries/LibBoard.sol";
-import {LibPoints} from "libraries/LibPoints.sol";
-import {LibTile} from "libraries/LibTile.sol";
+import { LibBoard } from "libraries/LibBoard.sol";
+import { LibPoints } from "libraries/LibPoints.sol";
+import { LibTile } from "libraries/LibTile.sol";
 
-import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 library LibPlay {
     function play(
@@ -34,7 +33,9 @@ library LibPlay {
         Direction direction,
         Bound[] memory bounds,
         address player
-    ) internal {
+    )
+        internal
+    {
         checkWord(word, proof, coord, direction);
         address[] memory buildsOnPlayers = checkCrossWords(word, coord, direction, bounds);
         Letter[] memory filledWord = setTiles(word, coord, direction, player);
@@ -51,7 +52,9 @@ library LibPlay {
         Direction direction,
         address player,
         uint256 playResultId
-    ) internal {
+    )
+        internal
+    {
         PlayResult.set(
             playResultId,
             player,
@@ -64,7 +67,12 @@ library LibPlay {
         );
     }
 
-    function setTiles(Letter[] memory word, Coord memory coord, Direction direction, address player)
+    function setTiles(
+        Letter[] memory word,
+        Coord memory coord,
+        Direction direction,
+        address player
+    )
         internal
         returns (Letter[] memory)
     {
@@ -83,7 +91,12 @@ library LibPlay {
         return filledWord;
     }
 
-    function checkCrossWords(Letter[] memory word, Coord memory coord, Direction direction, Bound[] memory bounds)
+    function checkCrossWords(
+        Letter[] memory word,
+        Coord memory coord,
+        Direction direction,
+        Bound[] memory bounds
+    )
         internal
         view
         returns (address[] memory)
@@ -151,8 +164,14 @@ library LibPlay {
     }
 
     /// @notice Checks if a word is a valid move (without checking cross words)
-    /// Specifically, this checks that a word is 1) has valid bounds, 2) is played on another word & has at least one letter and 3) is a valid word
-    function checkWord(Letter[] memory word, bytes32[] memory proof, Coord memory coord, Direction direction)
+    /// Specifically, this checks that a word is 1) has valid bounds, 2) is played on another word & has at least one
+    /// letter and 3) is a valid word
+    function checkWord(
+        Letter[] memory word,
+        bytes32[] memory proof,
+        Coord memory coord,
+        Direction direction
+    )
         internal
         view
     {
@@ -249,7 +268,11 @@ library LibPlay {
         return uint8Word;
     }
 
-    function getPlayResultId(Letter[] memory word, Coord memory coord, Direction direction)
+    function getPlayResultId(
+        Letter[] memory word,
+        Coord memory coord,
+        Direction direction
+    )
         internal
         pure
         returns (uint256)

@@ -27,6 +27,13 @@ export default mudConfig({
         power: "int256",
       },
     },
+    HostConfig: {
+      keySchema: {},
+      valueSchema: {
+        host: "address",
+        hostFeePercent: "uint256"
+      },
+    },
     // Game
     TileLetter: {
       keySchema: { x: "int32", y: "int32" },

@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Points} from "codegen/index.sol";
-
-import {SINGLETON_ADDRESS} from "common/Constants.sol";
+import { Points } from "codegen/index.sol";
+import { SINGLETON_ADDRESS } from "common/Constants.sol";
 
 library LibPlayer {
     function incrementScore(address player, uint32 increment) internal {

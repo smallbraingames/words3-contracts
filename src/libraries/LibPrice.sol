@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {VRGDAConfig, VRGDAConfigData, LetterCount} from "codegen/index.sol";
-import {Letter} from "codegen/common.sol";
-
-import {LETTER_WEIGHT_FRACTION} from "common/Constants.sol";
-import {LibPoints} from "libraries/LibPoints.sol";
-
+import { Letter } from "codegen/common.sol";
+import { LetterCount, VRGDAConfig, VRGDAConfigData } from "codegen/index.sol";
+import { LETTER_WEIGHT_FRACTION } from "common/Constants.sol";
+import { LibPoints } from "libraries/LibPoints.sol";
 import {
-    wadExp, wadDiv, wadLn, wadMul, wadPow, toWadUnsafe, toDaysWadUnsafe
+    toDaysWadUnsafe, toWadUnsafe, wadDiv, wadExp, wadLn, wadMul, wadPow
 } from "solmate/src/utils/SignedWadMath.sol";
 
 library LibPrice {

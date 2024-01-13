@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {IWorld} from "codegen/world/IWorld.sol";
-import {GameConfig, MerkleRootConfig, VRGDAConfig} from "codegen/index.sol";
-import {Status} from "codegen/common.sol";
+import { Status } from "codegen/common.sol";
+import { GameConfig, MerkleRootConfig, VRGDAConfig } from "codegen/index.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 
-import {LibGame} from "libraries/LibGame.sol";
+import { LibGame } from "libraries/LibGame.sol";
 
+import { Words3Test } from "../Words3Test.t.sol";
 import "forge-std/Test.sol";
-import {Words3Test} from "../Words3Test.t.sol";
+
 contract LibGameTest is Words3Test {
     IWorld world;
 
@@ -77,7 +78,9 @@ contract LibGameTest is Words3Test {
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
         uint32 crossWordRewardFraction
-    ) public {
+    )
+        public
+    {
         vm.assume(endTime > block.timestamp);
         vm.startPrank(deployerAddress);
         LibGame.startGame(

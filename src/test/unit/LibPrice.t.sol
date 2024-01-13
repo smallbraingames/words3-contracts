@@ -2,16 +2,17 @@
 // Linear VRGDA tests adapted from https://github.com/transmissions11/VRGDAs/blob/master/test/LinearVRGDA.t.sol
 pragma solidity >=0.8.0;
 
-import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/common.sol";
-import {VRGDAConfig, LetterCount} from "codegen/index.sol";
+import { Direction, Letter } from "codegen/common.sol";
+import { LetterCount, VRGDAConfig } from "codegen/index.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 
-import {NotEnoughValue} from "common/Errors.sol";
-import {LibPrice} from "libraries/LibPrice.sol";
+import { NotEnoughValue } from "common/Errors.sol";
+import { LibPrice } from "libraries/LibPrice.sol";
 
+import { Words3Test } from "../Words3Test.t.sol";
 import "forge-std/Test.sol";
-import {Words3Test} from "../Words3Test.t.sol";import {
-    toWadUnsafe, toDaysWadUnsafe, fromDaysWadUnsafe, unsafeWadDiv, wadPow
+import {
+    fromDaysWadUnsafe, toDaysWadUnsafe, toWadUnsafe, unsafeWadDiv, wadPow
 } from "solmate/src/utils/SignedWadMath.sol";
 
 contract LibPriceTest is Words3Test {
@@ -93,7 +94,9 @@ contract LibPriceTest is Words3Test {
         uint256 powerRaw,
         uint256 time,
         uint32 letterCount
-    ) public {
+    )
+        public
+    {
         int256 targetPrice = int256(bound(targetPriceRaw, 0.003e18, 1e19));
         int256 priceDecay = int256(bound(priceDecayRaw, 0.003e18, 0.999e18));
         uint256 perDayInitialNonWad = bound(perDayInitialRaw, 1, 1000);
@@ -124,13 +127,15 @@ contract LibPriceTest is Words3Test {
         uint256 powerRaw,
         uint256 time,
         uint32 letterCount
-    ) public {
+    )
+        public
+    {
         int256 targetPrice = int256(bound(targetPriceRaw, 0.003e18, 0.06e18));
         int256 priceDecay = int256(bound(priceDecayRaw, 0.3e18, 0.8e18));
         uint256 perDayInitialNonWad = bound(perDayInitialRaw, 10, 100);
         int256 power = int256(bound(powerRaw, 1.2e18, 5e18));
         uint256 timeDays = bound(time, 0, 8);
-        time = bound(time, 1 + timeDays * 86400, 9 days);
+        time = bound(time, 1 + timeDays * 86_400, 9 days);
         letterCount = uint32(bound(letterCount, 0, perDayInitialNonWad * 5 * (timeDays + 1)));
 
         vm.startPrank(deployerAddress);
@@ -149,7 +154,8 @@ contract LibPriceTest is Words3Test {
         LibPrice.getLetterPrice(Letter.D);
     }
 
-    /// ===== Modified tests from t11s https://github.com/transmissions11/VRGDAs/blob/master/test/LinearVRGDA.t.sol =====
+    /// ===== Modified tests from t11s https://github.com/transmissions11/VRGDAs/blob/master/test/LinearVRGDA.t.sol
+    /// =====
     /// When power is set to 1, the VRGDA is linear
 
     function testLinearTargetPrice() public {
@@ -209,13 +215,17 @@ contract LibPriceTest is Words3Test {
         assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), uint256(VRGDAConfig.getTargetPrice()), 0.00000001e18);
     }
 
-    /// ===== Copied from solmate's DSTestPlus (https://github.com/transmissions11/solmate/tree/main/src/test/utils) =====
+    /// ===== Copied from solmate's DSTestPlus (https://github.com/transmissions11/solmate/tree/main/src/test/utils)
+    /// =====
 
     function assertRelApproxEq(
         uint256 a,
         uint256 b,
         uint256 maxPercentDelta // An 18 decimal fixed point number, where 1e18 == 100%
-    ) internal virtual {
+    )
+        internal
+        virtual
+    {
         if (b == 0) return assertEq(a, b); // If the expected is 0, actual must be too.
 
         uint256 percentDelta = ((a > b ? a - b : b - a) * 1e18) / b;

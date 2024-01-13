@@ -1,32 +1,34 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {IWorld} from "codegen/world/IWorld.sol";
-import {Letter, Direction} from "codegen/common.sol";
-import {TileLetter, TilePlayer, MerkleRootConfig, Points, GameConfig} from "codegen/index.sol";
+import { Direction, Letter } from "codegen/common.sol";
+import { GameConfig, MerkleRootConfig, Points, TileLetter, TilePlayer } from "codegen/index.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 
-import {Bound} from "common/Bound.sol";
-import {Coord} from "common/Coord.sol";
-import {LibPlay} from "libraries/LibPlay.sol";
-import {LibBoard} from "libraries/LibBoard.sol";
-import {LibPoints} from "libraries/LibPoints.sol";
+import { Bound } from "common/Bound.sol";
+import { Coord } from "common/Coord.sol";
+
 import {
-    WordTooLong,
-    InvalidWordStart,
-    InvalidWordEnd,
     EmptyLetterNotOnExistingLetter,
+    InvalidBoundLength,
+    InvalidWordEnd,
+    InvalidWordStart,
     LetterOnExistingLetter,
     LonelyWord,
     NoLettersPlayed,
-    WordNotInDictionary,
-    InvalidBoundLength,
+    NonemptyBoundEdges,
     NonzeroEmptyLetterBound,
-    NonemptyBoundEdges
+    WordNotInDictionary,
+    WordTooLong
 } from "common/Errors.sol";
+import { LibBoard } from "libraries/LibBoard.sol";
+import { LibPlay } from "libraries/LibPlay.sol";
+import { LibPoints } from "libraries/LibPoints.sol";
 
+import { Words3Test } from "../Words3Test.t.sol";
+import { Merkle } from "../murky/src/Merkle.sol";
+import { Wrapper } from "./Wrapper.sol";
 import "forge-std/Test.sol";
-import {Words3Test} from "../Words3Test.t.sol";import {Merkle} from "../murky/src/Merkle.sol";
-import {Wrapper} from "./Wrapper.sol";
 
 contract LibPlayTest is Words3Test {
     IWorld world;
@@ -71,7 +73,7 @@ contract LibPlayTest is Words3Test {
         word[2] = Letter.S;
         word[3] = Letter.T;
         Letter[] memory filledWord =
-            LibPlay.setTiles(word, Coord({x: -1, y: 0}), Direction.LEFT_TO_RIGHT, address(this));
+            LibPlay.setTiles(word, Coord({ x: -1, y: 0 }), Direction.LEFT_TO_RIGHT, address(this));
         vm.stopPrank();
         assertEq(uint8(TileLetter.get(-1, 0)), uint8(Letter.T));
         assertEq(uint8(TileLetter.get(0, 0)), uint8(Letter.E));
@@ -96,11 +98,13 @@ contract LibPlayTest is Words3Test {
         int32 startY,
         address player,
         uint8 fill
-    ) public {
+    )
+        public
+    {
         vm.assume(startX >= -1e9 && startX <= 1e9);
         vm.assume(startY >= -1e9 && startY <= 1e9);
         fill = uint8(bound(fill, 1, 26));
-        Coord memory startCoord = Coord({x: startX, y: startY});
+        Coord memory startCoord = Coord({ x: startX, y: startY });
         vm.startPrank(deployerAddress);
         Direction direction = directionRightToLeft ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
         Letter[] memory word = new Letter[](wordRaw.length);
@@ -131,14 +135,19 @@ contract LibPlayTest is Words3Test {
         }
     }
 
-    function testFuzzCheckCrossWordsBuildsOnPlayers(int32 startX, int32 startY, uint8[] memory wordRaw, uint32 points)
+    function testFuzzCheckCrossWordsBuildsOnPlayers(
+        int32 startX,
+        int32 startY,
+        uint8[] memory wordRaw,
+        uint32 points
+    )
         public
     {
         vm.assume(startX >= -1e9 && startX <= 1e9);
         vm.assume(startY >= -1e9 && startY <= 1e9);
         vm.assume(wordRaw.length <= 40);
         vm.assume(wordRaw.length > 0);
-        Coord memory startCoord = Coord({x: startX, y: startY});
+        Coord memory startCoord = Coord({ x: startX, y: startY });
         Letter[] memory word = new Letter[](wordRaw.length);
         for (uint256 i = 0; i < wordRaw.length; i++) {
             word[i] = Letter(bound(wordRaw[i], 1, 26));
@@ -158,7 +167,8 @@ contract LibPlayTest is Words3Test {
         }
         vm.stopPrank();
         Bound[] memory bounds = new Bound[](word.length);
-        bounds[0] = Bound({positive: uint16(word.length) - 1, negative: 0, proof: m.getProof(words, words.length - 1)});
+        bounds[0] =
+            Bound({ positive: uint16(word.length) - 1, negative: 0, proof: m.getProof(words, words.length - 1) });
         for (uint256 i = 1; i < word.length; i++) {
             word[i] = Letter.EMPTY;
         }
@@ -186,7 +196,7 @@ contract LibPlayTest is Words3Test {
     function testFuzzCheckCrossWords(int32 startX, int32 startY, bool directionRightToLeft) public {
         vm.assume(startX >= -1e9 && startX <= 1e9);
         vm.assume(startY >= -1e9 && startY <= 1e9);
-        Coord memory startCoord = Coord({x: startX, y: startY});
+        Coord memory startCoord = Coord({ x: startX, y: startY });
         Direction direction = directionRightToLeft ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
 
         address directlyBuildsOn = address(0x321);
@@ -251,39 +261,39 @@ contract LibPlayTest is Words3Test {
         bytes32[] memory emptyProof = new bytes32[](1);
         bytes32[] memory lapProof = m.getProof(words, 0);
         bytes32[] memory iceProof = m.getProof(words, 1);
-        boundsInvalid[0] = Bound({positive: 0, negative: 0, proof: emptyProof});
-        boundsInvalid[1] = Bound({positive: 0, negative: 0, proof: emptyProof});
-        boundsInvalid[2] = Bound({positive: 1, negative: 1, proof: lapProof});
-        boundsInvalid[3] = Bound({positive: 1, negative: 1, proof: iceProof});
-        boundsInvalid[4] = Bound({positive: 0, negative: 0, proof: emptyProof});
-        boundsInvalid[5] = Bound({positive: 0, negative: 0, proof: emptyProof});
+        boundsInvalid[0] = Bound({ positive: 0, negative: 0, proof: emptyProof });
+        boundsInvalid[1] = Bound({ positive: 0, negative: 0, proof: emptyProof });
+        boundsInvalid[2] = Bound({ positive: 1, negative: 1, proof: lapProof });
+        boundsInvalid[3] = Bound({ positive: 1, negative: 1, proof: iceProof });
+        boundsInvalid[4] = Bound({ positive: 0, negative: 0, proof: emptyProof });
+        boundsInvalid[5] = Bound({ positive: 0, negative: 0, proof: emptyProof });
         vm.expectRevert();
         wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalid);
 
         Bound[] memory boundsInvalidTwo = new Bound[](5);
-        boundsInvalidTwo[0] = Bound({positive: 0, negative: 0, proof: emptyProof});
-        boundsInvalidTwo[1] = Bound({positive: 0, negative: 0, proof: emptyProof});
-        boundsInvalidTwo[2] = Bound({positive: 1, negative: 1, proof: lapProof});
-        boundsInvalidTwo[3] = Bound({positive: 1, negative: 1, proof: iceProof});
-        boundsInvalidTwo[4] = Bound({positive: 100, negative: 300, proof: emptyProof});
+        boundsInvalidTwo[0] = Bound({ positive: 0, negative: 0, proof: emptyProof });
+        boundsInvalidTwo[1] = Bound({ positive: 0, negative: 0, proof: emptyProof });
+        boundsInvalidTwo[2] = Bound({ positive: 1, negative: 1, proof: lapProof });
+        boundsInvalidTwo[3] = Bound({ positive: 1, negative: 1, proof: iceProof });
+        boundsInvalidTwo[4] = Bound({ positive: 100, negative: 300, proof: emptyProof });
 
         vm.expectRevert();
         wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalidTwo);
 
-        boundsInvalidTwo[4] = Bound({positive: 1, negative: 1, proof: emptyProof});
+        boundsInvalidTwo[4] = Bound({ positive: 1, negative: 1, proof: emptyProof });
         vm.expectRevert();
         wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalidTwo);
 
-        boundsInvalidTwo[4] = Bound({positive: 0, negative: 0, proof: emptyProof});
-        boundsInvalidTwo[3] = Bound({positive: 0, negative: 1, proof: m.getProof(words, 2)});
+        boundsInvalidTwo[4] = Bound({ positive: 0, negative: 0, proof: emptyProof });
+        boundsInvalidTwo[3] = Bound({ positive: 0, negative: 1, proof: m.getProof(words, 2) });
         vm.expectRevert();
         wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalidTwo);
 
-        boundsInvalidTwo[3] = Bound({positive: 1, negative: 1, proof: m.getProof(words, 2)});
+        boundsInvalidTwo[3] = Bound({ positive: 1, negative: 1, proof: m.getProof(words, 2) });
         vm.expectRevert();
         wrapper.playCheckCrossWords(word, startCoord, direction, boundsInvalidTwo);
 
-        boundsInvalidTwo[3] = Bound({positive: 1, negative: 1, proof: m.getProof(words, 1)});
+        boundsInvalidTwo[3] = Bound({ positive: 1, negative: 1, proof: m.getProof(words, 1) });
         // Does not revert
         address[] memory buildsOnPlayers = LibPlay.checkCrossWords(word, startCoord, direction, boundsInvalidTwo);
         assertEq(buildsOnPlayers.length, 5);
@@ -340,28 +350,28 @@ contract LibPlayTest is Words3Test {
 
         bytes32[] memory iceProof = m.getProof(words, 1);
         vm.expectRevert();
-        wrapper.playCheckWord(word, iceProof, Coord({x: 1, y: 0}), Direction.LEFT_TO_RIGHT);
+        wrapper.playCheckWord(word, iceProof, Coord({ x: 1, y: 0 }), Direction.LEFT_TO_RIGHT);
         vm.expectRevert();
-        wrapper.playCheckWord(word, iceProof, Coord({x: -1, y: 0}), Direction.LEFT_TO_RIGHT);
+        wrapper.playCheckWord(word, iceProof, Coord({ x: -1, y: 0 }), Direction.LEFT_TO_RIGHT);
         vm.expectRevert();
-        wrapper.playCheckWord(word, iceProof, Coord({x: 0, y: 1}), Direction.TOP_TO_BOTTOM);
+        wrapper.playCheckWord(word, iceProof, Coord({ x: 0, y: 1 }), Direction.TOP_TO_BOTTOM);
 
         word[0] = Letter.I;
         vm.expectRevert();
-        wrapper.playCheckWord(word, iceProof, Coord({x: 3, y: 3}), Direction.LEFT_TO_RIGHT);
+        wrapper.playCheckWord(word, iceProof, Coord({ x: 3, y: 3 }), Direction.LEFT_TO_RIGHT);
 
         Letter[] memory emptyWord = new Letter[](1);
         emptyWord[0] = Letter.EMPTY;
         bytes32[] memory emptyProof = new bytes32[](1);
         emptyProof[0] = bytes32(0x0);
         vm.expectRevert();
-        wrapper.playCheckWord(emptyWord, emptyProof, Coord({x: 0, y: 0}), Direction.LEFT_TO_RIGHT);
+        wrapper.playCheckWord(emptyWord, emptyProof, Coord({ x: 0, y: 0 }), Direction.LEFT_TO_RIGHT);
         vm.expectRevert();
-        wrapper.playCheckWord(emptyWord, emptyProof, Coord({x: 0, y: 0}), Direction.TOP_TO_BOTTOM);
+        wrapper.playCheckWord(emptyWord, emptyProof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM);
 
         word[0] = Letter.EMPTY;
-        LibPlay.checkWord(word, iceProof, Coord({x: 0, y: 0}), Direction.LEFT_TO_RIGHT);
-        LibPlay.checkWord(word, iceProof, Coord({x: 0, y: 0}), Direction.TOP_TO_BOTTOM);
+        LibPlay.checkWord(word, iceProof, Coord({ x: 0, y: 0 }), Direction.LEFT_TO_RIGHT);
+        LibPlay.checkWord(word, iceProof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM);
     }
 
     function testFuzzRevertCheckWord(
@@ -370,14 +380,16 @@ contract LibPlayTest is Words3Test {
         uint8[] memory wordRaw,
         bytes32[] memory proof,
         bool direction
-    ) public {
+    )
+        public
+    {
         Letter[] memory word = new Letter[](wordRaw.length);
         for (uint256 i = 0; i < word.length; i++) {
             word[i] = Letter(uint8(bound(wordRaw[i], 0, 26)));
         }
         Direction dir = direction ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
         vm.expectRevert();
-        wrapper.playCheckWord(word, proof, Coord({x: startX, y: startY}), dir);
+        wrapper.playCheckWord(word, proof, Coord({ x: startX, y: startY }), dir);
 
         vm.startPrank(deployerAddress);
         MerkleRootConfig.set(m.getRoot(words));
@@ -388,6 +400,6 @@ contract LibPlayTest is Words3Test {
         ice[0] = Letter.I;
         ice[1] = Letter.C;
         ice[2] = Letter.E;
-        wrapper.playCheckWord(ice, iceProof, Coord({x: startX, y: startY}), dir);
+        wrapper.playCheckWord(ice, iceProof, Coord({ x: startX, y: startY }), dir);
     }
 }

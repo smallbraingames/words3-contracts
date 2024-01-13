@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Direction, Letter, BonusType} from "codegen/common.sol";
-import {TileLetter, TilePlayer, LetterCount} from "codegen/index.sol";
-
-import {Coord} from "common/Coord.sol";
+import { Letter } from "codegen/common.sol";
+import { LetterCount, TileLetter, TilePlayer } from "codegen/index.sol";
+import { Coord } from "common/Coord.sol";
 
 library LibTile {
     function setTile(Coord memory coord, Letter letter, address player) internal {
