@@ -2,12 +2,10 @@
 pragma solidity >=0.8.0;
 
 import { Direction, Letter } from "codegen/common.sol";
-
 import { Bound } from "common/Bound.sol";
 import { MAX_WORD_LENGTH } from "common/Constants.sol";
 import { Coord } from "common/Coord.sol";
 import { BoundTooLong, EmptyLetterInBounds } from "common/Errors.sol";
-
 import { LibTile } from "libraries/LibTile.sol";
 
 library LibBoard {

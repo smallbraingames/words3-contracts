@@ -31,7 +31,7 @@ contract LibGameTest is Words3Test {
 
     function testCanPlayAfterGameStart() public {
         vm.startPrank(deployerAddress);
-        LibGame.startGame(block.timestamp + 100, bytes32(0), 0, 0, 0, 0, 3);
+        LibGame.startGame(block.timestamp + 100, bytes32(0), 0, 0, 0, 0, 3, address(0), 0);
         vm.stopPrank();
         assertTrue(LibGame.canPlay());
         vm.warp(block.timestamp + 100);
@@ -41,7 +41,7 @@ contract LibGameTest is Words3Test {
     function testFuzzCanPlay(uint256 endTime) public {
         vm.assume(endTime > block.timestamp);
         vm.startPrank(deployerAddress);
-        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3);
+        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3, address(0), 0);
         vm.stopPrank();
         assertTrue(LibGame.canPlay());
         vm.warp(endTime);
@@ -52,7 +52,7 @@ contract LibGameTest is Words3Test {
         vm.assume(endTime > block.timestamp);
         vm.assume(callTime > endTime);
         vm.startPrank(deployerAddress);
-        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3);
+        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3, address(0), 0);
         vm.stopPrank();
         vm.warp(callTime);
         assertFalse(LibGame.canPlay());
@@ -90,7 +90,9 @@ contract LibGameTest is Words3Test {
             vrgdaPriceDecay,
             vrgdaPerDayInitial,
             vrgdaPower,
-            crossWordRewardFraction
+            crossWordRewardFraction,
+            address(0),
+            0
         );
         vm.stopPrank();
         assertEq(endTime, GameConfig.getEndTime());

@@ -86,7 +86,7 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, address(0), 0);
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -143,7 +143,7 @@ contract Claim is Words3Test {
         initialWord[2] = Letter.L;
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, address(0), 0);
         vm.deal(worldAddress, 2 ether);
         vm.startPrank(deployerAddress);
         Treasury.set(1 ether);
@@ -181,7 +181,7 @@ contract Claim is Words3Test {
         initialWord[5] = Letter.I;
         initialWord[6] = Letter.T;
         initialWord[7] = Letter.E;
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, address(0), 0);
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
         word[1] = Letter.O;
@@ -273,7 +273,7 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, address(0), 0);
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
