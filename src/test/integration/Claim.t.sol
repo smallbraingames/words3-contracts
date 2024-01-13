@@ -143,7 +143,7 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
         world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3);
-        payable(worldAddress).transfer(2 ether);
+        vm.deal(worldAddress, 2 ether);
         vm.startPrank(deployerAddress);
         Treasury.set(1 ether);
         Points.set(winner, 10);
