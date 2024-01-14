@@ -89,16 +89,12 @@ contract LibTreasuryTest is Words3Test {
         LibTreasury.incrementSpent(spender, 100);
         assertTrue(LibTreasury.canSpend(spender, 100));
         assertTrue(LibTreasury.canSpend(spender, 1000));
-        assertTrue(LibTreasury.canSpend(spender, 100000));
-        assertTrue(LibTreasury.canSpend(spender, 10000000));
+        assertTrue(LibTreasury.canSpend(spender, 100_000));
+        assertTrue(LibTreasury.canSpend(spender, 10_000_000));
         vm.stopPrank();
     }
 
-    function testFuzzCanSpend(
-        address spender,
-        uint256 msgValue,
-        uint256 maxPlayerSpend
-    ) public {
+    function testFuzzCanSpend(address spender, uint256 msgValue, uint256 maxPlayerSpend) public {
         maxPlayerSpend = bound(maxPlayerSpend, 0, 1000e18);
         vm.assume(maxPlayerSpend > 2);
         msgValue = bound(msgValue, 0, maxPlayerSpend - 1);
