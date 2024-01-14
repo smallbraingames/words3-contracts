@@ -5,7 +5,7 @@ import { System } from "@latticexyz/world/src/System.sol";
 import { Direction, Letter } from "codegen/common.sol";
 import { Bound } from "common/Bound.sol";
 import { Coord } from "common/Coord.sol";
-import { CannotPlay, NotEnoughValue } from "common/Errors.sol";
+import { CannotPlay, NotEnoughValue, SpendCap } from "common/Errors.sol";
 import { LibGame } from "libraries/LibGame.sol";
 import { LibPlay } from "libraries/LibPlay.sol";
 import { LibPrice } from "libraries/LibPrice.sol";
@@ -28,14 +28,19 @@ contract PlaySystem is System {
         public
         payable
     {
-        if (_msgValue() < LibPrice.getWordPrice(word)) {
+        address player = _msgSender();
+        uint256 value = _msgValue();
+        if (value < LibPrice.getWordPrice(word)) {
             revert NotEnoughValue();
         }
         if (!LibGame.canPlay()) {
             revert CannotPlay();
         }
-        LibTreasury.incrementTreasury(_msgSender(), _msgValue());
-        LibPlay.play(word, proof, coord, direction, bounds, _msgSender());
+        if (!LibTreasury.canSpend(player, value)) {
+            revert SpendCap();
+        }
+        LibTreasury.incrementTreasury(player, value);
+        LibPlay.play(word, proof, coord, direction, bounds, player);
     }
 
     function getWordPrice(Letter[] memory word) public view returns (uint256) {

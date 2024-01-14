@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {Spent} from "codegen/index.sol";
 import { Words3Test } from "../Words3Test.t.sol";
+import { GameConfig, Spent } from "codegen/index.sol";
 import "forge-std/Test.sol";
 
 import { LibTreasury } from "libraries/LibTreasury.sol";
@@ -48,6 +48,64 @@ contract LibTreasuryTest is Words3Test {
         assertEq(Spent.get(spender), 100);
         LibTreasury.incrementSpent(spender, 100);
         assertEq(Spent.get(spender), 200);
+        vm.stopPrank();
+    }
+
+    function testCanSpend() public {
+        address spender = address(1);
+        vm.startPrank(deployerAddress);
+        GameConfig.setMaxPlayerSpend(1000);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 400));
+        assertTrue(LibTreasury.canSpend(spender, 500));
+        assertTrue(!LibTreasury.canSpend(spender, 600));
+        assertTrue(!LibTreasury.canSpend(spender, 700));
+        assertTrue(!LibTreasury.canSpend(spender, 800));
+        vm.stopPrank();
+    }
+
+    function testNoSpendCapIfZero() public {
+        address spender = address(1);
+        vm.startPrank(deployerAddress);
+        GameConfig.setMaxPlayerSpend(0);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        LibTreasury.incrementSpent(spender, 100);
+        assertTrue(LibTreasury.canSpend(spender, 100));
+        assertTrue(LibTreasury.canSpend(spender, 1000));
+        assertTrue(LibTreasury.canSpend(spender, 100000));
+        assertTrue(LibTreasury.canSpend(spender, 10000000));
+        vm.stopPrank();
+    }
+
+    function testFuzzCanSpend(
+        address spender,
+        uint256 msgValue,
+        uint256 maxPlayerSpend
+    ) public {
+        maxPlayerSpend = bound(maxPlayerSpend, 0, 1000e18);
+        vm.assume(maxPlayerSpend > 2);
+        msgValue = bound(msgValue, 0, maxPlayerSpend - 1);
+        vm.startPrank(deployerAddress);
+        GameConfig.setMaxPlayerSpend(maxPlayerSpend);
+        assertTrue(LibTreasury.canSpend(spender, msgValue));
+        assertTrue(!LibTreasury.canSpend(spender, msgValue + maxPlayerSpend + 1));
         vm.stopPrank();
     }
 }
