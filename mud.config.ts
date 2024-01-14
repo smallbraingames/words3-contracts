@@ -31,7 +31,7 @@ export default mudConfig({
       keySchema: {},
       valueSchema: {
         host: "address",
-        hostFeePercent: "uint256"
+        hostFeeBps: "uint16"
       },
     },
     // Game

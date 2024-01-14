@@ -10,18 +10,19 @@ import { Letter } from "codegen/common.sol";
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IStartSystem {
-  function start(
-    Letter[] memory initialWord,
-    uint256 endTime,
-    bytes32 merkleRoot,
-    int256 vrgdaTargetPrice,
-    int256 vrgdaPriceDecay,
-    int256 vrgdaPerDayInitial,
-    int256 vrgdaPower,
-    uint32 crossWordRewardFraction,
-    address host,
-    uint256 hostFeePercent
-  ) external;
+    function start(
+        Letter[] memory initialWord,
+        uint256 endTime,
+        bytes32 merkleRoot,
+        int256 vrgdaTargetPrice,
+        int256 vrgdaPriceDecay,
+        int256 vrgdaPerDayInitial,
+        int256 vrgdaPower,
+        uint32 crossWordRewardFraction,
+        address host,
+        uint16 hostFeeBps
+    )
+        external;
 
-  function end() external;
+    function end() external;
 }

@@ -30,7 +30,7 @@ library LibGame {
         int256 vrgdaPower,
         uint32 crossWordRewardFraction,
         address host,
-        uint256 hostFeePercent
+        uint16 hostFeeBps
     )
         internal
     {
@@ -47,6 +47,6 @@ library LibGame {
                 power: vrgdaPower
             })
         );
-        HostConfig.set(HostConfigData({ host: host, hostFeePercent: hostFeePercent }));
+        HostConfig.set(HostConfigData({ host: host, hostFeeBps: hostFeeBps }));
     }
 }

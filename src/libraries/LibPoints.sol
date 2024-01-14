@@ -15,7 +15,6 @@ import { LibPlayer } from "libraries/LibPlayer.sol";
 
 library LibPoints {
     /// @notice Updates the score for a player for the main word and cross words
-
     function setScore(
         Letter[] memory playWord,
         Letter[] memory filledWord,

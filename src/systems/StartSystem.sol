@@ -19,7 +19,7 @@ contract StartSystem is System {
         int256 vrgdaPower,
         uint32 crossWordRewardFraction,
         address host,
-        uint256 hostFeePercent
+        uint16 hostFeeBps
     )
         public
     {
@@ -40,7 +40,7 @@ contract StartSystem is System {
             vrgdaPower,
             crossWordRewardFraction,
             host,
-            hostFeePercent
+            hostFeeBps
         );
     }
 
