@@ -12,13 +12,14 @@ contract StartSystem is System {
     function start(
         Letter[] memory initialWord,
         uint256 endTime,
+        uint256 maxPlayerSpend,
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
-        uint32 crossWordRewardFraction,
         address host,
+        uint32 crossWordRewardFraction,
         uint16 hostFeeBps
     )
         public
@@ -31,17 +32,18 @@ contract StartSystem is System {
             TileLetter.set(coord.x, coord.y, initialWord[i]);
             TilePlayer.set(coord.x, coord.y, address(0));
         }
-        LibGame.startGame(
-            endTime,
-            merkleRoot,
-            vrgdaTargetPrice,
-            vrgdaPriceDecay,
-            vrgdaPerDayInitial,
-            vrgdaPower,
-            crossWordRewardFraction,
-            host,
-            hostFeeBps
-        );
+        LibGame.startGame({
+            endTime: endTime,
+            maxPlayerSpend: maxPlayerSpend,
+            merkleRoot: merkleRoot,
+            vrgdaTargetPrice: vrgdaTargetPrice,
+            vrgdaPriceDecay: vrgdaPriceDecay,
+            vrgdaPerDayInitial: vrgdaPerDayInitial,
+            vrgdaPower: vrgdaPower,
+            host: host,
+            crossWordRewardFraction: crossWordRewardFraction,
+            hostFeeBps: hostFeeBps
+        });
     }
 
     function end() public {

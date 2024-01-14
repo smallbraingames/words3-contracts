@@ -8,5 +8,5 @@ pragma solidity >=0.8.21;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IClaimSystem {
-    function claim(address player) external;
+  function claim(address player) external;
 }

@@ -99,7 +99,7 @@ contract CrossWord is Words3Test {
         initialWord[5] = Letter.I;
         initialWord[6] = Letter.T;
         initialWord[7] = Letter.E;
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e18, 3, address(0), 0);
+        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e18, address(0), 3, 0);
 
         // Play aunt on the first N
         vm.startPrank(address(0xface));

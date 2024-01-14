@@ -23,19 +23,25 @@ library LibGame {
 
     function startGame(
         uint256 endTime,
+        uint256 maxPlayerSpend,
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
-        uint32 crossWordRewardFraction,
         address host,
+        uint32 crossWordRewardFraction,
         uint16 hostFeeBps
     )
         internal
     {
         GameConfig.set(
-            GameConfigData({ status: Status.STARTED, endTime: endTime, crossWordRewardFraction: crossWordRewardFraction })
+            GameConfigData({
+                status: Status.STARTED,
+                endTime: endTime,
+                crossWordRewardFraction: crossWordRewardFraction,
+                maxPlayerSpend: maxPlayerSpend
+            })
         );
         MerkleRootConfig.set(merkleRoot);
         VRGDAConfig.set(
