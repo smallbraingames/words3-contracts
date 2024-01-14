@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { Status } from "codegen/common.sol";
-import { GameConfig, MerkleRootConfig, VRGDAConfig, HostConfig } from "codegen/index.sol";
+import { GameConfig, HostConfig, MerkleRootConfig, VRGDAConfig } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 
 import { LibGame } from "libraries/LibGame.sol";
@@ -84,7 +84,7 @@ contract LibGameTest is Words3Test {
     )
         public
     {
-        hostFeeBps = uint16(bound(hostFeeBps, 0, 10000));
+        hostFeeBps = uint16(bound(hostFeeBps, 0, 10_000));
         vm.assume(endTime > block.timestamp);
         vm.startPrank(deployerAddress);
         LibGame.startGame(

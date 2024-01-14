@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import { Points, Spent, SpentMove, Treasury } from "codegen/index.sol";
+import { GameConfig, Points, Spent, SpentMove, Treasury } from "codegen/index.sol";
 import { NoPoints } from "common/Errors.sol";
 import { LibPoints } from "libraries/LibPoints.sol";
 
@@ -27,6 +27,15 @@ library LibTreasury {
         Treasury.set(incrementedTreasury);
         SpentMove.set(msgSender, incrementedTreasury, msgValue);
         incrementSpent(msgSender, msgValue);
+    }
+
+    function canSpend(address msgSender, uint256 msgValue) internal view returns (bool) {
+        uint256 maxPlayerSpend = GameConfig.getMaxPlayerSpend();
+        if (maxPlayerSpend == 0) {
+            return true;
+        }
+        uint256 spent = Spent.get(msgSender);
+        return spent + msgValue <= maxPlayerSpend;
     }
 
     function incrementSpent(address msgSender, uint256 msgValue) internal {
