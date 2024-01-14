@@ -8,7 +8,7 @@ import { IWorld } from "codegen/world/IWorld.sol";
 import { Bound } from "common/Bound.sol";
 import { SINGLETON_ADDRESS } from "common/Constants.sol";
 import { Coord } from "common/Coord.sol";
-import { GameStartedOrOver } from "common/Errors.sol";
+import { SpendCap } from "common/Errors.sol";
 
 import { Words3Test } from "../Words3Test.t.sol";
 import { Merkle } from "../murky/src/Merkle.sol";
@@ -182,7 +182,17 @@ contract Claim is Words3Test {
         initialWord[6] = Letter.T;
         initialWord[7] = Letter.E;
         world.start(
-            initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, address(0xabcde333), 3, 500
+            initialWord,
+            block.timestamp + 1e6,
+            3 ether,
+            m.getRoot(words),
+            0.0000001 ether,
+            1e17,
+            3e18,
+            1e16,
+            address(0xabcde333),
+            3,
+            500
         );
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -191,9 +201,12 @@ contract Claim is Words3Test {
         word[3] = Letter.E;
         Bound[] memory bounds = new Bound[](4);
         bytes32[] memory proof = m.getProof(words, 1);
-        vm.deal(address(0xcafe), 2 ether);
-        vm.prank(address(0xcafe));
+        vm.deal(address(0xcafe), 6 ether);
+        vm.startPrank(address(0xcafe));
+        vm.expectRevert(SpendCap.selector);
+        world.play{ value: 4 ether }(word, proof, Coord({ x: 4, y: -2 }), Direction.TOP_TO_BOTTOM, bounds);
         world.play{ value: 1 ether }(word, proof, Coord({ x: 4, y: -2 }), Direction.TOP_TO_BOTTOM, bounds);
+        vm.stopPrank();
         assertEq(Points.get(address(0xcafe)), 13);
 
         // Play zebra on zone
@@ -207,6 +220,10 @@ contract Claim is Words3Test {
         bytes32[] memory proof2 = m.getProof(words, 3);
         Bound[] memory bounds2 = new Bound[](5);
         vm.deal(address(0xface), 2 ether);
+        vm.startPrank(address(0xcafe));
+        vm.expectRevert(SpendCap.selector);
+        world.play{ value: 2.1 ether }(word2, proof2, Coord({ x: 4, y: -2 }), Direction.LEFT_TO_RIGHT, bounds2);
+        vm.stopPrank();
         vm.prank(address(0xface));
         world.play{ value: 1 ether }(word2, proof2, Coord({ x: 4, y: -2 }), Direction.LEFT_TO_RIGHT, bounds2);
         assertEq(Points.get(address(0xcafe)), 18);
@@ -253,7 +270,7 @@ contract Claim is Words3Test {
         world.end();
 
         world.claim(address(0xcafe));
-        assertEq(address(0xcafe).balance, 1 ether + 530_882_352_941_176_470);
+        assertEq(address(0xcafe).balance, 5 ether + 530_882_352_941_176_470);
 
         world.claim(address(0xface));
         assertEq(address(0xface).balance, 1 ether + 810_294_117_647_058_824);
