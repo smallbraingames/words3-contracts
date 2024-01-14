@@ -28,13 +28,13 @@ contract PlaySystem is System {
         public
         payable
     {
-        if (msg.value < LibPrice.getWordPrice(word)) {
+        if (_msgValue() < LibPrice.getWordPrice(word)) {
             revert NotEnoughValue();
         }
         if (!LibGame.canPlay()) {
             revert CannotPlay();
         }
-        LibTreasury.incrementTreasury(_msgSender(), msg.value);
+        LibTreasury.incrementTreasury(_msgSender(), _msgValue());
         LibPlay.play(word, proof, coord, direction, bounds, _msgSender());
     }
 

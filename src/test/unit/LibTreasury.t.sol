@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
+import {Spent} from "codegen/index.sol";
 import { Words3Test } from "../Words3Test.t.sol";
 import "forge-std/Test.sol";
 
@@ -38,5 +39,15 @@ contract LibTreasuryTest is Words3Test {
         feeBps = uint16(bound(feeBps, 0, 10_000));
         uint256 feeAmount = LibTreasury.getFeeAmount(msgValue, feeBps);
         assertTrue(feeAmount <= msgValue);
+    }
+
+    function testIncrementSpent() public {
+        address spender = address(1);
+        vm.startPrank(deployerAddress);
+        LibTreasury.incrementSpent(spender, 100);
+        assertEq(Spent.get(spender), 100);
+        LibTreasury.incrementSpent(spender, 100);
+        assertEq(Spent.get(spender), 200);
+        vm.stopPrank();
     }
 }

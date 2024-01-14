@@ -9,6 +9,7 @@ export default mudConfig({
         status: "Status",
         endTime: "uint256",
         crossWordRewardFraction: "uint32",
+        maxPlayerSpend: "uint256",
       },
     },
     MerkleRootConfig: {
@@ -60,11 +61,10 @@ export default mudConfig({
       },
     },
     Spent: {
-      keySchema: { player: "address", id: "uint256" },
+      keySchema: { player: "address" },
       valueSchema: {
         value: "uint256",
       },
-      offchainOnly: true,
     },
     LetterCount: {
       keySchema: { letter: "Letter" },
@@ -79,6 +79,13 @@ export default mudConfig({
       },
     },
     // Activity
+    SpentMove: {
+      keySchema: { player: "address", id: "uint256" },
+      valueSchema: {
+        value: "uint256",
+      },
+      offchainOnly: true
+    },
     PlayResult: {
       keySchema: {
         id: "uint256",

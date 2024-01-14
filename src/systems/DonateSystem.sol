@@ -11,6 +11,6 @@ contract DonateSystem is System {
         if (!LibGame.canPlay()) {
             revert CannotPlay();
         }
-        LibTreasury.incrementTreasury(address(0), msg.value);
+        LibTreasury.incrementTreasury(address(0), _msgValue());
     }
 }
