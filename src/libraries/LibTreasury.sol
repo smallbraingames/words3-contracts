@@ -17,6 +17,11 @@ library LibTreasury {
         return claimAmount;
     }
 
+    function getFeeAmount(uint256 value, uint16 feeBps) internal pure returns (uint256) {
+        uint256 feeAmount = (value * uint256(feeBps)) / 10_000;
+        return feeAmount;
+    }
+
     function incrementTreasury(address msgSender, uint256 msgValue) internal {
         uint256 incrementedTreasury = Treasury.get() + msgValue;
         Treasury.set(incrementedTreasury);

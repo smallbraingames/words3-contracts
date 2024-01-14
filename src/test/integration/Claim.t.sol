@@ -181,7 +181,9 @@ contract Claim is Words3Test {
         initialWord[5] = Letter.I;
         initialWord[6] = Letter.T;
         initialWord[7] = Letter.E;
-        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, address(0), 0);
+        world.start(
+            initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, address(0xabcde333), 500
+        );
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
         word[1] = Letter.O;
@@ -251,16 +253,18 @@ contract Claim is Words3Test {
         world.end();
 
         world.claim(address(0xcafe));
-        assertEq(address(0xcafe).balance, 1_558_823_529_411_764_705);
+        assertEq(address(0xcafe).balance, 1 ether + 530_882_352_941_176_470);
 
         world.claim(address(0xface));
-        assertEq(address(0xface).balance, 1_852_941_176_470_588_235);
+        assertEq(address(0xface).balance, 1 ether + 810_294_117_647_058_824);
 
         world.claim(address(player3));
-        assertEq(address(player3).balance, 1_588_235_294_117_647_058);
+        assertEq(address(player3).balance, 1 ether + 558_823_529_411_764_706);
 
         world.claim(player4);
-        assertEq(address(player4).balance, 2 ether + 1 ether);
+        assertEq(address(player4).balance, 3 ether - 0.1 ether);
+
+        assertApproxEqRel(address(0xabcde333).balance, 0.2 ether, 0.0000000001e18);
     }
 
     function testRevertClaimSingleton() public {
