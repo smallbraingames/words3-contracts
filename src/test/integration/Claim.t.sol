@@ -323,4 +323,44 @@ contract Claim is Words3Test {
         vm.expectRevert();
         world.claim(SINGLETON_ADDRESS);
     }
+
+    function testEndAndClaim() public {
+        address player1 = address(0x12345);
+
+        Letter[] memory initialWord = new Letter[](5);
+        initialWord[0] = Letter.H;
+        initialWord[1] = Letter.E;
+        initialWord[2] = Letter.L;
+        initialWord[3] = Letter.L;
+        initialWord[4] = Letter.O;
+
+        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, address(0), 3, 0);
+
+        Letter[] memory word = new Letter[](4);
+        word[0] = Letter.Z;
+        word[1] = Letter.EMPTY;
+        word[2] = Letter.N;
+        word[3] = Letter.E;
+
+        uint256 wordPrice = world.getWordPrice(word);
+        vm.deal(player1, wordPrice * 2);
+
+        Bound[] memory bounds = new Bound[](4);
+        bytes32[] memory proof = m.getProof(words, 1);
+
+        // Play zone
+        vm.prank(player1);
+        world.play{ value: wordPrice }(word, proof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, bounds);
+        assertEq(address(player1).balance, wordPrice);
+        assertEq(address(worldAddress).balance, wordPrice);
+
+        vm.warp(block.timestamp + 1e6 + 1);
+        vm.prank(player1);
+        vm.expectRevert();
+        world.claim(player1);
+
+        world.endAndClaim(player1);
+        assertEq(address(player1).balance, wordPrice * 2);
+        assertEq(address(worldAddress).balance, 0);
+    }
 }
