@@ -29,8 +29,8 @@ fs_permissions = [{ access = "read", path = "./"}]
 [fuzz]
 runs = 1028
 
-[profile.lattice-testnet]
-eth_rpc_url = "https://follower.testnet-chain.linfra.xyz"
+[profile.lattice-901]
+eth_rpc_url = "https://redstone.linfra.xyz/"
 
 [profile.base-testnet]
 eth_rpc_url = "https://goerli.base.org"
