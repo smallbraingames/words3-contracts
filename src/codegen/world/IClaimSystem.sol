@@ -9,4 +9,6 @@ pragma solidity >=0.8.21;
  */
 interface IClaimSystem {
   function claim(address player) external;
+
+  function endAndClaim(address player) external;
 }
