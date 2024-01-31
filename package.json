@@ -8,6 +8,7 @@
     "clean": "forge clean && rimraf src/codegen",
     "deploy:local": "pnpm run build && mud deploy",
     "deploy:testnet": "pnpm run build && mud deploy --profile=lattice-901",
+    "deploy:base": "pnpm run build && mud deploy --profile=base-mainnet",
     "dev": "pnpm mud dev-contracts",
     "faucet": "DEBUG=mud:faucet pnpm faucet-server",
     "lint": "forge fmt && pnpm run solhint",

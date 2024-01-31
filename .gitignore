@@ -10,3 +10,4 @@ types/
 broadcast/
 .env
 latticeEnv.sh
+foundry.toml

@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { Letter, Status } from "codegen/common.sol";
-import { GameConfig, TileLetter, TilePlayer } from "codegen/index.sol";
+import { GameConfig, HostConfigData, TileLetter, TilePlayer } from "codegen/index.sol";
 import { Coord } from "common/Coord.sol";
 import { GameStartedOrOver, NotEndTime } from "common/Errors.sol";
 import { LibGame } from "libraries/LibGame.sol";
@@ -18,20 +18,13 @@ contract StartSystem is System {
         int256 vrgdaPriceDecay,
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
-        address host,
+        HostConfigData memory hostConfig,
         uint32 crossWordRewardFraction,
-        uint16 hostFeeBps
+        uint16 bonusDistance
     )
         public
     {
-        if (LibGame.getGameStatus() != Status.NOT_STARTED) {
-            revert GameStartedOrOver();
-        }
-        for (uint256 i = 0; i < initialWord.length; i++) {
-            Coord memory coord = Coord({ x: int32(uint32(i)), y: 0 });
-            TileLetter.set(coord.x, coord.y, initialWord[i]);
-            TilePlayer.set(coord.x, coord.y, address(0));
-        }
+        checkStartInputs(initialWord);
         LibGame.startGame({
             endTime: endTime,
             maxPlayerSpend: maxPlayerSpend,
@@ -40,10 +33,21 @@ contract StartSystem is System {
             vrgdaPriceDecay: vrgdaPriceDecay,
             vrgdaPerDayInitial: vrgdaPerDayInitial,
             vrgdaPower: vrgdaPower,
-            host: host,
+            hostConfig: hostConfig,
             crossWordRewardFraction: crossWordRewardFraction,
-            hostFeeBps: hostFeeBps
+            bonusDistance: bonusDistance
         });
+    }
+
+    function checkStartInputs(Letter[] memory initialWord) private {
+        if (LibGame.getGameStatus() != Status.NOT_STARTED) {
+            revert GameStartedOrOver();
+        }
+        for (uint256 i = 0; i < initialWord.length; i++) {
+            Coord memory coord = Coord({ x: int32(uint32(i)), y: 0 });
+            TileLetter.set(coord.x, coord.y, initialWord[i]);
+            TilePlayer.set(coord.x, coord.y, address(0));
+        }
     }
 
     function end() public {
