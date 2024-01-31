@@ -36,4 +36,4 @@ eth_rpc_url = "https://redstone.linfra.xyz/"
 eth_rpc_url = "https://goerli.base.org"
 
 [profile.base-mainnet]
-eth_rpc_url = "https://mainnet.base.org"
+eth_rpc_url = "https://base-mainnet.blastapi.io/"

@@ -29,9 +29,9 @@ library LibGame {
         int256 vrgdaPriceDecay,
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
-        address host,
+        HostConfigData memory hostConfig,
         uint32 crossWordRewardFraction,
-        uint16 hostFeeBps
+        uint16 bonusDistance
     )
         internal
     {
@@ -40,7 +40,8 @@ library LibGame {
                 status: Status.STARTED,
                 endTime: endTime,
                 crossWordRewardFraction: crossWordRewardFraction,
-                maxPlayerSpend: maxPlayerSpend
+                maxPlayerSpend: maxPlayerSpend,
+                bonusDistance: bonusDistance
             })
         );
         MerkleRootConfig.set(merkleRoot);
@@ -53,6 +54,6 @@ library LibGame {
                 power: vrgdaPower
             })
         );
-        HostConfig.set(HostConfigData({ host: host, hostFeeBps: hostFeeBps }));
+        HostConfig.set(hostConfig);
     }
 }

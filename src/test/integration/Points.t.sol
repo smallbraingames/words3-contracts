@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { BonusType, Direction, Letter } from "codegen/common.sol";
-import { MerkleRootConfig, Points, TileLetter, TilePlayer } from "codegen/index.sol";
+import { HostConfigData, MerkleRootConfig, Points, TileLetter, TilePlayer } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 
 import { Bonus } from "common/Bonus.sol";
@@ -71,7 +71,19 @@ contract PointsTest is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, address(0), 3, 0);
+        world.start(
+            initialWord,
+            block.timestamp + 1e6,
+            0,
+            m.getRoot(words),
+            0,
+            1e17,
+            3e18,
+            1e16,
+            HostConfigData({ host: address(0), hostFeeBps: 0 }),
+            3,
+            5
+        );
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -112,7 +124,19 @@ contract PointsTest is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, address(0), 3, 0);
+        world.start(
+            initialWord,
+            block.timestamp + 1e6,
+            0,
+            m.getRoot(words),
+            0,
+            1e17,
+            3e18,
+            1e16,
+            HostConfigData({ host: address(0), hostFeeBps: 0 }),
+            3,
+            5
+        );
 
         Letter[] memory word = new Letter[](5);
         word[0] = Letter.EMPTY;

@@ -10,6 +10,7 @@ export default mudConfig({
         endTime: "uint256",
         crossWordRewardFraction: "uint32",
         maxPlayerSpend: "uint256",
+        bonusDistance: "uint16",
       },
     },
     MerkleRootConfig: {

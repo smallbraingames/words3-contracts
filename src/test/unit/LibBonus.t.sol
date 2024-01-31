@@ -6,7 +6,6 @@ import { IWorld } from "codegen/world/IWorld.sol";
 
 import { Bonus } from "common/Bonus.sol";
 
-import { BONUS_DISTANCE } from "common/Constants.sol";
 import { Coord } from "common/Coord.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 
@@ -15,7 +14,7 @@ import "forge-std/Test.sol";
 
 contract LibBonusTest is Words3Test {
     function testIsBonusTile() public {
-        int32 bonusDistance = int32(uint32(BONUS_DISTANCE));
+        int32 bonusDistance = int32(uint32(8));
         // Bonus tiles
         Coord memory coord = Coord({ x: 0, y: 0 });
         Coord memory coord2 = Coord({ x: 0, y: bonusDistance });
@@ -26,31 +25,32 @@ contract LibBonusTest is Words3Test {
         Coord memory coord5 = Coord({ x: 0, y: bonusDistance * 3 + 1 });
         Coord memory coord6 = Coord({ x: 0, y: bonusDistance * 4 + 1 });
 
-        assertTrue(LibBonus.isBonusTile(coord));
-        assertTrue(LibBonus.isBonusTile(coord2));
-        assertTrue(LibBonus.isBonusTile(coord3));
-        assertTrue(LibBonus.isBonusTile(coord4));
+        assertTrue(LibBonus.isBonusTile(coord, 8));
+        assertTrue(LibBonus.isBonusTile(coord2, 8));
+        assertTrue(LibBonus.isBonusTile(coord3, 8));
+        assertTrue(LibBonus.isBonusTile(coord4, 8));
 
-        assertFalse(LibBonus.isBonusTile(coord5));
-        assertFalse(LibBonus.isBonusTile(coord6));
+        assertFalse(LibBonus.isBonusTile(coord5, 8));
+        assertFalse(LibBonus.isBonusTile(coord6, 8));
     }
 
     function testFuzzIsBonusTile(int32 x, int32 y) public {
+        uint16 bonusDistance = 3;
         vm.assume(x >= -1e9 && x <= 1e9);
         vm.assume(y >= -1e9 && y <= 1e9);
         Coord memory coord = Coord({ x: x, y: y });
-        bool isBonus = LibBonus.isBonusTile(coord);
+        bool isBonus = LibBonus.isBonusTile(coord, bonusDistance);
         if (isBonus) {
             int32 absX = x < 0 ? -x : x;
             int32 absY = y < 0 ? -y : y;
             assertTrue(absX >= 0);
             assertTrue(absY >= 0);
-            assertEq((absX - absY) % int32(uint32(BONUS_DISTANCE)), 0);
+            assertEq((absX - absY) % int32(uint32(bonusDistance)), 0);
         }
     }
 
     function testFuzzIsBonusTileCross(int32 bonusDistanceMultiple, int32 diff) public {
-        int32 bonusDistance = int32(uint32(BONUS_DISTANCE));
+        int32 bonusDistance = int32(uint32(6));
 
         vm.assume(bonusDistance > 1);
         vm.assume(bonusDistanceMultiple >= 0 && bonusDistanceMultiple <= 1e3);
@@ -65,18 +65,19 @@ contract LibBonusTest is Words3Test {
         Coord memory coord4 = Coord({ x: bonusDistance * bonusDistanceMultiple + diff, y: diff + 1 });
         Coord memory coord5 = Coord({ x: bonusDistance * bonusDistanceMultiple + diff, y: -diff - 1 });
 
-        assertTrue(LibBonus.isBonusTile(coord));
-        assertTrue(LibBonus.isBonusTile(coord2));
-        assertTrue(LibBonus.isBonusTile(coord3));
+        assertTrue(LibBonus.isBonusTile(coord, 6));
+        assertTrue(LibBonus.isBonusTile(coord2, 6));
+        assertTrue(LibBonus.isBonusTile(coord3, 6));
 
-        assertFalse(LibBonus.isBonusTile(coord4));
-        assertFalse(LibBonus.isBonusTile(coord5));
+        assertFalse(LibBonus.isBonusTile(coord4, 6));
+        assertFalse(LibBonus.isBonusTile(coord5, 6));
     }
 
-    function testFuzzGetTileBonusWithinBounds(int32 x, int32 y) public {
+    function testFuzzGetTileBonusWithinBounds(int32 x, int32 y, uint16 bonusDistance) public {
         vm.assume(x >= -1e9 && x <= 1e9);
         vm.assume(y >= -1e9 && y <= 1e9);
-        vm.assume(LibBonus.isBonusTile(Coord({ x: x, y: y })));
+        bonusDistance = uint16(bound(bonusDistance, 1, 1000));
+        vm.assume(LibBonus.isBonusTile(Coord({ x: x, y: y }), bonusDistance));
         Bonus memory bonus = LibBonus.getTileBonus(Coord({ x: x, y: y }));
         assertTrue(bonus.bonusValue >= 2 && bonus.bonusValue <= 5);
         assertTrue(bonus.bonusType == BonusType.MULTIPLY_LETTER || bonus.bonusType == BonusType.MULTIPLY_WORD);

@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { Direction, Letter } from "codegen/common.sol";
-import { MerkleRootConfig, Points, TileLetter, TilePlayer, Treasury } from "codegen/index.sol";
+import { HostConfigData, MerkleRootConfig, Points, TileLetter, TilePlayer, Treasury } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 
 import { Bound } from "common/Bound.sol";
@@ -86,7 +86,19 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, address(0), 3, 0);
+        world.start(
+            initialWord,
+            block.timestamp + 1e6,
+            0,
+            m.getRoot(words),
+            0,
+            1e17,
+            3e18,
+            1e16,
+            HostConfigData({ host: address(0), hostFeeBps: 0 }),
+            3,
+            5
+        );
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -143,7 +155,19 @@ contract Claim is Words3Test {
         initialWord[2] = Letter.L;
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
-        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, address(0), 3, 0);
+        world.start(
+            initialWord,
+            block.timestamp + 1e6,
+            0,
+            m.getRoot(words),
+            0,
+            1e17,
+            3e18,
+            1e16,
+            HostConfigData({ host: address(0), hostFeeBps: 0 }),
+            3,
+            5
+        );
         vm.deal(worldAddress, 2 ether);
         vm.startPrank(deployerAddress);
         Treasury.set(1 ether);
@@ -190,9 +214,9 @@ contract Claim is Words3Test {
             1e17,
             3e18,
             1e16,
-            address(0xabcde333),
+            HostConfigData({ host: address(0xabcde333), hostFeeBps: 500 }),
             3,
-            500
+            5
         );
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -294,7 +318,19 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, address(0), 3, 0);
+        world.start(
+            initialWord,
+            block.timestamp + 1e6,
+            0,
+            m.getRoot(words),
+            0,
+            1e17,
+            3e18,
+            1e16,
+            HostConfigData({ host: address(0), hostFeeBps: 0 }),
+            3,
+            5
+        );
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -334,7 +370,19 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, address(0), 3, 0);
+        world.start(
+            initialWord,
+            block.timestamp + 1e6,
+            0,
+            m.getRoot(words),
+            0,
+            1e17,
+            3e18,
+            1e16,
+            HostConfigData({ host: address(0), hostFeeBps: 0 }),
+            3,
+            5
+        );
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;

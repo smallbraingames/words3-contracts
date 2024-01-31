@@ -2,11 +2,12 @@
 pragma solidity >=0.8.0;
 
 import { BonusType, Direction, Letter } from "codegen/common.sol";
+import { GameConfig, HostConfigData } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 
 import { Bonus } from "common/Bonus.sol";
 
-import { BONUS_DISTANCE } from "common/Constants.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 import { Coord } from "common/Coord.sol";
 import { NoPointsForEmptyLetter } from "common/Errors.sol";
 import { LibBonus } from "libraries/LibPoints.sol";
@@ -17,11 +18,13 @@ import { Wrapper } from "./Wrapper.sol";
 import "forge-std/Test.sol";
 
 contract LibPointsTest is Words3Test {
+    IWorld world;
     Wrapper wrapper;
 
     function setUp() public override {
         super.setUp();
         wrapper = new Wrapper();
+        world = IWorld(worldAddress);
     }
 
     function testGetBaseLetterPoints() public {
@@ -75,19 +78,36 @@ contract LibPointsTest is Words3Test {
     }
 
     function testGetWordPoints() public {
-        Letter[] memory playWord = new Letter[](BONUS_DISTANCE);
-        Letter[] memory filledWord = new Letter[](BONUS_DISTANCE);
-        for (uint256 i; i < BONUS_DISTANCE; i++) {
+        Letter[] memory initialWord = new Letter[](1);
+        initialWord[0] = Letter.A;
+        uint16 bonusDistance = 8;
+        world.start(
+            initialWord,
+            block.timestamp + 1e6,
+            0,
+            bytes32(0x0),
+            0,
+            1e17,
+            3e18,
+            1e16,
+            HostConfigData({ host: address(0), hostFeeBps: 0 }),
+            3,
+            bonusDistance
+        );
+
+        Letter[] memory playWord = new Letter[](bonusDistance);
+        Letter[] memory filledWord = new Letter[](bonusDistance);
+        for (uint256 i; i < bonusDistance; i++) {
             playWord[i] = Letter.A;
             filledWord[i] = Letter.A;
         }
-        playWord[BONUS_DISTANCE - 1] = Letter.EMPTY;
+        playWord[bonusDistance - 1] = Letter.EMPTY;
 
         Coord memory coord = Coord({ x: 0, y: 0 });
         Direction direction = Direction.LEFT_TO_RIGHT;
         uint32 points = LibPoints.getWordPoints(playWord, filledWord, coord, direction);
 
-        uint32 truePoints = BONUS_DISTANCE;
+        uint32 truePoints = bonusDistance;
         Bonus memory bonus = LibBonus.getTileBonus(coord);
         if (bonus.bonusType == BonusType.MULTIPLY_WORD) {
             truePoints *= bonus.bonusValue;
@@ -99,8 +119,25 @@ contract LibPointsTest is Words3Test {
 
     /// forge-config: default.fuzz.runs = 500
     function testFuzzGetWordPointsNoBonus(uint8[] memory playWordRaw, bool directionRaw) public {
+        Letter[] memory initialWord = new Letter[](1);
+        initialWord[0] = Letter.A;
+        uint16 bonusDistance = 3;
+        world.start(
+            initialWord,
+            block.timestamp + 1e6,
+            0,
+            bytes32(0x0),
+            0,
+            1e17,
+            3e18,
+            1e16,
+            HostConfigData({ host: address(0), hostFeeBps: 0 }),
+            3,
+            bonusDistance
+        );
+
         // If the word does not touch any bonus tiles, points are equal to the base point value
-        vm.assume(playWordRaw.length < BONUS_DISTANCE - 1);
+        vm.assume(playWordRaw.length < bonusDistance - 1);
 
         Letter[] memory playWord = new Letter[](playWordRaw.length);
         Letter[] memory filledWord = new Letter[](playWordRaw.length);

@@ -107,7 +107,7 @@ library LibPoints {
         Direction direction
     )
         internal
-        pure
+        view
         returns (uint32)
     {
         uint32 points = 0;
@@ -115,7 +115,7 @@ library LibPoints {
 
         for (uint256 i; i < word.length; i++) {
             Coord memory letterCoord = LibBoard.getRelativeCoord(start, int32(uint32(i)), direction);
-            if (word[i] != Letter.EMPTY && LibBonus.isBonusTile(letterCoord)) {
+            if (word[i] != Letter.EMPTY && LibBonus.isBonusTile(letterCoord, GameConfig.getBonusDistance())) {
                 Bonus memory bonus = LibBonus.getTileBonus(letterCoord);
                 if (bonus.bonusType == BonusType.MULTIPLY_WORD) {
                     multiplier *= bonus.bonusValue;

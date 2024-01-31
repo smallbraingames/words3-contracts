@@ -27,16 +27,16 @@ contract PostDeploy is Script {
 
         // world.start({
         //     initialWord: infinite,
-        //     endTime: block.timestamp + 3600 * 20,
-        //     maxPlayerSpend: 0,
+        //     endTime: block.timestamp + 45 * 60,
+        //     maxPlayerSpend: 0.5 ether,
         //     merkleRoot: 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
-        //     vrgdaTargetPrice: 5e14,
-        //     vrgdaPriceDecay: 5e17,
-        //     vrgdaPerDayInitial: 3e18,
-        //     vrgdaPower: 2e18,
-        //     host: address(0),
+        //     vrgdaTargetPrice: 25e13,
+        //     vrgdaPriceDecay: 99999e13,
+        //     vrgdaPerDayInitial: 800e18,
+        //     vrgdaPower: 1e18,
+        //     host: address(0x817a70B945DdaAFD58D71adF66fE9A82fCCaa049),
         //     crossWordRewardFraction: 3,
-        //     hostFeeBps: 0
+        //     hostFeeBps: 1_000
         // });
 
         // vm.stopBroadcast();
