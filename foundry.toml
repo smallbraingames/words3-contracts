@@ -11,7 +11,7 @@ wrap_comments = true
 
 
 [profile.default]
-solc_version = "0.8.23"
+solc_version = "0.8.24"
 ffi = false
 optimizer = true
 optimizer_runs = 3000
