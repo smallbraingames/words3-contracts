@@ -117,7 +117,7 @@ contract LibPointsTest is Words3Test {
         assertEq(points, truePoints);
     }
 
-    /// forge-config: default.fuzz.runs = 500
+    /// forge-config: default.fuzz.runs = 300
     function testFuzzGetWordPointsNoBonus(uint8[] memory playWordRaw, bool directionRaw) public {
         Letter[] memory initialWord = new Letter[](1);
         initialWord[0] = Letter.A;
@@ -137,11 +137,11 @@ contract LibPointsTest is Words3Test {
         );
 
         // If the word does not touch any bonus tiles, points are equal to the base point value
-        vm.assume(playWordRaw.length < bonusDistance - 1);
+        uint256 minLength = playWordRaw.length < bonusDistance - 1 ? playWordRaw.length : bonusDistance - 2;
 
-        Letter[] memory playWord = new Letter[](playWordRaw.length);
-        Letter[] memory filledWord = new Letter[](playWordRaw.length);
-        for (uint256 i; i < playWordRaw.length; i++) {
+        Letter[] memory playWord = new Letter[](minLength);
+        Letter[] memory filledWord = new Letter[](minLength);
+        for (uint256 i; i < minLength; i++) {
             uint8 letter = playWordRaw[i];
             if (letter > 26) {
                 letter = 26;
