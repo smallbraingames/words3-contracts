@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "mud build",
+    "build": "mud worldgen && mud tablegen && forge build",
     "clean": "forge clean && rimraf src/codegen",
     "deploy:local": "pnpm run build && mud deploy",
     "deploy:testnet": "pnpm run build && mud deploy --profile=lattice-901",
@@ -16,13 +16,13 @@
     "test": "mud test"
   },
   "devDependencies": {
-    "@latticexyz/cli": "2.0.0-next.15",
-    "@latticexyz/config": "2.0.0-next.15",
-    "@latticexyz/faucet": "2.0.0-next.15",
-    "@latticexyz/store": "2.0.0-next.15",
-    "@latticexyz/schema-type": "2.0.0-next.15",
-    "@latticexyz/world": "2.0.0-next.15",
-    "@latticexyz/world-modules": "2.0.0-next.15",
+    "@latticexyz/cli": "2.0.0-main-1a82c278",
+    "@latticexyz/config": "2.0.0-main-1a82c278",
+    "@latticexyz/faucet": "2.0.0-main-1a82c278",
+    "@latticexyz/store": "2.0.0-main-1a82c278",
+    "@latticexyz/schema-type": "2.0.0-main-1a82c278",
+    "@latticexyz/world": "2.0.0-main-1a82c278",
+    "@latticexyz/world-modules": "2.0.0-main-1a82c278",
     "@openzeppelin/contracts": "^4.8.3",
     "@solidstate/contracts": "^0.0.52",
     "@types/node": "^18.15.11",
@@ -34,11 +34,11 @@
     "rimraf": "^3.0.2",
     "run-pty": "^4.0.3",
     "solhint": "^3.4.1",
-    "solhint-config-mud": "2.0.0-next.15",
-    "solhint-plugin-mud": "2.0.0-next.15",
+    "solhint-config-mud": "2.0.0-main-1a82c278",
+    "solhint-plugin-mud": "2.0.0-main-1a82c278",
     "solmate": "6.1.0",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1",
-    "typescript": "^4.9.5"
+    "typescript": "^5.0.4"
   }
 }
