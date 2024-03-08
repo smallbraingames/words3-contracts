@@ -4,6 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "clean-murky": "rm -rf src/test/murky/lib && rm -rf src/test/murky/differential_testing && rm -rf src/test/murky/src/test",
     "build": "mud worldgen && mud tablegen && forge build",
     "clean": "forge clean && rimraf src/codegen",
     "deploy:local": "pnpm run build && mud deploy",
