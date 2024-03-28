@@ -1,11 +1,11 @@
-import { mudConfig } from "@latticexyz/world/register";
+import { defineWorld } from "@latticexyz/world";
 
-export default mudConfig({
+export default defineWorld({
   tables: {
     // Config
     GameConfig: {
-      keySchema: {},
-      valueSchema: {
+      key: [],
+      schema: {
         status: "Status",
         endTime: "uint256",
         crossWordRewardFraction: "uint32",
@@ -14,14 +14,14 @@ export default mudConfig({
       },
     },
     MerkleRootConfig: {
-      keySchema: {},
-      valueSchema: {
+      key: [],
+     schema: {
         value: "bytes32",
       },
     },
     VRGDAConfig: {
-      keySchema: {},
-      valueSchema: {
+      key: [],
+      schema: {
         startTime: "uint256",
         targetPrice: "int256",
         priceDecay: "int256",
@@ -30,68 +30,69 @@ export default mudConfig({
       },
     },
     HostConfig: {
-      keySchema: {},
-      valueSchema: {
+      key: [],
+      schema: {
         host: "address",
         hostFeeBps: "uint16"
       },
     },
     // Game
     TileLetter: {
-      keySchema: { x: "int32", y: "int32" },
-      valueSchema: {
-        value: "Letter",
-      },
+      key: ["x", "y"],
+      schema: { x: "int32", y: "int32", value: "Letter" },
     },
     TilePlayer: {
-      keySchema: { x: "int32", y: "int32" },
-      valueSchema: {
-        value: "address",
-      },
+      key: ["x", "y"],
+      schema: { x: "int32", y: "int32", value: "address" }
     },
     Treasury: {
-      keySchema: {},
-      valueSchema: {
+      key: [],
+      schema: {
         value: "uint256",
       },
     },
     Points: {
-      keySchema: { player: "address" },
-      valueSchema: {
+      key: ["player"],
+     schema: {
+      player: "address",
         value: "uint32",
       },
     },
     Spent: {
-      keySchema: { player: "address" },
-      valueSchema: {
+      key: ["player"],
+      schema: {
+        player: "address",
         value: "uint256",
       },
     },
     LetterCount: {
-      keySchema: { letter: "Letter" },
-      valueSchema: {
+      key: ["letter"],
+      schema: {
+        letter: "Letter",
         value: "uint32",
       },
     },
     Claimed: {
-      keySchema: { player: "address" },
-      valueSchema: {
+      key: ["player"],
+      schema: {
+        player: "address",
         value: "bool",
       },
     },
     // Activity
     SpentMove: {
-      keySchema: { player: "address", id: "uint256" },
-      valueSchema: {
+      key: ["player", "id"],
+      schema: {
+        player: "address",
+        id: "uint256",
         value: "uint256",
       },
-      offchainOnly: true
+     type: "offchainTable",
     },
     PlayResult: {
-      keySchema: {
+      key: ["id"],
+      schema: {
         id: "uint256",
-      },
-      valueSchema: {
         player: "address",
         direction: "Direction",
         timestamp: "uint256",
@@ -100,18 +101,17 @@ export default mudConfig({
         word: "uint8[]",
         filledWord: "uint8[]",
       },
-      offchainOnly: true,
+      type: "offchainTable",
     },
     PointsResult: {
-      keySchema: {
+      key: ["id"],
+      schema: {
         id: "uint256",
         player: "address",
         pointsId: "int16",
-      },
-      valueSchema: {
         points: "uint32",
       },
-      offchainOnly: true,
+      type: "offchainTable"
     },
   },
   enums: {
