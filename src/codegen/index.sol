@@ -9,6 +9,7 @@ import { VRGDAConfig, VRGDAConfigData } from "./tables/VRGDAConfig.sol";
 import { TileLetter } from "./tables/TileLetter.sol";
 import { TilePlayer } from "./tables/TilePlayer.sol";
 import { PlayerLetters } from "./tables/PlayerLetters.sol";
+import { DrawLetterOdds } from "./tables/DrawLetterOdds.sol";
 import { Treasury } from "./tables/Treasury.sol";
 import { Points } from "./tables/Points.sol";
 import { Spent } from "./tables/Spent.sol";
