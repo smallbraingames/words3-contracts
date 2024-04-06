@@ -15,7 +15,7 @@ export default defineWorld({
     },
     MerkleRootConfig: {
       key: [],
-     schema: {
+      schema: {
         value: "bytes32",
       },
     },
@@ -38,6 +38,13 @@ export default defineWorld({
       key: ["x", "y"],
       schema: { x: "int32", y: "int32", value: "address" }
     },
+    PlayerLetters: {
+      key: ["player"],
+      schema: {
+        player: "address",
+        value: "uint8[]", // No arrays of enums, so we use uint8
+      },
+    },
     Treasury: {
       key: [],
       schema: {
@@ -46,8 +53,8 @@ export default defineWorld({
     },
     Points: {
       key: ["player"],
-     schema: {
-      player: "address",
+      schema: {
+        player: "address",
         value: "uint32",
       },
     },
@@ -80,7 +87,7 @@ export default defineWorld({
         id: "uint256",
         value: "uint256",
       },
-     type: "offchainTable",
+      type: "offchainTable",
     },
     PlayResult: {
       key: ["id"],
