@@ -27,7 +27,7 @@ library LibLetters {
 
         Letter[] memory letters = new Letter[](numLetters);
         for (uint256 i = 0; i < numLetters; i++) {
-            uint256 randomIndex = uint256(keccak256(abi.encodePacked(random + i))) % sumOfOdds;
+            uint256 randomIndex = uint256(keccak256(abi.encodePacked(random, i))) % sumOfOdds;
             letters[i] = bag[randomIndex];
         }
 
