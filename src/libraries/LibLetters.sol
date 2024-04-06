@@ -2,9 +2,9 @@
 pragma solidity >=0.8.0;
 
 import { Letter } from "codegen/common.sol";
-import { DrawLetterOdds } from "codegen/index.sol";
+import { DrawLetterOdds, PlayerLetters } from "codegen/index.sol";
 
-library LibDraw {
+library LibLetters {
     function getDraw(uint8 numLetters, uint256 random) internal view returns (Letter[] memory) {
         uint8[] memory odds = DrawLetterOdds.get();
 
@@ -34,5 +34,15 @@ library LibDraw {
         }
 
         return letters;
+    }
+
+    function addLetter(address player, Letter letter) internal {
+        uint32 count = PlayerLetters.get({ player: player, letter: letter });
+        PlayerLetters.set({ player: player, letter: letter, value: count + 1 });
+    }
+
+    function removeLetter(address player, Letter letter) internal {
+        uint32 count = PlayerLetters.get({ player: player, letter: letter });
+        PlayerLetters.set({ player: player, letter: letter, value: count - 1 });
     }
 }
