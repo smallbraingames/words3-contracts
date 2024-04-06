@@ -2,12 +2,10 @@
 pragma solidity >=0.8.0;
 
 import { Letter } from "codegen/common.sol";
-import { DrawLetterOdds, PlayerLetters } from "codegen/index.sol";
+import { PlayerLetters } from "codegen/index.sol";
 
 library LibLetters {
-    function getDraw(uint8 numLetters, uint256 random) internal view returns (Letter[] memory) {
-        uint8[] memory odds = DrawLetterOdds.get();
-
+    function getDraw(uint8[] memory odds, uint8 numLetters, uint256 random) internal pure returns (Letter[] memory) {
         // This sum is recomputed every function call to support overriding odds in the future
         uint256 sumOfOdds = 0;
         for (uint8 i = 0; i < odds.length; i++) {
