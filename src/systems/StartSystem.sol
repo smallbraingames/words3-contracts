@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { Letter, Status } from "codegen/common.sol";
-import { GameConfig, HostConfigData, TileLetter, TilePlayer } from "codegen/index.sol";
+import { GameConfig, TileLetter, TilePlayer } from "codegen/index.sol";
 import { Coord } from "common/Coord.sol";
 import { GameStartedOrOver, NotEndTime } from "common/Errors.sol";
 import { LibGame } from "libraries/LibGame.sol";
@@ -18,7 +18,6 @@ contract StartSystem is System {
         int256 vrgdaPriceDecay,
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
-        HostConfigData memory hostConfig,
         uint32 crossWordRewardFraction,
         uint16 bonusDistance
     )
@@ -33,7 +32,6 @@ contract StartSystem is System {
             vrgdaPriceDecay: vrgdaPriceDecay,
             vrgdaPerDayInitial: vrgdaPerDayInitial,
             vrgdaPower: vrgdaPower,
-            hostConfig: hostConfig,
             crossWordRewardFraction: crossWordRewardFraction,
             bonusDistance: bonusDistance
         });

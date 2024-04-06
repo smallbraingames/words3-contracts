@@ -2,15 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { Status } from "codegen/common.sol";
-import {
-    GameConfig,
-    GameConfigData,
-    HostConfig,
-    HostConfigData,
-    MerkleRootConfig,
-    VRGDAConfig,
-    VRGDAConfigData
-} from "codegen/index.sol";
+import { GameConfig, GameConfigData, MerkleRootConfig, VRGDAConfig, VRGDAConfigData } from "codegen/index.sol";
 
 library LibGame {
     function getGameStatus() internal view returns (Status) {
@@ -29,7 +21,6 @@ library LibGame {
         int256 vrgdaPriceDecay,
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
-        HostConfigData memory hostConfig,
         uint32 crossWordRewardFraction,
         uint16 bonusDistance
     )
@@ -54,6 +45,5 @@ library LibGame {
                 power: vrgdaPower
             })
         );
-        HostConfig.set(hostConfig);
     }
 }

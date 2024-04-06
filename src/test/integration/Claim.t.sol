@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { Direction, Letter } from "codegen/common.sol";
-import { HostConfigData, MerkleRootConfig, Points, TileLetter, TilePlayer, Treasury } from "codegen/index.sol";
+import { MerkleRootConfig, Points, TileLetter, TilePlayer, Treasury } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 
 import { Bound } from "common/Bound.sol";
@@ -86,19 +86,7 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(
-            initialWord,
-            block.timestamp + 1e6,
-            0,
-            m.getRoot(words),
-            0,
-            1e17,
-            3e18,
-            1e16,
-            HostConfigData({ host: address(0), hostFeeBps: 0 }),
-            3,
-            5
-        );
+        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, 5);
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -155,19 +143,7 @@ contract Claim is Words3Test {
         initialWord[2] = Letter.L;
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
-        world.start(
-            initialWord,
-            block.timestamp + 1e6,
-            0,
-            m.getRoot(words),
-            0,
-            1e17,
-            3e18,
-            1e16,
-            HostConfigData({ host: address(0), hostFeeBps: 0 }),
-            3,
-            5
-        );
+        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, 5);
         vm.deal(worldAddress, 2 ether);
         vm.startPrank(deployerAddress);
         Treasury.set(1 ether);
@@ -206,17 +182,7 @@ contract Claim is Words3Test {
         initialWord[6] = Letter.T;
         initialWord[7] = Letter.E;
         world.start(
-            initialWord,
-            block.timestamp + 1e6,
-            3 ether,
-            m.getRoot(words),
-            0.0000001 ether,
-            1e17,
-            3e18,
-            1e16,
-            HostConfigData({ host: address(0xabcde333), hostFeeBps: 500 }),
-            3,
-            5
+            initialWord, block.timestamp + 1e6, 3 ether, m.getRoot(words), 0.0000001 ether, 1e17, 3e18, 1e16, 3, 5
         );
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -294,18 +260,16 @@ contract Claim is Words3Test {
         world.end();
 
         world.claim(address(0xcafe));
-        assertEq(address(0xcafe).balance, 5 ether + 530_882_352_941_176_470);
+        assertEq(address(0xcafe).balance, 5 ether + 558_823_529_411_764_705);
 
         world.claim(address(0xface));
-        assertEq(address(0xface).balance, 1 ether + 810_294_117_647_058_824);
+        assertEq(address(0xface).balance, 1 ether + 852_941_176_470_588_235);
 
         world.claim(address(player3));
-        assertEq(address(player3).balance, 1 ether + 558_823_529_411_764_706);
+        assertEq(address(player3).balance, 1 ether + 588_235_294_117_647_058);
 
         world.claim(player4);
-        assertEq(address(player4).balance, 3 ether - 0.1 ether);
-
-        assertApproxEqRel(address(0xabcde333).balance, 0.2 ether, 0.0000000001e18);
+        assertEq(address(player4).balance, 3 ether);
     }
 
     function testRevertClaimSingleton() public {
@@ -318,19 +282,7 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(
-            initialWord,
-            block.timestamp + 1e6,
-            0,
-            m.getRoot(words),
-            0,
-            1e17,
-            3e18,
-            1e16,
-            HostConfigData({ host: address(0), hostFeeBps: 0 }),
-            3,
-            5
-        );
+        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, 5);
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;
@@ -370,19 +322,7 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start(
-            initialWord,
-            block.timestamp + 1e6,
-            0,
-            m.getRoot(words),
-            0,
-            1e17,
-            3e18,
-            1e16,
-            HostConfigData({ host: address(0), hostFeeBps: 0 }),
-            3,
-            5
-        );
+        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, 5);
 
         Letter[] memory word = new Letter[](4);
         word[0] = Letter.Z;

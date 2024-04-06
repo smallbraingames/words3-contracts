@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { Direction, Letter } from "codegen/common.sol";
-import { HostConfigData, MerkleRootConfig, TileLetter, TilePlayer } from "codegen/index.sol";
+import { MerkleRootConfig, TileLetter, TilePlayer } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 
 import { Bound } from "common/Bound.sol";
@@ -37,19 +37,7 @@ contract SimpleWord is Words3Test {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start(
-            initialWord,
-            10,
-            0,
-            m.getRoot(words),
-            0,
-            0,
-            0,
-            1e16,
-            HostConfigData({ host: address(0), hostFeeBps: 0 }),
-            3,
-            5
-        );
+        world.start(initialWord, 10, 0, m.getRoot(words), 0, 0, 0, 1e16, 3, 5);
         assertEq(uint8(TileLetter.get(0, 0)), uint8(Letter.H));
         assertEq(uint8(TileLetter.get(1, 0)), uint8(Letter.I));
     }
@@ -58,19 +46,7 @@ contract SimpleWord is Words3Test {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start(
-            initialWord,
-            block.timestamp + 1e6,
-            0,
-            m.getRoot(words),
-            0,
-            1e17,
-            3e18,
-            1e16,
-            HostConfigData({ host: address(0), hostFeeBps: 0 }),
-            3,
-            5
-        );
+        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, 5);
 
         Letter[] memory word = new Letter[](2);
         word[0] = Letter.EMPTY;
