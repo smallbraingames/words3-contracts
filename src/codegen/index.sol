@@ -5,7 +5,6 @@ pragma solidity >=0.8.24;
 
 import { Claimed } from "./tables/Claimed.sol";
 import { GameConfig, GameConfigData } from "./tables/GameConfig.sol";
-import { HostConfig, HostConfigData } from "./tables/HostConfig.sol";
 import { LetterCount } from "./tables/LetterCount.sol";
 import { MerkleRootConfig } from "./tables/MerkleRootConfig.sol";
 

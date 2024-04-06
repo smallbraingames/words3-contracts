@@ -29,13 +29,6 @@ export default defineWorld({
         power: "int256",
       },
     },
-    HostConfig: {
-      key: [],
-      schema: {
-        host: "address",
-        hostFeeBps: "uint16"
-      },
-    },
     // Game
     TileLetter: {
       key: ["x", "y"],
