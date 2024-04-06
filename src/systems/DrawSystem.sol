@@ -4,6 +4,7 @@ pragma solidity >=0.8.0;
 import { System } from "@latticexyz/world/src/System.sol";
 
 import { Letter } from "codegen/common.sol";
+import { DrawLetterOdds } from "codegen/index.sol";
 import { SINGLETON_ADDRESS } from "common/Constants.sol";
 import { LibLetters } from "libraries/LibLetters.sol";
 
@@ -16,8 +17,9 @@ contract DrawSystem is System {
         }
 
         // Draw 8 letters for now, undecided on whether players can control
-        Letter[] memory drawnLetters =
-            LibLetters.getDraw(8, uint256(keccak256(abi.encodePacked(block.timestamp, _msgSender()))));
+        Letter[] memory drawnLetters = LibLetters.getDraw(
+            DrawLetterOdds.get(), 8, uint256(keccak256(abi.encodePacked(block.timestamp, _msgSender())))
+        );
 
         for (uint256 i = 0; i < drawnLetters.length; i++) {
             LibLetters.addLetter(player, drawnLetters[i]);
