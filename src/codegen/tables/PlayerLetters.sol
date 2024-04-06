@@ -16,25 +16,29 @@ import { Schema } from "@latticexyz/store/src/Schema.sol";
 import { EncodedLengths, EncodedLengthsLib } from "@latticexyz/store/src/EncodedLengths.sol";
 import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 
+// Import user types
+import { Letter } from "./../common.sol";
+
 library PlayerLetters {
   // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "PlayerLetters", typeId: RESOURCE_TABLE });`
   ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000506c617965724c657474657273000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0000000100000000000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0004010004000000000000000000000000000000000000000000000000000000);
 
-  // Hex-encoded key schema of (address)
-  Schema constant _keySchema = Schema.wrap(0x0014010061000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (uint8[])
-  Schema constant _valueSchema = Schema.wrap(0x0000000162000000000000000000000000000000000000000000000000000000);
+  // Hex-encoded key schema of (address, uint8)
+  Schema constant _keySchema = Schema.wrap(0x0015020061000000000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (uint32)
+  Schema constant _valueSchema = Schema.wrap(0x0004010003000000000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
    * @return keyNames An array of strings with the names of key fields.
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
-    keyNames = new string[](1);
+    keyNames = new string[](2);
     keyNames[0] = "player";
+    keyNames[1] = "letter";
   }
 
   /**
@@ -63,333 +67,102 @@ library PlayerLetters {
   /**
    * @notice Get value.
    */
-  function getValue(address player) internal view returns (uint8[] memory value) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function getValue(address player, Letter letter) internal view returns (uint32 value) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
-    return (SliceLib.getSubslice(_blob, 0, _blob.length).decodeArray_uint8());
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint32(bytes4(_blob)));
   }
 
   /**
    * @notice Get value.
    */
-  function _getValue(address player) internal view returns (uint8[] memory value) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _getValue(address player, Letter letter) internal view returns (uint32 value) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
-    return (SliceLib.getSubslice(_blob, 0, _blob.length).decodeArray_uint8());
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint32(bytes4(_blob)));
   }
 
   /**
    * @notice Get value.
    */
-  function get(address player) internal view returns (uint8[] memory value) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function get(address player, Letter letter) internal view returns (uint32 value) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
-    return (SliceLib.getSubslice(_blob, 0, _blob.length).decodeArray_uint8());
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint32(bytes4(_blob)));
   }
 
   /**
    * @notice Get value.
    */
-  function _get(address player) internal view returns (uint8[] memory value) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _get(address player, Letter letter) internal view returns (uint32 value) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
-    return (SliceLib.getSubslice(_blob, 0, _blob.length).decodeArray_uint8());
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint32(bytes4(_blob)));
   }
 
   /**
    * @notice Set value.
    */
-  function setValue(address player, uint8[] memory value) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function setValue(address player, Letter letter, uint32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((value)));
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
   }
 
   /**
    * @notice Set value.
    */
-  function _setValue(address player, uint8[] memory value) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _setValue(address player, Letter letter, uint32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((value)));
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
   }
 
   /**
    * @notice Set value.
    */
-  function set(address player, uint8[] memory value) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function set(address player, Letter letter, uint32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((value)));
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
   }
 
   /**
    * @notice Set value.
    */
-  function _set(address player, uint8[] memory value) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _set(address player, Letter letter, uint32 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((value)));
-  }
-
-  /**
-   * @notice Get the length of value.
-   */
-  function lengthValue(address player) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get the length of value.
-   */
-  function _lengthValue(address player) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get the length of value.
-   */
-  function length(address player) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get the length of value.
-   */
-  function _length(address player) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get an item of value.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function getItemValue(address player, uint256 _index) internal view returns (uint8) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (uint8(bytes1(_blob)));
-    }
-  }
-
-  /**
-   * @notice Get an item of value.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function _getItemValue(address player, uint256 _index) internal view returns (uint8) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (uint8(bytes1(_blob)));
-    }
-  }
-
-  /**
-   * @notice Get an item of value.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function getItem(address player, uint256 _index) internal view returns (uint8) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (uint8(bytes1(_blob)));
-    }
-  }
-
-  /**
-   * @notice Get an item of value.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function _getItem(address player, uint256 _index) internal view returns (uint8) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (uint8(bytes1(_blob)));
-    }
-  }
-
-  /**
-   * @notice Push an element to value.
-   */
-  function pushValue(address player, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, abi.encodePacked((_element)));
-  }
-
-  /**
-   * @notice Push an element to value.
-   */
-  function _pushValue(address player, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, abi.encodePacked((_element)));
-  }
-
-  /**
-   * @notice Push an element to value.
-   */
-  function push(address player, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, abi.encodePacked((_element)));
-  }
-
-  /**
-   * @notice Push an element to value.
-   */
-  function _push(address player, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, abi.encodePacked((_element)));
-  }
-
-  /**
-   * @notice Pop an element from value.
-   */
-  function popValue(address player) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Pop an element from value.
-   */
-  function _popValue(address player) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Pop an element from value.
-   */
-  function pop(address player) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Pop an element from value.
-   */
-  function _pop(address player) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Update an element of value at `_index`.
-   */
-  function updateValue(address player, uint256 _index, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    unchecked {
-      bytes memory _encoded = abi.encodePacked((_element));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
-  }
-
-  /**
-   * @notice Update an element of value at `_index`.
-   */
-  function _updateValue(address player, uint256 _index, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    unchecked {
-      bytes memory _encoded = abi.encodePacked((_element));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
-  }
-
-  /**
-   * @notice Update an element of value at `_index`.
-   */
-  function update(address player, uint256 _index, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    unchecked {
-      bytes memory _encoded = abi.encodePacked((_element));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
-  }
-
-  /**
-   * @notice Update an element of value at `_index`.
-   */
-  function _update(address player, uint256 _index, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(player)));
-
-    unchecked {
-      bytes memory _encoded = abi.encodePacked((_element));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(address player) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function deleteRecord(address player, Letter letter) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -397,30 +170,20 @@ library PlayerLetters {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(address player) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _deleteRecord(address player, Letter letter) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
 
   /**
-   * @notice Tightly pack dynamic data lengths using this table's schema.
-   * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
+   * @notice Tightly pack static (fixed length) data using this table's schema.
+   * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeLengths(uint8[] memory value) internal pure returns (EncodedLengths _encodedLengths) {
-    // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
-    unchecked {
-      _encodedLengths = EncodedLengthsLib.pack(value.length * 1);
-    }
-  }
-
-  /**
-   * @notice Tightly pack dynamic (variable length) data using this table's schema.
-   * @return The dynamic data, encoded into a sequence of bytes.
-   */
-  function encodeDynamic(uint8[] memory value) internal pure returns (bytes memory) {
-    return abi.encodePacked(EncodeArray.encode((value)));
+  function encodeStatic(uint32 value) internal pure returns (bytes memory) {
+    return abi.encodePacked(value);
   }
 
   /**
@@ -429,10 +192,11 @@ library PlayerLetters {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(uint8[] memory value) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData;
-    EncodedLengths _encodedLengths = encodeLengths(value);
-    bytes memory _dynamicData = encodeDynamic(value);
+  function encode(uint32 value) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
+    bytes memory _staticData = encodeStatic(value);
+
+    EncodedLengths _encodedLengths;
+    bytes memory _dynamicData;
 
     return (_staticData, _encodedLengths, _dynamicData);
   }
@@ -440,9 +204,10 @@ library PlayerLetters {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(address player) internal pure returns (bytes32[] memory) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function encodeKeyTuple(address player, Letter letter) internal pure returns (bytes32[] memory) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(player)));
+    _keyTuple[1] = bytes32(uint256(uint8(letter)));
 
     return _keyTuple;
   }

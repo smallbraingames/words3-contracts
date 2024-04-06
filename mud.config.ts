@@ -39,10 +39,17 @@ export default defineWorld({
       schema: { x: "int32", y: "int32", value: "address" }
     },
     PlayerLetters: {
-      key: ["player"],
+      key: ["player", "letter"],
       schema: {
         player: "address",
-        value: "uint8[]", // No arrays of enums, so we use uint8
+        letter: "Letter",
+        value: "uint32",
+      },
+    },
+    DrawLetterOdds: {
+      key: [],
+      schema: {
+       value: "uint8[]" // Letters index the array (A is index 1, B is index 2, etc.)
       },
     },
     Treasury: {
