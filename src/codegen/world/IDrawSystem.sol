@@ -9,5 +9,7 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IDrawSystem {
-  function draw(address player) external payable;
+    error InvalidAddress();
+
+    function draw(address player) external payable;
 }
