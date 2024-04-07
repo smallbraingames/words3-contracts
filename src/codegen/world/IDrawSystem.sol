@@ -10,6 +10,7 @@ pragma solidity >=0.8.24;
  */
 interface IDrawSystem {
     error InvalidDrawAddress();
+    error NotEnoughValue();
 
     function draw(address player) external payable;
 

@@ -48,7 +48,16 @@ contract SimpleWord is Words3Test {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start(initialWord, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, 5);
+        world.start({
+            initialWord: initialWord,
+            merkleRoot: m.getRoot(words),
+            vrgdaTargetPrice: 1,
+            vrgdaPriceDecay: 1e17,
+            vrgdaPerDayInitial: 100e18,
+            vrgdaPower: 1e16,
+            crossWordRewardFraction: 3,
+            bonusDistance: 5
+        });
 
         Letter[] memory word = new Letter[](2);
         word[0] = Letter.EMPTY;
@@ -60,6 +69,7 @@ contract SimpleWord is Words3Test {
         vm.deal(player, 50 ether);
         vm.startPrank(player);
         for (uint256 i = 0; i < 50; i++) {
+            vm.warp(block.timestamp + 1 days);
             world.draw{ value: 1 ether }(player);
         }
         world.play(word, proof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
