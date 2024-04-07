@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import { Points, Spent, SpentMove, Treasury } from "codegen/index.sol";
+import { Spent, SpentMove, Treasury } from "codegen/index.sol";
 import { NoPoints } from "common/Errors.sol";
 import { LibPoints } from "libraries/LibPoints.sol";
 
 library LibTreasury {
-    function getClaimAmount(address player) internal view returns (uint256) {
+    function getClaimAmount(uint32 points) internal view returns (uint256) {
         uint256 treasury = Treasury.get();
-        uint256 points = Points.get(player);
         if (points == 0) {
             revert NoPoints();
         }

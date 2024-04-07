@@ -28,7 +28,7 @@ library LibPoints {
         returns (uint32)
     {
         uint32 points = getPoints(playWord, filledWord, start, direction, bounds);
-        LibPlayer.incrementScore(player, points);
+        LibPlayer.incrementPoints(player, points);
         PointsResult.set(playResultId, player, -1, points);
         return points;
     }
@@ -90,7 +90,7 @@ library LibPoints {
         for (uint256 i; i < buildsOnPlayers.length; i++) {
             if (buildsOnPlayers[i] != address(0)) {
                 address player = buildsOnPlayers[i];
-                LibPlayer.incrementScore(player, rewardPoints);
+                LibPlayer.incrementPoints(player, rewardPoints);
                 PointsResult.set(playResultId, player, int16(uint16(i)), rewardPoints);
             }
         }
