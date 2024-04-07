@@ -4,18 +4,28 @@ pragma solidity >=0.8.0;
 import { System } from "@latticexyz/world/src/System.sol";
 
 import { Letter } from "codegen/common.sol";
-import { DrawLetterOdds } from "codegen/index.sol";
+import { DrawCount, DrawLetterOdds } from "codegen/index.sol";
 import { SINGLETON_ADDRESS } from "common/Constants.sol";
 import { LibLetters } from "libraries/LibLetters.sol";
 import { LibPrice } from "libraries/LibPrice.sol";
+import { LibTreasury } from "libraries/LibTreasury.sol";
 
 contract DrawSystem is System {
     error InvalidDrawAddress();
+    error NotEnoughValue();
 
     function draw(address player) public payable {
         if (player == address(0) || player == SINGLETON_ADDRESS) {
             revert InvalidDrawAddress();
         }
+
+        uint256 value = _msgValue();
+        if (value < LibPrice.getDrawPrice()) {
+            revert NotEnoughValue();
+        }
+
+        // Sender might be different than player, track the spend under sender
+        LibTreasury.incrementTreasury(_msgSender(), value);
 
         // Draw 8 letters for now, undecided on whether players can control
         Letter[] memory drawnLetters = LibLetters.getDraw({
@@ -27,6 +37,8 @@ contract DrawSystem is System {
         for (uint256 i = 0; i < drawnLetters.length; i++) {
             LibLetters.addLetter({ player: player, letter: drawnLetters[i] });
         }
+
+        DrawCount.set(DrawCount.get() + 1);
     }
 
     function getDrawPrice() public view returns (uint256) {

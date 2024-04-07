@@ -12,7 +12,8 @@ contract PostDeploy is Script {
     function run(address worldAddress) external {
         IWorld world = IWorld(worldAddress);
 
-        // turn this into an array
+        /// SET ODDS
+
         uint8[] memory odds = new uint8[](27);
         odds[0] = 0;
         odds[uint8(Letter.A)] = 9;
