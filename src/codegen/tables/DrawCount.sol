@@ -20,19 +20,16 @@ import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 
 import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 
-// Import user types
-import { Letter } from "./../common.sol";
-
-library LetterCount {
-    // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "LetterCount", typeId:
-    // RESOURCE_TABLE });`
-    ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000004c6574746572436f756e740000000000);
+library DrawCount {
+    // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "DrawCount", typeId: RESOURCE_TABLE
+    // });`
+    ResourceId constant _tableId = ResourceId.wrap(0x7462000000000000000000000000000044726177436f756e7400000000000000);
 
     FieldLayout constant _fieldLayout =
         FieldLayout.wrap(0x0004010004000000000000000000000000000000000000000000000000000000);
 
-    // Hex-encoded key schema of (uint8)
-    Schema constant _keySchema = Schema.wrap(0x0001010000000000000000000000000000000000000000000000000000000000);
+    // Hex-encoded key schema of ()
+    Schema constant _keySchema = Schema.wrap(0x0000000000000000000000000000000000000000000000000000000000000000);
     // Hex-encoded value schema of (uint32)
     Schema constant _valueSchema = Schema.wrap(0x0004010003000000000000000000000000000000000000000000000000000000);
 
@@ -41,8 +38,7 @@ library LetterCount {
      * @return keyNames An array of strings with the names of key fields.
      */
     function getKeyNames() internal pure returns (string[] memory keyNames) {
-        keyNames = new string[](1);
-        keyNames[0] = "letter";
+        keyNames = new string[](0);
     }
 
     /**
@@ -71,9 +67,8 @@ library LetterCount {
     /**
      * @notice Get value.
      */
-    function getValue(Letter letter) internal view returns (uint32 value) {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function getValue() internal view returns (uint32 value) {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
         return (uint32(bytes4(_blob)));
@@ -82,9 +77,8 @@ library LetterCount {
     /**
      * @notice Get value.
      */
-    function _getValue(Letter letter) internal view returns (uint32 value) {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function _getValue() internal view returns (uint32 value) {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
         return (uint32(bytes4(_blob)));
@@ -93,9 +87,8 @@ library LetterCount {
     /**
      * @notice Get value.
      */
-    function get(Letter letter) internal view returns (uint32 value) {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function get() internal view returns (uint32 value) {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
         return (uint32(bytes4(_blob)));
@@ -104,9 +97,8 @@ library LetterCount {
     /**
      * @notice Get value.
      */
-    function _get(Letter letter) internal view returns (uint32 value) {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function _get() internal view returns (uint32 value) {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
         return (uint32(bytes4(_blob)));
@@ -115,9 +107,8 @@ library LetterCount {
     /**
      * @notice Set value.
      */
-    function setValue(Letter letter, uint32 value) internal {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function setValue(uint32 value) internal {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
     }
@@ -125,9 +116,8 @@ library LetterCount {
     /**
      * @notice Set value.
      */
-    function _setValue(Letter letter, uint32 value) internal {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function _setValue(uint32 value) internal {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
     }
@@ -135,9 +125,8 @@ library LetterCount {
     /**
      * @notice Set value.
      */
-    function set(Letter letter, uint32 value) internal {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function set(uint32 value) internal {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
     }
@@ -145,9 +134,8 @@ library LetterCount {
     /**
      * @notice Set value.
      */
-    function _set(Letter letter, uint32 value) internal {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function _set(uint32 value) internal {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
     }
@@ -155,9 +143,8 @@ library LetterCount {
     /**
      * @notice Delete all data for given keys.
      */
-    function deleteRecord(Letter letter) internal {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function deleteRecord() internal {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         StoreSwitch.deleteRecord(_tableId, _keyTuple);
     }
@@ -165,9 +152,8 @@ library LetterCount {
     /**
      * @notice Delete all data for given keys.
      */
-    function _deleteRecord(Letter letter) internal {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function _deleteRecord() internal {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
     }
@@ -198,9 +184,8 @@ library LetterCount {
     /**
      * @notice Encode keys as a bytes32 array using this table's field layout.
      */
-    function encodeKeyTuple(Letter letter) internal pure returns (bytes32[] memory) {
-        bytes32[] memory _keyTuple = new bytes32[](1);
-        _keyTuple[0] = bytes32(uint256(uint8(letter)));
+    function encodeKeyTuple() internal pure returns (bytes32[] memory) {
+        bytes32[] memory _keyTuple = new bytes32[](0);
 
         return _keyTuple;
     }

@@ -12,7 +12,6 @@ contract StartSystem is System {
     function start(
         Letter[] memory initialWord,
         uint256 endTime,
-        uint256 maxPlayerSpend,
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
@@ -26,7 +25,6 @@ contract StartSystem is System {
         checkStartInputs(initialWord);
         LibGame.startGame({
             endTime: endTime,
-            maxPlayerSpend: maxPlayerSpend,
             merkleRoot: merkleRoot,
             vrgdaTargetPrice: vrgdaTargetPrice,
             vrgdaPriceDecay: vrgdaPriceDecay,

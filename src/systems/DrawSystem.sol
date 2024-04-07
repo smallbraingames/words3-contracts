@@ -7,6 +7,7 @@ import { Letter } from "codegen/common.sol";
 import { DrawLetterOdds } from "codegen/index.sol";
 import { SINGLETON_ADDRESS } from "common/Constants.sol";
 import { LibLetters } from "libraries/LibLetters.sol";
+import { LibPrice } from "libraries/LibPrice.sol";
 
 contract DrawSystem is System {
     error InvalidAddress();
@@ -26,5 +27,9 @@ contract DrawSystem is System {
         for (uint256 i = 0; i < drawnLetters.length; i++) {
             LibLetters.addLetter({ player: player, letter: drawnLetters[i] });
         }
+    }
+
+    function getDrawPrice() public view returns (uint256) {
+        return LibPrice.getDrawPrice();
     }
 }

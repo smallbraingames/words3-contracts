@@ -10,12 +10,11 @@ library LibGame {
     }
 
     function canPlay() internal view returns (bool) {
-        return getGameStatus() == Status.STARTED && block.timestamp < GameConfig.getEndTime();
+        return getGameStatus() == Status.STARTED;
     }
 
     function startGame(
         uint256 endTime,
-        uint256 maxPlayerSpend,
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
@@ -31,7 +30,6 @@ library LibGame {
                 status: Status.STARTED,
                 endTime: endTime,
                 crossWordRewardFraction: crossWordRewardFraction,
-                maxPlayerSpend: maxPlayerSpend,
                 bonusDistance: bonusDistance
             })
         );

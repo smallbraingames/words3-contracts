@@ -14,7 +14,6 @@ interface IStartSystem {
     function start(
         Letter[] memory initialWord,
         uint256 endTime,
-        uint256 maxPlayerSpend,
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,

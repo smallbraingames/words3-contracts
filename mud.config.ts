@@ -9,7 +9,6 @@ export default defineWorld({
         status: "Status",
         endTime: "uint256",
         crossWordRewardFraction: "uint32",
-        maxPlayerSpend: "uint256",
         bonusDistance: "uint16",
       },
     },
@@ -72,10 +71,9 @@ export default defineWorld({
         value: "uint256",
       },
     },
-    LetterCount: {
-      key: ["letter"],
+    DrawCount: {
+      key: [],
       schema: {
-        letter: "Letter",
         value: "uint32",
       },
     },

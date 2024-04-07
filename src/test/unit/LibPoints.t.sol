@@ -81,7 +81,7 @@ contract LibPointsTest is Words3Test {
         Letter[] memory initialWord = new Letter[](1);
         initialWord[0] = Letter.A;
         uint16 bonusDistance = 8;
-        world.start(initialWord, block.timestamp + 1e6, 0, bytes32(0x0), 0, 1e17, 3e18, 1e16, 3, bonusDistance);
+        world.start(initialWord, block.timestamp + 1e6, bytes32(0x0), 0, 1e17, 3e18, 1e16, 3, bonusDistance);
 
         Letter[] memory playWord = new Letter[](bonusDistance);
         Letter[] memory filledWord = new Letter[](bonusDistance);
@@ -110,7 +110,7 @@ contract LibPointsTest is Words3Test {
         Letter[] memory initialWord = new Letter[](1);
         initialWord[0] = Letter.A;
         uint16 bonusDistance = 3;
-        world.start(initialWord, block.timestamp + 1e6, 0, bytes32(0x0), 0, 1e17, 3e18, 1e16, 3, bonusDistance);
+        world.start(initialWord, block.timestamp + 1e6, bytes32(0x0), 0, 1e17, 3e18, 1e16, 3, bonusDistance);
 
         // If the word does not touch any bonus tiles, points are equal to the base point value
         uint256 minLength = playWordRaw.length < bonusDistance - 1 ? playWordRaw.length : bonusDistance - 2;

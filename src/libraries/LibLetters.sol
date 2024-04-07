@@ -34,6 +34,29 @@ library LibLetters {
         return letters;
     }
 
+    function hasLetters(address player, Letter[] memory letters) internal view returns (bool) {
+        for (uint256 i = 0; i < letters.length; i++) {
+            Letter letter = letters[i];
+            if (letter == Letter.EMPTY) {
+                continue;
+            }
+            if (PlayerLetters.get({ player: player, letter: letter }) == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function useLetters(address player, Letter[] memory letters) internal {
+        for (uint256 i = 0; i < letters.length; i++) {
+            Letter letter = letters[i];
+            if (letter == Letter.EMPTY) {
+                continue;
+            }
+            removeLetter(player, letter);
+        }
+    }
+
     function addLetter(address player, Letter letter) internal {
         uint32 count = PlayerLetters.get({ player: player, letter: letter });
         PlayerLetters.set({ player: player, letter: letter, value: count + 1 });

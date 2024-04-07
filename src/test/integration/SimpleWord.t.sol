@@ -37,7 +37,7 @@ contract SimpleWord is Words3Test {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start(initialWord, 10, 0, m.getRoot(words), 0, 0, 0, 1e16, 3, 5);
+        world.start(initialWord, 10, m.getRoot(words), 0, 0, 0, 1e16, 3, 5);
         assertEq(uint8(TileLetter.get(0, 0)), uint8(Letter.H));
         assertEq(uint8(TileLetter.get(1, 0)), uint8(Letter.I));
     }
@@ -46,7 +46,7 @@ contract SimpleWord is Words3Test {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start(initialWord, block.timestamp + 1e6, 0, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, 5);
+        world.start(initialWord, block.timestamp + 1e6, m.getRoot(words), 0, 1e17, 3e18, 1e16, 3, 5);
 
         Letter[] memory word = new Letter[](2);
         word[0] = Letter.EMPTY;
@@ -54,6 +54,13 @@ contract SimpleWord is Words3Test {
         Bound[] memory bounds = new Bound[](2);
         bytes32[] memory proof = m.getProof(words, 0);
 
+        address player = address(0x123);
+        vm.deal(player, 50 ether);
+        vm.startPrank(player);
+        for (uint256 i = 0; i < 50; i++) {
+            world.draw{ value: 1 ether }(player);
+        }
         world.play(word, proof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
+        vm.stopPrank();
     }
 }

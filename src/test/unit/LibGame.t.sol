@@ -31,7 +31,7 @@ contract LibGameTest is Words3Test {
 
     function testCanPlayAfterGameStart() public {
         vm.startPrank(deployerAddress);
-        LibGame.startGame(block.timestamp + 100, 0, bytes32(0), 0, 0, 0, 0, 3, 5);
+        LibGame.startGame(block.timestamp + 100, bytes32(0), 0, 0, 0, 0, 3, 5);
         vm.stopPrank();
         assertTrue(LibGame.canPlay());
         vm.warp(block.timestamp + 100);
@@ -41,7 +41,7 @@ contract LibGameTest is Words3Test {
     function testFuzzCanPlay(uint256 endTime) public {
         vm.assume(endTime > block.timestamp);
         vm.startPrank(deployerAddress);
-        LibGame.startGame(endTime, 0, bytes32(0), 0, 0, 0, 0, 3, 8);
+        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3, 8);
         vm.stopPrank();
         assertTrue(LibGame.canPlay());
         vm.warp(endTime);
@@ -52,7 +52,7 @@ contract LibGameTest is Words3Test {
         vm.assume(endTime > block.timestamp);
         vm.assume(callTime > endTime);
         vm.startPrank(deployerAddress);
-        LibGame.startGame(endTime, 0, bytes32(0), 0, 0, 0, 0, 3, 12);
+        LibGame.startGame(endTime, bytes32(0), 0, 0, 0, 0, 3, 12);
         vm.stopPrank();
         vm.warp(callTime);
         assertFalse(LibGame.canPlay());
@@ -78,8 +78,7 @@ contract LibGameTest is Words3Test {
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
         uint32 crossWordRewardFraction,
-        uint16 hostFeeBps,
-        uint256 maxPlayerSpend
+        uint16 hostFeeBps
     )
         public
     {
@@ -88,7 +87,6 @@ contract LibGameTest is Words3Test {
         vm.startPrank(deployerAddress);
         LibGame.startGame(
             endTime,
-            maxPlayerSpend,
             merkleRoot,
             vrgdaTargetPrice,
             vrgdaPriceDecay,
@@ -105,6 +103,5 @@ contract LibGameTest is Words3Test {
         assertEq(vrgdaPerDayInitial, VRGDAConfig.getPerDayInitial());
         assertEq(vrgdaPower, VRGDAConfig.getPower());
         assertEq(crossWordRewardFraction, GameConfig.getCrossWordRewardFraction());
-        assertEq(maxPlayerSpend, GameConfig.getMaxPlayerSpend());
     }
 }
