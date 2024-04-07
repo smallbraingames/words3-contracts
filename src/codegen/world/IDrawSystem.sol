@@ -12,4 +12,6 @@ interface IDrawSystem {
     error InvalidAddress();
 
     function draw(address player) external payable;
+
+    function getDrawPrice() external view returns (uint256);
 }

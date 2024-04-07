@@ -14,6 +14,9 @@ import { Coord } from "common/Coord.sol";
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IPlaySystem {
+    error CannotPlay();
+    error MissingLetters();
+
     function play(
         Letter[] memory word,
         bytes32[] memory proof,
@@ -21,8 +24,5 @@ interface IPlaySystem {
         Direction direction,
         Bound[] memory bounds
     )
-        external
-        payable;
-
-    function getWordPrice(Letter[] memory word) external view returns (uint256);
+        external;
 }

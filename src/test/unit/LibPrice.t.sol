@@ -3,7 +3,7 @@
 pragma solidity >=0.8.0;
 
 import { Direction, Letter } from "codegen/common.sol";
-import { LetterCount, VRGDAConfig } from "codegen/index.sol";
+import { DrawCount, VRGDAConfig } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 
 import { NotEnoughValue } from "common/Errors.sol";
@@ -60,29 +60,29 @@ contract LibPriceTest is Words3Test {
 
         uint256 start = block.timestamp;
 
-        LetterCount.set(Letter.A, uint32(20));
+        DrawCount.set(uint32(20));
         vm.warp(start + 1 days);
-        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+        assertRelApproxEq(LibPrice.getDrawPrice(), 1e18, 0.03e18);
 
-        LetterCount.set(Letter.A, uint32(49));
+        DrawCount.set(uint32(49));
         vm.warp(start + 2 days);
-        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+        assertRelApproxEq(LibPrice.getDrawPrice(), 1e18, 0.03e18);
 
-        LetterCount.set(Letter.A, uint32(83));
+        DrawCount.set(uint32(83));
         vm.warp(start + 3 days);
-        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+        assertRelApproxEq(LibPrice.getDrawPrice(), 1e18, 0.03e18);
 
-        LetterCount.set(Letter.A, uint32(121));
+        DrawCount.set(uint32(121));
         vm.warp(start + 4 days);
-        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+        assertRelApproxEq(LibPrice.getDrawPrice(), 1e18, 0.03e18);
 
-        LetterCount.set(Letter.A, uint32(162));
+        DrawCount.set(uint32(162));
         vm.warp(start + 5 days);
-        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+        assertRelApproxEq(LibPrice.getDrawPrice(), 1e18, 0.03e18);
 
-        LetterCount.set(Letter.A, uint32(205));
+        DrawCount.set(uint32(205));
         vm.warp(start + 6 days);
-        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), 1e18, 0.03e18);
+        assertRelApproxEq(LibPrice.getDrawPrice(), 1e18, 0.03e18);
 
         vm.stopPrank();
     }
@@ -93,7 +93,7 @@ contract LibPriceTest is Words3Test {
         uint256 perDayInitialRaw,
         uint256 powerRaw,
         uint256 time,
-        uint32 letterCount
+        uint32 drawCount
     )
         public
     {
@@ -102,7 +102,7 @@ contract LibPriceTest is Words3Test {
         uint256 perDayInitialNonWad = bound(perDayInitialRaw, 1, 1000);
         int256 power = int256(bound(powerRaw, 1e18, 5e18));
         time = bound(time, 1, 1000 days);
-        letterCount = uint32(bound(letterCount, 0, uint256(perDayInitialNonWad * 5)));
+        drawCount = uint32(bound(drawCount, 0, uint256(perDayInitialNonWad * 5)));
 
         vm.startPrank(deployerAddress);
         VRGDAConfig.set({
@@ -112,12 +112,12 @@ contract LibPriceTest is Words3Test {
             perDayInitial: toWadUnsafe(perDayInitialNonWad),
             power: power
         });
-        LetterCount.set(Letter.D, letterCount);
+        DrawCount.set(drawCount);
         vm.stopPrank();
         vm.warp(block.timestamp + time);
 
         // This should not revert
-        LibPrice.getLetterPrice(Letter.D);
+        LibPrice.getDrawPrice();
     }
 
     function testFuzzAroundConstantsDoNotRevertWithReasonableValues(
@@ -126,7 +126,7 @@ contract LibPriceTest is Words3Test {
         uint256 perDayInitialRaw,
         uint256 powerRaw,
         uint256 time,
-        uint32 letterCount
+        uint32 drawCount
     )
         public
     {
@@ -136,7 +136,7 @@ contract LibPriceTest is Words3Test {
         int256 power = int256(bound(powerRaw, 1.2e18, 5e18));
         uint256 timeDays = bound(time, 0, 8);
         time = bound(time, 1 + timeDays * 86_400, 9 days);
-        letterCount = uint32(bound(letterCount, 0, perDayInitialNonWad * 5 * (timeDays + 1)));
+        drawCount = uint32(bound(drawCount, 0, perDayInitialNonWad * 5 * (timeDays + 1)));
 
         vm.startPrank(deployerAddress);
         VRGDAConfig.set({
@@ -146,12 +146,12 @@ contract LibPriceTest is Words3Test {
             perDayInitial: toWadUnsafe(perDayInitialNonWad),
             power: power
         });
-        LetterCount.set(Letter.D, letterCount);
+        DrawCount.set(drawCount);
         vm.stopPrank();
         vm.warp(block.timestamp + time);
 
         // This should not revert
-        LibPrice.getLetterPrice(Letter.D);
+        LibPrice.getDrawPrice();
     }
 
     /// ===== Modified tests from t11s https://github.com/transmissions11/VRGDAs/blob/master/test/LinearVRGDA.t.sol
@@ -173,7 +173,7 @@ contract LibPriceTest is Words3Test {
         int256 targetSaleTime = unsafeWadDiv(1e18, 2e18);
         vm.warp(block.timestamp + fromDaysWadUnsafe(targetSaleTime));
 
-        uint256 cost = LibPrice.getLetterPrice(Letter.A);
+        uint256 cost = LibPrice.getDrawPrice();
         assertRelApproxEq(cost, uint256(69.42e18), 0.00000000001e18);
     }
 
@@ -189,12 +189,12 @@ contract LibPriceTest is Words3Test {
             perDayInitial: 2e18,
             power: 1e18
         });
-        LetterCount.set(Letter.A, uint32(numMint));
+        DrawCount.set(uint32(numMint));
         vm.stopPrank();
 
         vm.warp(block.timestamp + timeDelta);
 
-        uint256 cost = LibPrice.getLetterPrice(Letter.A);
+        uint256 cost = LibPrice.getDrawPrice();
         assertRelApproxEq(cost, uint256(VRGDAConfig.getTargetPrice()), 0.00000001e18);
     }
 
@@ -208,11 +208,11 @@ contract LibPriceTest is Words3Test {
             perDayInitial: 2e18,
             power: 1e18
         });
-        LetterCount.set(Letter.A, sold);
+        DrawCount.set(sold);
         vm.stopPrank();
         int256 targetSaleTime = unsafeWadDiv(toWadUnsafe(sold + 1), 2e18);
         vm.warp(block.timestamp + fromDaysWadUnsafe(targetSaleTime));
-        assertRelApproxEq(LibPrice.getLetterPrice(Letter.A), uint256(VRGDAConfig.getTargetPrice()), 0.00000001e18);
+        assertRelApproxEq(LibPrice.getDrawPrice(), uint256(VRGDAConfig.getTargetPrice()), 0.00000001e18);
     }
 
     /// ===== Copied from solmate's DSTestPlus (https://github.com/transmissions11/solmate/tree/main/src/test/utils)

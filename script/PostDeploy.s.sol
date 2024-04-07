@@ -64,7 +64,6 @@ contract PostDeploy is Script {
         // world.start({
         //     initialWord: infinite,
         //     endTime: block.timestamp + 60 * 3 * 60,
-        //     maxPlayerSpend: 0.5 ether,
         //     merkleRoot: 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
         //     vrgdaTargetPrice: 40e13,
         //     vrgdaPriceDecay: 99_999e13,

@@ -21,7 +21,6 @@ error WordNotInDictionary();
 error InvalidBoundLength();
 error NonzeroEmptyLetterBound();
 error NonemptyBoundEdges();
-error SpendCap();
 
 error NotEnoughValue();
 
