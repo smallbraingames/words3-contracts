@@ -14,7 +14,6 @@ library LibGame {
     }
 
     function startGame(
-        uint256 endTime,
         bytes32 merkleRoot,
         int256 vrgdaTargetPrice,
         int256 vrgdaPriceDecay,
@@ -28,7 +27,6 @@ library LibGame {
         GameConfig.set(
             GameConfigData({
                 status: Status.STARTED,
-                endTime: endTime,
                 crossWordRewardFraction: crossWordRewardFraction,
                 bonusDistance: bonusDistance
             })
