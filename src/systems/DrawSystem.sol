@@ -10,11 +10,11 @@ import { LibLetters } from "libraries/LibLetters.sol";
 import { LibPrice } from "libraries/LibPrice.sol";
 
 contract DrawSystem is System {
-    error InvalidAddress();
+    error InvalidDrawAddress();
 
     function draw(address player) public payable {
         if (player == address(0) || player == SINGLETON_ADDRESS) {
-            revert InvalidAddress();
+            revert InvalidDrawAddress();
         }
 
         // Draw 8 letters for now, undecided on whether players can control

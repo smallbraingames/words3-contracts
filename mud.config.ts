@@ -7,7 +7,6 @@ export default defineWorld({
       key: [],
       schema: {
         status: "Status",
-        endTime: "uint256",
         crossWordRewardFraction: "uint32",
         bonusDistance: "uint16",
       },
@@ -122,7 +121,7 @@ export default defineWorld({
   enums: {
     BonusType: ["MULTIPLY_WORD", "MULTIPLY_LETTER"],
     Direction: ["LEFT_TO_RIGHT", "TOP_TO_BOTTOM"],
-    Status: ["NOT_STARTED", "STARTED", "OVER"],
+    Status: ["NOT_STARTED", "STARTED"],
     Letter: [
       "EMPTY",
       "A",

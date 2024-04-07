@@ -9,7 +9,8 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IClaimSystem {
-    function claim(address player) external;
+    error AlreadyClaimed();
+    error InvalidClaimAddress();
 
-    function endAndClaim(address player) external;
+    function claim(address player) external;
 }

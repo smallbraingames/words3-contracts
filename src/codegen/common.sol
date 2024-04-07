@@ -14,8 +14,7 @@ enum Direction {
 
 enum Status {
     NOT_STARTED,
-    STARTED,
-    OVER
+    STARTED
 }
 
 enum Letter {
