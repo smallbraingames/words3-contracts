@@ -69,8 +69,9 @@ contract SimpleWord is Words3Test {
         vm.deal(player, 50 ether);
         vm.startPrank(player);
         for (uint256 i = 0; i < 50; i++) {
+            uint256 price = world.getDrawPrice();
             vm.warp(block.timestamp + 1 days);
-            world.draw{ value: 1 ether }(player);
+            world.draw{ value: price }(player);
         }
         world.play(word, proof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
         vm.stopPrank();
