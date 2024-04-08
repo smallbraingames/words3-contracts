@@ -12,6 +12,32 @@ contract PostDeploy is Script {
     function run(address worldAddress) external {
         IWorld world = IWorld(worldAddress);
 
+        /// START GAME
+
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        vm.startBroadcast(deployerPrivateKey);
+
+        Letter[] memory infinite = new Letter[](8);
+        infinite[0] = Letter.I;
+        infinite[1] = Letter.N;
+        infinite[2] = Letter.F;
+        infinite[3] = Letter.I;
+        infinite[4] = Letter.N;
+        infinite[5] = Letter.I;
+        infinite[6] = Letter.T;
+        infinite[7] = Letter.E;
+
+        world.start({
+            initialWord: infinite,
+            merkleRoot: 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
+            vrgdaTargetPrice: 40e13,
+            vrgdaPriceDecay: 99_999e13,
+            vrgdaPerDayInitial: 700e18,
+            vrgdaPower: 1e18,
+            crossWordRewardFraction: 3,
+            bonusDistance: 10
+        });
+
         /// SET ODDS
 
         uint8[] memory odds = new uint8[](27);
@@ -45,35 +71,6 @@ contract PostDeploy is Script {
 
         world.setDrawLetterOdds(odds);
 
-        /// START GAME
-
-        // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        // vm.startBroadcast(deployerPrivateKey);
-
-        // IWorld world = IWorld(worldAddress);
-
-        // Letter[] memory infinite = new Letter[](8);
-        // infinite[0] = Letter.I;
-        // infinite[1] = Letter.N;
-        // infinite[2] = Letter.F;
-        // infinite[3] = Letter.I;
-        // infinite[4] = Letter.N;
-        // infinite[5] = Letter.I;
-        // infinite[6] = Letter.T;
-        // infinite[7] = Letter.E;
-
-        // world.start({
-        //     initialWord: infinite,
-        //     endTime: block.timestamp + 60 * 3 * 60,
-        //     merkleRoot: 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
-        //     vrgdaTargetPrice: 40e13,
-        //     vrgdaPriceDecay: 99_999e13,
-        //     vrgdaPerDayInitial: 700e18,
-        //     vrgdaPower: 1e18,
-        //     crossWordRewardFraction: 3,
-        //     bonusDistance: 10
-        // });
-
-        // vm.stopBroadcast();
+        vm.stopBroadcast();
     }
 }
