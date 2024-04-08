@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { Claimed, Points } from "codegen/index.sol";
+import { Points } from "codegen/index.sol";
 import { SINGLETON_ADDRESS } from "common/Constants.sol";
 
 import { LibPlayer } from "libraries/LibPlayer.sol";
@@ -19,18 +19,14 @@ contract ClaimSystem is System {
         if (player == address(0) || player == SINGLETON_ADDRESS) {
             revert InvalidClaimAddress();
         }
-        if (Claimed.get(player)) {
-            revert AlreadyClaimed();
-        }
 
         uint32 playerPoints = Points.get(player);
         if (points > playerPoints) {
             revert NotEnoughPoints();
         }
 
-        Claimed.set(player, true);
-        uint256 claimAmount = LibTreasury.getClaimAmount(points);
         LibPlayer.decrementPoints(player, points);
+        uint256 claimAmount = LibTreasury.getClaimAmount(points);
 
         payable(player).transfer(claimAmount);
     }

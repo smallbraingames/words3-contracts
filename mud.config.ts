@@ -76,13 +76,6 @@ export default defineWorld({
         value: "uint32",
       },
     },
-    Claimed: {
-      key: ["player"],
-      schema: {
-        player: "address",
-        value: "bool",
-      },
-    },
     // Activity
     SpentMove: {
       key: ["player", "id"],
