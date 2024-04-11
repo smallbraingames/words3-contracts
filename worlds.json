@@ -12,8 +12,12 @@
     "blockNumber": 10010490
   },
   "17001": {
-    "address": "0xe0dc39646cc066f98a1f9362803d435ad6d14b23",
-    "blockNumber": 6637093
+    "address": "0x42eb4c07a60d77ee5de7d044f41d35d5237043c0",
+    "blockNumber": 6720499
+  },
+  "17069": {
+    "address": "0x7856428cdf7105e5b5188fa300f8d63d1770b8b7",
+    "blockNumber": 320526
   },
   "31337": {
     "address": "0x4f4ddafbc93cf8d11a253f21ddbcf836139efdec"
