@@ -142,9 +142,6 @@ contract Claim is Words3Test {
         uint32 player1Points = Points.get(player1);
         uint32 player2Points = Points.get(player2);
 
-        console.log(player1Points);
-        console.log(player2Points);
-
         assertEq(Treasury.get(), 20 ether);
 
         vm.prank(player1);
@@ -152,5 +149,10 @@ contract Claim is Words3Test {
 
         vm.prank(player2);
         world.claim(player2Points);
+
+        uint256 player1ExpectedBalance = (20 ether * player1Points) / (player1Points + player2Points);
+
+        assertEq(address(player1).balance, player1ExpectedBalance);
+        assertEq(address(player2).balance, 20 ether - player1ExpectedBalance);
     }
 }
