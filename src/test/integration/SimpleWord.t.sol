@@ -17,6 +17,7 @@ contract SimpleWord is Words3Test {
     IWorld world;
     bytes32[] public words;
     Merkle private m;
+    Letter[] initialWord;
 
     function setUp() public override {
         super.setUp();
@@ -35,8 +36,8 @@ contract SimpleWord is Words3Test {
         setDefaultLetterOdds();
     }
 
-    function testSetup() public {
-        Letter[] memory initialWord = new Letter[](2);
+    function test_Setup() public {
+        initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
         world.start(initialWord, m.getRoot(words), 0, 0, 0, 1e16, 3, 5);
@@ -44,8 +45,8 @@ contract SimpleWord is Words3Test {
         assertEq(uint8(TileLetter.get(1, 0)), uint8(Letter.I));
     }
 
-    function testPlayHi() public {
-        Letter[] memory initialWord = new Letter[](2);
+    function test_PlayHi() public {
+        initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
         world.start({
@@ -75,5 +76,40 @@ contract SimpleWord is Words3Test {
         }
         world.play(word, proof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
         vm.stopPrank();
+    }
+
+    function test_MultipleDraws() public {
+        world.start({
+            initialWord: initialWord,
+            merkleRoot: 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
+            vrgdaTargetPrice: 40e13,
+            vrgdaPriceDecay: 99_999e13,
+            vrgdaPerDayInitial: 700e18,
+            vrgdaPower: 1e18,
+            crossWordRewardFraction: 3,
+            bonusDistance: 10
+        });
+
+        address player = address(0x123);
+        vm.deal(player, 50 ether);
+        vm.startPrank(player);
+
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
+        vm.warp(block.timestamp + 5);
+        world.draw{ value: world.getDrawPrice() }(player);
+        vm.warp(block.timestamp + 10);
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
+        vm.warp(block.timestamp + 10);
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
+        vm.warp(block.timestamp + 3);
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
     }
 }
