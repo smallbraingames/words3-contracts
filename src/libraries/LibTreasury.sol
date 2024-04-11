@@ -28,6 +28,11 @@ library LibTreasury {
         incrementSpent(msgSender, msgValue);
     }
 
+    function decrementTreasury(uint256 decrement) internal {
+        uint256 decrementedTreasury = Treasury.get() - decrement;
+        Treasury.set(decrementedTreasury);
+    }
+
     function incrementSpent(address msgSender, uint256 msgValue) internal {
         uint256 incrementedSpent = Spent.get(msgSender) + msgValue;
         Spent.set(msgSender, incrementedSpent);

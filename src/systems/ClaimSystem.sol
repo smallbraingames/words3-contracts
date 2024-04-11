@@ -15,13 +15,15 @@ contract ClaimSystem is System {
     function claim(uint32 points) public {
         address player = _msgSender();
 
-        uint32 playerPoints = Points.get(player);
+        uint32 playerPoints = Points.get({ player: player });
         if (points > playerPoints) {
             revert NotEnoughPoints();
         }
 
-        uint256 claimAmount = LibTreasury.getClaimAmount(points);
-        LibPlayer.decrementPoints(player, points);
+        uint256 claimAmount = LibTreasury.getClaimAmount({ points: points });
+        LibPlayer.decrementPoints({ player: player, decrement: points });
+
+        LibTreasury.decrementTreasury({ decrement: claimAmount });
 
         payable(player).transfer(claimAmount);
     }
