@@ -29,8 +29,11 @@
 [fuzz]
   runs = 1028
 
-[profile.redstone-holesky]
+[profile.redstone-garnet]
   eth_rpc_url = "https://rpc.garnet.qry.live"
+
+[profile.redstone-holesky-legacy]
+  eth_rpc_url = "https://rpc.holesky.redstone.xyz"
 
 [profile.lattice-901]
   eth_rpc_url = "https://redstone.linfra.xyz"
