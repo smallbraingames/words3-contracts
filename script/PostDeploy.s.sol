@@ -30,9 +30,9 @@ contract PostDeploy is Script {
         // world.start({
         //     initialWord: infinite,
         //     merkleRoot: 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
-        //     vrgdaTargetPrice: 40e13,
+        //     vrgdaTargetPrice: 3e15,
         //     vrgdaPriceDecay: 99_999e13,
-        //     vrgdaPerDayInitial: 700e18,
+        //     vrgdaPerDayInitial: 200e18,
         //     vrgdaPower: 1e18,
         //     crossWordRewardFraction: 3,
         //     bonusDistance: 10
