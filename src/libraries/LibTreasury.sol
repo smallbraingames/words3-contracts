@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity >=0.8.0;
 
-import { Spent, SpentMove, Treasury } from "codegen/index.sol";
+import { Spent, Treasury } from "codegen/index.sol";
 import { NoPoints } from "common/Errors.sol";
 import { LibPoints } from "libraries/LibPoints.sol";
 
@@ -24,7 +24,6 @@ library LibTreasury {
     function incrementTreasury(address msgSender, uint256 msgValue) internal {
         uint256 incrementedTreasury = Treasury.get() + msgValue;
         Treasury.set(incrementedTreasury);
-        SpentMove.set(msgSender, incrementedTreasury, msgValue);
         incrementSpent(msgSender, msgValue);
     }
 

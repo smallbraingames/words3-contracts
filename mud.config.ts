@@ -77,15 +77,6 @@ export default defineWorld({
       },
     },
     // Activity
-    SpentMove: {
-      key: ["player", "id"],
-      schema: {
-        player: "address",
-        id: "uint256",
-        value: "uint256",
-      },
-      type: "offchainTable",
-    },
     PlayResult: {
       key: ["id"],
       schema: {
@@ -97,6 +88,27 @@ export default defineWorld({
         y: "int32",
         word: "uint8[]",
         filledWord: "uint8[]",
+      },
+      type: "offchainTable",
+    },
+    PointsClaimed: {
+      key: ["id"],
+      schema: {
+        id: "uint256",
+        player: "address",
+        points: "uint32",
+        value: "uint256",
+        timestamp: "uint256",
+      },
+      type: "offchainTable",
+    },
+    LettersDrawn: {
+      key: ["id"],
+      schema: {
+        id: "uint256",
+        player: "address",
+        value: "uint256",
+        timestamp: "uint256",
       },
       type: "offchainTable",
     },

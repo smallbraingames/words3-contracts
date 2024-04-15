@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { System } from "@latticexyz/world/src/System.sol";
 
 import { Letter } from "codegen/common.sol";
-import { DrawCount, DrawLetterOdds } from "codegen/index.sol";
+import { DrawCount, DrawLetterOdds, LettersDrawn } from "codegen/index.sol";
 import { SINGLETON_ADDRESS } from "common/Constants.sol";
 import { LibLetters } from "libraries/LibLetters.sol";
 import { LibPrice } from "libraries/LibPrice.sol";
@@ -38,7 +38,10 @@ contract DrawSystem is System {
             LibLetters.addLetter({ player: player, letter: drawnLetters[i] });
         }
 
-        DrawCount.set(DrawCount.get() + 1);
+        uint32 drawCount = DrawCount.get() + 1;
+        DrawCount.set(drawCount);
+
+        LettersDrawn.set({ id: drawCount, player: player, value: value, timestamp: block.timestamp });
     }
 
     function getDrawPrice() public view returns (uint256) {
