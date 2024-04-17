@@ -113,7 +113,7 @@ export default defineWorld({
       type: "offchainTable",
     },
     PointsResult: {
-      key: ["id"],
+      key: ["id", "pointsId"],
       schema: {
         id: "uint256",
         player: "address",
