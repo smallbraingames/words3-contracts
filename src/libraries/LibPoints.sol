@@ -29,7 +29,7 @@ library LibPoints {
     {
         uint32 points = getPoints(playWord, filledWord, start, direction, bounds);
         LibPlayer.incrementPoints(player, points);
-        PointsResult.set(playResultId, player, -1, points);
+        PointsResult.set({ id: playResultId, player: player, pointsId: -1, points: points });
         return points;
     }
 
@@ -91,7 +91,7 @@ library LibPoints {
             if (buildsOnPlayers[i] != address(0)) {
                 address player = buildsOnPlayers[i];
                 LibPlayer.incrementPoints(player, rewardPoints);
-                PointsResult.set(playResultId, player, int16(uint16(i)), rewardPoints);
+                PointsResult.set({ id: playResultId, player: player, pointsId: int16(uint16(i)), points: rewardPoints });
             }
         }
     }
