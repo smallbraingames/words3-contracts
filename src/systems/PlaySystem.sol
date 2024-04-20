@@ -12,7 +12,7 @@ import { LibPlay } from "libraries/LibPlay.sol";
 
 contract PlaySystem is System {
     error CannotPlay();
-    error MissingLetters();
+    error PlayMissingLetters();
 
     /// @notice Checks if a move is valid and if so, plays a word on the board
     /// @param word Letters of the word being played, empty letters mean using existing letters on board
@@ -34,7 +34,7 @@ contract PlaySystem is System {
             revert CannotPlay();
         }
         if (!LibLetters.hasLetters(player, word)) {
-            revert MissingLetters();
+            revert PlayMissingLetters();
         }
         LibLetters.useLetters(player, word);
         LibPlay.play(word, proof, coord, direction, bounds, player);
