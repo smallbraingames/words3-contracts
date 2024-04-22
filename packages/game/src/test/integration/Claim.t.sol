@@ -88,7 +88,7 @@ contract Claim is Words3Test {
         initialWord[3] = Letter.L;
         initialWord[4] = Letter.O;
 
-        world.start({
+        world.words3__start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
             vrgdaTargetPrice: 1,
@@ -114,9 +114,9 @@ contract Claim is Words3Test {
         vm.startPrank(player1);
         for (uint256 i = 0; i < 20; i++) {
             vm.warp(block.timestamp + 1 days);
-            world.draw{ value: 0.5 ether }(player1);
+            world.words3__draw{ value: 0.5 ether }(player1);
         }
-        world.play(word, proof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, bounds);
+        world.words3__play(word, proof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, bounds);
         vm.stopPrank();
         assertEq(address(player1).balance, 0);
         assertEq(address(worldAddress).balance, 10 ether);
@@ -135,9 +135,9 @@ contract Claim is Words3Test {
         vm.startPrank(player2);
         for (uint256 i = 0; i < 20; i++) {
             vm.warp(block.timestamp + 1 days);
-            world.draw{ value: 0.5 ether }(player2);
+            world.words3__draw{ value: 0.5 ether }(player2);
         }
-        world.play(word2, proof2, Coord({ x: 4, y: -1 }), Direction.LEFT_TO_RIGHT, bounds2);
+        world.words3__play(word2, proof2, Coord({ x: 4, y: -1 }), Direction.LEFT_TO_RIGHT, bounds2);
         vm.stopPrank();
         uint32 player1Points = Points.get(player1);
         uint32 player2Points = Points.get(player2);
@@ -145,10 +145,10 @@ contract Claim is Words3Test {
         assertEq(Treasury.get(), 20 ether);
 
         vm.prank(player1);
-        world.claim(player1Points);
+        world.words3__claim(player1Points);
 
         vm.prank(player2);
-        world.claim(player2Points);
+        world.words3__claim(player2Points);
 
         uint256 player1ExpectedBalance = (20 ether * player1Points) / (player1Points + player2Points);
 

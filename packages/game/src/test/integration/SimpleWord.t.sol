@@ -40,7 +40,7 @@ contract SimpleWord is Words3Test {
         initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start(initialWord, m.getRoot(words), 0, 0, 0, 1e16, 3, 5);
+        world.words3__start(initialWord, m.getRoot(words), 0, 0, 0, 1e16, 3, 5);
         assertEq(uint8(TileLetter.get(0, 0)), uint8(Letter.H));
         assertEq(uint8(TileLetter.get(1, 0)), uint8(Letter.I));
     }
@@ -49,7 +49,7 @@ contract SimpleWord is Words3Test {
         initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start({
+        world.words3__start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
             vrgdaTargetPrice: 1,
@@ -70,16 +70,16 @@ contract SimpleWord is Words3Test {
         vm.deal(player, 50 ether);
         vm.startPrank(player);
         for (uint256 i = 0; i < 50; i++) {
-            uint256 price = world.getDrawPrice();
+            uint256 price = world.words3__getDrawPrice();
             vm.warp(block.timestamp + 1 days);
-            world.draw{ value: price }(player);
+            world.words3__draw{ value: price }(player);
         }
-        world.play(word, proof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
+        world.words3__play(word, proof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
         vm.stopPrank();
     }
 
     function test_MultipleDraws() public {
-        world.start({
+        world.words3__start({
             initialWord: initialWord,
             merkleRoot: 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
             vrgdaTargetPrice: 40e13,
@@ -94,22 +94,22 @@ contract SimpleWord is Words3Test {
         vm.deal(player, 50 ether);
         vm.startPrank(player);
 
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
         vm.warp(block.timestamp + 5);
-        world.draw{ value: world.getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
         vm.warp(block.timestamp + 10);
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
         vm.warp(block.timestamp + 10);
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
         vm.warp(block.timestamp + 3);
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
+        world.words3__draw{ value: world.words3__getDrawPrice() }(player);
     }
 }

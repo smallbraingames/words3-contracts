@@ -44,6 +44,6 @@ contract Words3Test is MudTest {
         odds[uint8(Letter.Y)] = 2;
         odds[uint8(Letter.Z)] = 1;
 
-        world.setDrawLetterOdds(odds);
+        world.words3__setDrawLetterOdds(odds);
     }
 }

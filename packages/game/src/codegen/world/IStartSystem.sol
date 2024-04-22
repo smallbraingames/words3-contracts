@@ -11,17 +11,16 @@ import { Letter } from "codegen/common.sol";
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IStartSystem {
-    error GameAlreadyStarted();
+  error GameAlreadyStarted();
 
-    function start(
-        Letter[] memory initialWord,
-        bytes32 merkleRoot,
-        int256 vrgdaTargetPrice,
-        int256 vrgdaPriceDecay,
-        int256 vrgdaPerDayInitial,
-        int256 vrgdaPower,
-        uint32 crossWordRewardFraction,
-        uint16 bonusDistance
-    )
-        external;
+  function words3__start(
+    Letter[] memory initialWord,
+    bytes32 merkleRoot,
+    int256 vrgdaTargetPrice,
+    int256 vrgdaPriceDecay,
+    int256 vrgdaPerDayInitial,
+    int256 vrgdaPower,
+    uint32 crossWordRewardFraction,
+    uint16 bonusDistance
+  ) external;
 }

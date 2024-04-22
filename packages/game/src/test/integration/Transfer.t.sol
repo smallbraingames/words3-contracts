@@ -26,7 +26,7 @@ contract Transfer is Words3Test {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
-        world.start({
+        world.words3__start({
             initialWord: initialWord,
             merkleRoot: bytes32(0),
             vrgdaTargetPrice: 1,
@@ -42,15 +42,15 @@ contract Transfer is Words3Test {
         vm.deal(player, 50 ether);
         vm.startPrank(player);
         for (uint256 i = 0; i < 50; i++) {
-            uint256 price = world.getDrawPrice();
+            uint256 price = world.words3__getDrawPrice();
             vm.warp(block.timestamp + 1 days);
-            world.draw{ value: price }(player);
+            world.words3__draw{ value: price }(player);
         }
         assertEq(PlayerLetters.get({ player: to, letter: Letter.A }), 0);
         Letter[] memory transferLetters = new Letter[](2);
         transferLetters[0] = Letter.A;
         transferLetters[1] = Letter.B;
-        world.transfer({ letters: transferLetters, to: to });
+        world.words3__transfer({ letters: transferLetters, to: to });
         assertEq(PlayerLetters.get({ player: to, letter: Letter.A }), 1);
         assertEq(PlayerLetters.get({ player: to, letter: Letter.B }), 1);
         vm.stopPrank();
