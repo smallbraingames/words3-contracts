@@ -11,8 +11,6 @@
     "deploy:testnet-legacy": "bun run build && mud deploy --profile=redstone-holesky-legacy",
     "deploy:base": "bun run build && mud deploy --profile=base-mainnet",
     "dev": "bun mud dev-contracts",
-    "lint": "forge fmt && bun run solhint",
-    "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",
     "test": "mud test"
   },
   "devDependencies": {

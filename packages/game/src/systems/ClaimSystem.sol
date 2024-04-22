@@ -3,7 +3,6 @@ pragma solidity >=0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { Points, PointsClaimed } from "codegen/index.sol";
-
 import { LibPlayer } from "libraries/LibPlayer.sol";
 import { LibTreasury } from "libraries/LibTreasury.sol";
 

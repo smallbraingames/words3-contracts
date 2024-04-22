@@ -2,7 +2,6 @@
 pragma solidity >=0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
-
 import { Letter } from "codegen/common.sol";
 import { DrawCount, DrawLetterOdds, LettersDrawn } from "codegen/index.sol";
 import { SINGLETON_ADDRESS } from "common/Constants.sol";

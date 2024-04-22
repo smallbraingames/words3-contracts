@@ -6,7 +6,6 @@ import { Direction, Letter } from "codegen/common.sol";
 import { Bound } from "common/Bound.sol";
 import { Coord } from "common/Coord.sol";
 import { LibGame } from "libraries/LibGame.sol";
-
 import { LibLetters } from "libraries/LibLetters.sol";
 import { LibPlay } from "libraries/LibPlay.sol";
 
