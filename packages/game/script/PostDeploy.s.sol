@@ -4,7 +4,6 @@ pragma solidity >=0.8.0;
 import { Letter, Status } from "codegen/common.sol";
 import { GameConfig, GameConfigData, MerkleRootConfig, VRGDAConfig, VRGDAConfigData } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
-
 import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 

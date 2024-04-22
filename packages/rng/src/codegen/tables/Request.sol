@@ -20,24 +20,24 @@ import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 
 import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 
-struct LettersDrawnData {
-    address player;
-    uint256 value;
+struct RequestData {
+    uint256 blockNumber;
     uint256 timestamp;
+    uint256 period;
 }
 
-library LettersDrawn {
-    // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "LettersDrawn", typeId:
-    // RESOURCE_OFFCHAIN_TABLE });`
-    ResourceId constant _tableId = ResourceId.wrap(0x6f7400000000000000000000000000004c657474657273447261776e00000000);
+library Request {
+    // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "rng", name: "Request", typeId: RESOURCE_TABLE
+    // });`
+    ResourceId constant _tableId = ResourceId.wrap(0x7462726e67000000000000000000000052657175657374000000000000000000);
 
     FieldLayout constant _fieldLayout =
-        FieldLayout.wrap(0x0054030014202000000000000000000000000000000000000000000000000000);
+        FieldLayout.wrap(0x0060030020202000000000000000000000000000000000000000000000000000);
 
     // Hex-encoded key schema of (uint256)
     Schema constant _keySchema = Schema.wrap(0x002001001f000000000000000000000000000000000000000000000000000000);
-    // Hex-encoded value schema of (address, uint256, uint256)
-    Schema constant _valueSchema = Schema.wrap(0x00540300611f1f00000000000000000000000000000000000000000000000000);
+    // Hex-encoded value schema of (uint256, uint256, uint256)
+    Schema constant _valueSchema = Schema.wrap(0x006003001f1f1f00000000000000000000000000000000000000000000000000);
 
     /**
      * @notice Get the table's key field names.
@@ -54,9 +54,9 @@ library LettersDrawn {
      */
     function getFieldNames() internal pure returns (string[] memory fieldNames) {
         fieldNames = new string[](3);
-        fieldNames[0] = "player";
-        fieldNames[1] = "value";
-        fieldNames[2] = "timestamp";
+        fieldNames[0] = "blockNumber";
+        fieldNames[1] = "timestamp";
+        fieldNames[2] = "period";
     }
 
     /**
@@ -74,43 +74,67 @@ library LettersDrawn {
     }
 
     /**
-     * @notice Set player.
+     * @notice Get blockNumber.
      */
-    function setPlayer(uint256 id, address player) internal {
+    function getBlockNumber(uint256 id) internal view returns (uint256 blockNumber) {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((player)), _fieldLayout);
+        bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+        return (uint256(bytes32(_blob)));
     }
 
     /**
-     * @notice Set player.
+     * @notice Get blockNumber.
      */
-    function _setPlayer(uint256 id, address player) internal {
+    function _getBlockNumber(uint256 id) internal view returns (uint256 blockNumber) {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((player)), _fieldLayout);
+        bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+        return (uint256(bytes32(_blob)));
     }
 
     /**
-     * @notice Set value.
+     * @notice Set blockNumber.
      */
-    function setValue(uint256 id, uint256 value) internal {
+    function setBlockNumber(uint256 id, uint256 blockNumber) internal {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((value)), _fieldLayout);
+        StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((blockNumber)), _fieldLayout);
     }
 
     /**
-     * @notice Set value.
+     * @notice Set blockNumber.
      */
-    function _setValue(uint256 id, uint256 value) internal {
+    function _setBlockNumber(uint256 id, uint256 blockNumber) internal {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((value)), _fieldLayout);
+        StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((blockNumber)), _fieldLayout);
+    }
+
+    /**
+     * @notice Get timestamp.
+     */
+    function getTimestamp(uint256 id) internal view returns (uint256 timestamp) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+        return (uint256(bytes32(_blob)));
+    }
+
+    /**
+     * @notice Get timestamp.
+     */
+    function _getTimestamp(uint256 id) internal view returns (uint256 timestamp) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+        return (uint256(bytes32(_blob)));
     }
 
     /**
@@ -120,7 +144,7 @@ library LettersDrawn {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((timestamp)), _fieldLayout);
+        StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((timestamp)), _fieldLayout);
     }
 
     /**
@@ -130,14 +154,80 @@ library LettersDrawn {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((timestamp)), _fieldLayout);
+        StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((timestamp)), _fieldLayout);
+    }
+
+    /**
+     * @notice Get period.
+     */
+    function getPeriod(uint256 id) internal view returns (uint256 period) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+        return (uint256(bytes32(_blob)));
+    }
+
+    /**
+     * @notice Get period.
+     */
+    function _getPeriod(uint256 id) internal view returns (uint256 period) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+        return (uint256(bytes32(_blob)));
+    }
+
+    /**
+     * @notice Set period.
+     */
+    function setPeriod(uint256 id, uint256 period) internal {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((period)), _fieldLayout);
+    }
+
+    /**
+     * @notice Set period.
+     */
+    function _setPeriod(uint256 id, uint256 period) internal {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((period)), _fieldLayout);
+    }
+
+    /**
+     * @notice Get the full data.
+     */
+    function get(uint256 id) internal view returns (RequestData memory _table) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) =
+            StoreSwitch.getRecord(_tableId, _keyTuple, _fieldLayout);
+        return decode(_staticData, _encodedLengths, _dynamicData);
+    }
+
+    /**
+     * @notice Get the full data.
+     */
+    function _get(uint256 id) internal view returns (RequestData memory _table) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) =
+            StoreCore.getRecord(_tableId, _keyTuple, _fieldLayout);
+        return decode(_staticData, _encodedLengths, _dynamicData);
     }
 
     /**
      * @notice Set the full data using individual values.
      */
-    function set(uint256 id, address player, uint256 value, uint256 timestamp) internal {
-        bytes memory _staticData = encodeStatic(player, value, timestamp);
+    function set(uint256 id, uint256 blockNumber, uint256 timestamp, uint256 period) internal {
+        bytes memory _staticData = encodeStatic(blockNumber, timestamp, period);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -151,8 +241,8 @@ library LettersDrawn {
     /**
      * @notice Set the full data using individual values.
      */
-    function _set(uint256 id, address player, uint256 value, uint256 timestamp) internal {
-        bytes memory _staticData = encodeStatic(player, value, timestamp);
+    function _set(uint256 id, uint256 blockNumber, uint256 timestamp, uint256 period) internal {
+        bytes memory _staticData = encodeStatic(blockNumber, timestamp, period);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -166,8 +256,8 @@ library LettersDrawn {
     /**
      * @notice Set the full data using the data struct.
      */
-    function set(uint256 id, LettersDrawnData memory _table) internal {
-        bytes memory _staticData = encodeStatic(_table.player, _table.value, _table.timestamp);
+    function set(uint256 id, RequestData memory _table) internal {
+        bytes memory _staticData = encodeStatic(_table.blockNumber, _table.timestamp, _table.period);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -181,8 +271,8 @@ library LettersDrawn {
     /**
      * @notice Set the full data using the data struct.
      */
-    function _set(uint256 id, LettersDrawnData memory _table) internal {
-        bytes memory _staticData = encodeStatic(_table.player, _table.value, _table.timestamp);
+    function _set(uint256 id, RequestData memory _table) internal {
+        bytes memory _staticData = encodeStatic(_table.blockNumber, _table.timestamp, _table.period);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -199,13 +289,13 @@ library LettersDrawn {
     function decodeStatic(bytes memory _blob)
         internal
         pure
-        returns (address player, uint256 value, uint256 timestamp)
+        returns (uint256 blockNumber, uint256 timestamp, uint256 period)
     {
-        player = (address(Bytes.getBytes20(_blob, 0)));
+        blockNumber = (uint256(Bytes.getBytes32(_blob, 0)));
 
-        value = (uint256(Bytes.getBytes32(_blob, 20)));
+        timestamp = (uint256(Bytes.getBytes32(_blob, 32)));
 
-        timestamp = (uint256(Bytes.getBytes32(_blob, 52)));
+        period = (uint256(Bytes.getBytes32(_blob, 64)));
     }
 
     /**
@@ -221,9 +311,9 @@ library LettersDrawn {
     )
         internal
         pure
-        returns (LettersDrawnData memory _table)
+        returns (RequestData memory _table)
     {
-        (_table.player, _table.value, _table.timestamp) = decodeStatic(_staticData);
+        (_table.blockNumber, _table.timestamp, _table.period) = decodeStatic(_staticData);
     }
 
     /**
@@ -250,8 +340,16 @@ library LettersDrawn {
      * @notice Tightly pack static (fixed length) data using this table's schema.
      * @return The static data, encoded into a sequence of bytes.
      */
-    function encodeStatic(address player, uint256 value, uint256 timestamp) internal pure returns (bytes memory) {
-        return abi.encodePacked(player, value, timestamp);
+    function encodeStatic(
+        uint256 blockNumber,
+        uint256 timestamp,
+        uint256 period
+    )
+        internal
+        pure
+        returns (bytes memory)
+    {
+        return abi.encodePacked(blockNumber, timestamp, period);
     }
 
     /**
@@ -261,15 +359,15 @@ library LettersDrawn {
      * @return The dynamic (variable length) data, encoded into a sequence of bytes.
      */
     function encode(
-        address player,
-        uint256 value,
-        uint256 timestamp
+        uint256 blockNumber,
+        uint256 timestamp,
+        uint256 period
     )
         internal
         pure
         returns (bytes memory, EncodedLengths, bytes memory)
     {
-        bytes memory _staticData = encodeStatic(player, value, timestamp);
+        bytes memory _staticData = encodeStatic(blockNumber, timestamp, period);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;

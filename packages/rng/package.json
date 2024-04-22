@@ -1,5 +1,5 @@
 {
-  "name": "game",
+  "name": "rng",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -20,7 +20,6 @@
     "@latticexyz/store": "2.0.6",
     "@latticexyz/world": "2.0.6",
     "@latticexyz/world-modules": "2.0.6",
-    "@openzeppelin/contracts": "5.0.2",
     "@solidstate/contracts": "^0.0.52",
     "@types/node": "^18.15.11",
     "ds-test": "https://github.com/dapphub/ds-test.git#e282159d5170298eb2455a6c05280ab5a73a4ef0",
@@ -31,7 +30,6 @@
     "solhint": "^3.4.1",
     "solhint-config-mud": "2.0.6",
     "solhint-plugin-mud": "2.0.6",
-    "solmate": "6.2.0",
     "typescript": "5.4.2"
   }
 }

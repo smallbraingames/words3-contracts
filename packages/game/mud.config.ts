@@ -47,7 +47,7 @@ export default defineWorld({
     DrawLetterOdds: {
       key: [],
       schema: {
-       value: "uint8[]" // Letters index the array (A is index 1, B is index 2, etc.)
+        value: "uint8[]" // Letters index the array (A is index 1, B is index 2, etc.)
       },
     },
     Treasury: {
