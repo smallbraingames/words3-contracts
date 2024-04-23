@@ -3,7 +3,6 @@ import { defineWorld } from "@latticexyz/world";
 export default defineWorld({
   namespace: "words3",
   tables: {
-    // Config
     GameConfig: {
       key: [],
       schema: {
@@ -28,7 +27,6 @@ export default defineWorld({
         power: "int256",
       },
     },
-    // Game
     TileLetter: {
       key: ["x", "y"],
       schema: { x: "int32", y: "int32", value: "Letter" },
@@ -36,6 +34,14 @@ export default defineWorld({
     TilePlayer: {
       key: ["x", "y"],
       schema: { x: "int32", y: "int32", value: "address" }
+    },
+    DrawRequest: {
+      key: ["id"],
+      schema: {
+        id: "uint256",
+        player: "address",
+        fulfilled: "bool"
+      },
     },
     PlayerLetters: {
       key: ["player", "letter"],
@@ -77,7 +83,6 @@ export default defineWorld({
         value: "uint32",
       },
     },
-    // Activity
     PlayResult: {
       key: ["id"],
       schema: {

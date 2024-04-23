@@ -9,10 +9,13 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IDrawSystem {
-  error InvalidDrawAddress();
-  error NotEnoughValue();
+    error InvalidDrawAddress();
+    error NotEnoughValue();
+    error AlreadyFulfilled();
 
-  function words3__draw(address player) external payable;
+    function words3__requestDraw(address player) external payable;
 
-  function words3__getDrawPrice() external view returns (uint256);
+    function words3__fulfillDraw(uint256 id) external;
+
+    function words3__getDrawPrice() external view returns (uint256);
 }

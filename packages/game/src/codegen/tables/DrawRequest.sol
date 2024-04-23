@@ -20,24 +20,23 @@ import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 
 import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 
-struct LettersDrawnData {
+struct DrawRequestData {
     address player;
-    uint256 value;
-    uint256 timestamp;
+    bool fulfilled;
 }
 
-library LettersDrawn {
-    // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "words3", name: "LettersDrawn", typeId:
-    // RESOURCE_OFFCHAIN_TABLE });`
-    ResourceId constant _tableId = ResourceId.wrap(0x6f74776f7264733300000000000000004c657474657273447261776e00000000);
+library DrawRequest {
+    // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "words3", name: "DrawRequest", typeId:
+    // RESOURCE_TABLE });`
+    ResourceId constant _tableId = ResourceId.wrap(0x7462776f72647333000000000000000044726177526571756573740000000000);
 
     FieldLayout constant _fieldLayout =
-        FieldLayout.wrap(0x0054030014202000000000000000000000000000000000000000000000000000);
+        FieldLayout.wrap(0x0015020014010000000000000000000000000000000000000000000000000000);
 
     // Hex-encoded key schema of (uint256)
     Schema constant _keySchema = Schema.wrap(0x002001001f000000000000000000000000000000000000000000000000000000);
-    // Hex-encoded value schema of (address, uint256, uint256)
-    Schema constant _valueSchema = Schema.wrap(0x00540300611f1f00000000000000000000000000000000000000000000000000);
+    // Hex-encoded value schema of (address, bool)
+    Schema constant _valueSchema = Schema.wrap(0x0015020061600000000000000000000000000000000000000000000000000000);
 
     /**
      * @notice Get the table's key field names.
@@ -53,10 +52,9 @@ library LettersDrawn {
      * @return fieldNames An array of strings with the names of value fields.
      */
     function getFieldNames() internal pure returns (string[] memory fieldNames) {
-        fieldNames = new string[](3);
+        fieldNames = new string[](2);
         fieldNames[0] = "player";
-        fieldNames[1] = "value";
-        fieldNames[2] = "timestamp";
+        fieldNames[1] = "fulfilled";
     }
 
     /**
@@ -71,6 +69,28 @@ library LettersDrawn {
      */
     function _register() internal {
         StoreCore.registerTable(_tableId, _fieldLayout, _keySchema, _valueSchema, getKeyNames(), getFieldNames());
+    }
+
+    /**
+     * @notice Get player.
+     */
+    function getPlayer(uint256 id) internal view returns (address player) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+        return (address(bytes20(_blob)));
+    }
+
+    /**
+     * @notice Get player.
+     */
+    function _getPlayer(uint256 id) internal view returns (address player) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+        return (address(bytes20(_blob)));
     }
 
     /**
@@ -94,50 +114,76 @@ library LettersDrawn {
     }
 
     /**
-     * @notice Set value.
+     * @notice Get fulfilled.
      */
-    function setValue(uint256 id, uint256 value) internal {
+    function getFulfilled(uint256 id) internal view returns (bool fulfilled) {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((value)), _fieldLayout);
+        bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+        return (_toBool(uint8(bytes1(_blob))));
     }
 
     /**
-     * @notice Set value.
+     * @notice Get fulfilled.
      */
-    function _setValue(uint256 id, uint256 value) internal {
+    function _getFulfilled(uint256 id) internal view returns (bool fulfilled) {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((value)), _fieldLayout);
+        bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+        return (_toBool(uint8(bytes1(_blob))));
     }
 
     /**
-     * @notice Set timestamp.
+     * @notice Set fulfilled.
      */
-    function setTimestamp(uint256 id, uint256 timestamp) internal {
+    function setFulfilled(uint256 id, bool fulfilled) internal {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((timestamp)), _fieldLayout);
+        StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((fulfilled)), _fieldLayout);
     }
 
     /**
-     * @notice Set timestamp.
+     * @notice Set fulfilled.
      */
-    function _setTimestamp(uint256 id, uint256 timestamp) internal {
+    function _setFulfilled(uint256 id, bool fulfilled) internal {
         bytes32[] memory _keyTuple = new bytes32[](1);
         _keyTuple[0] = bytes32(uint256(id));
 
-        StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((timestamp)), _fieldLayout);
+        StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((fulfilled)), _fieldLayout);
+    }
+
+    /**
+     * @notice Get the full data.
+     */
+    function get(uint256 id) internal view returns (DrawRequestData memory _table) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) =
+            StoreSwitch.getRecord(_tableId, _keyTuple, _fieldLayout);
+        return decode(_staticData, _encodedLengths, _dynamicData);
+    }
+
+    /**
+     * @notice Get the full data.
+     */
+    function _get(uint256 id) internal view returns (DrawRequestData memory _table) {
+        bytes32[] memory _keyTuple = new bytes32[](1);
+        _keyTuple[0] = bytes32(uint256(id));
+
+        (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) =
+            StoreCore.getRecord(_tableId, _keyTuple, _fieldLayout);
+        return decode(_staticData, _encodedLengths, _dynamicData);
     }
 
     /**
      * @notice Set the full data using individual values.
      */
-    function set(uint256 id, address player, uint256 value, uint256 timestamp) internal {
-        bytes memory _staticData = encodeStatic(player, value, timestamp);
+    function set(uint256 id, address player, bool fulfilled) internal {
+        bytes memory _staticData = encodeStatic(player, fulfilled);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -151,8 +197,8 @@ library LettersDrawn {
     /**
      * @notice Set the full data using individual values.
      */
-    function _set(uint256 id, address player, uint256 value, uint256 timestamp) internal {
-        bytes memory _staticData = encodeStatic(player, value, timestamp);
+    function _set(uint256 id, address player, bool fulfilled) internal {
+        bytes memory _staticData = encodeStatic(player, fulfilled);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -166,8 +212,8 @@ library LettersDrawn {
     /**
      * @notice Set the full data using the data struct.
      */
-    function set(uint256 id, LettersDrawnData memory _table) internal {
-        bytes memory _staticData = encodeStatic(_table.player, _table.value, _table.timestamp);
+    function set(uint256 id, DrawRequestData memory _table) internal {
+        bytes memory _staticData = encodeStatic(_table.player, _table.fulfilled);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -181,8 +227,8 @@ library LettersDrawn {
     /**
      * @notice Set the full data using the data struct.
      */
-    function _set(uint256 id, LettersDrawnData memory _table) internal {
-        bytes memory _staticData = encodeStatic(_table.player, _table.value, _table.timestamp);
+    function _set(uint256 id, DrawRequestData memory _table) internal {
+        bytes memory _staticData = encodeStatic(_table.player, _table.fulfilled);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -196,16 +242,10 @@ library LettersDrawn {
     /**
      * @notice Decode the tightly packed blob of static data using this table's field layout.
      */
-    function decodeStatic(bytes memory _blob)
-        internal
-        pure
-        returns (address player, uint256 value, uint256 timestamp)
-    {
+    function decodeStatic(bytes memory _blob) internal pure returns (address player, bool fulfilled) {
         player = (address(Bytes.getBytes20(_blob, 0)));
 
-        value = (uint256(Bytes.getBytes32(_blob, 20)));
-
-        timestamp = (uint256(Bytes.getBytes32(_blob, 52)));
+        fulfilled = (_toBool(uint8(Bytes.getBytes1(_blob, 20))));
     }
 
     /**
@@ -221,9 +261,9 @@ library LettersDrawn {
     )
         internal
         pure
-        returns (LettersDrawnData memory _table)
+        returns (DrawRequestData memory _table)
     {
-        (_table.player, _table.value, _table.timestamp) = decodeStatic(_staticData);
+        (_table.player, _table.fulfilled) = decodeStatic(_staticData);
     }
 
     /**
@@ -250,8 +290,8 @@ library LettersDrawn {
      * @notice Tightly pack static (fixed length) data using this table's schema.
      * @return The static data, encoded into a sequence of bytes.
      */
-    function encodeStatic(address player, uint256 value, uint256 timestamp) internal pure returns (bytes memory) {
-        return abi.encodePacked(player, value, timestamp);
+    function encodeStatic(address player, bool fulfilled) internal pure returns (bytes memory) {
+        return abi.encodePacked(player, fulfilled);
     }
 
     /**
@@ -262,14 +302,13 @@ library LettersDrawn {
      */
     function encode(
         address player,
-        uint256 value,
-        uint256 timestamp
+        bool fulfilled
     )
         internal
         pure
         returns (bytes memory, EncodedLengths, bytes memory)
     {
-        bytes memory _staticData = encodeStatic(player, value, timestamp);
+        bytes memory _staticData = encodeStatic(player, fulfilled);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -285,5 +324,18 @@ library LettersDrawn {
         _keyTuple[0] = bytes32(uint256(id));
 
         return _keyTuple;
+    }
+}
+
+/**
+ * @notice Cast a value to a bool.
+ * @dev Boolean values are encoded as uint8 (1 = true, 0 = false), but Solidity doesn't allow casting between uint8 and
+ * bool.
+ * @param value The uint8 value to convert.
+ * @return result The boolean value.
+ */
+function _toBool(uint8 value) pure returns (bool result) {
+    assembly {
+        result := value
     }
 }

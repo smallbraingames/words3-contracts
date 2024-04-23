@@ -9,6 +9,7 @@
   out = "out"
   allow_paths = [
     "../../node_modules",
+    "../rng",
   ]
   extra_output_files = [
     "abi",
