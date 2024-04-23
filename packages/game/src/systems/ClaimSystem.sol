@@ -2,7 +2,10 @@
 pragma solidity >=0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
+
+import { WorldResourceIdLib } from "@latticexyz/world/src/WorldResourceId.sol";
 import { Points, PointsClaimed } from "codegen/index.sol";
+import { IWorld } from "codegen/world/IWorld.sol";
 import { LibPlayer } from "libraries/LibPlayer.sol";
 import { LibTreasury } from "libraries/LibTreasury.sol";
 
@@ -24,7 +27,11 @@ contract ClaimSystem is System {
 
         LibTreasury.decrementTreasury({ decrement: claimAmount });
 
-        payable(player).transfer(claimAmount);
+        IWorld(_world()).transferBalanceToAddress({
+            fromNamespaceId: WorldResourceIdLib.encodeNamespace("words3"),
+            toAddress: player,
+            amount: claimAmount
+        });
 
         PointsClaimed.set({
             id: uint256(keccak256(abi.encodePacked(player, playerPoints, block.number))),
