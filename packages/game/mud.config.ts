@@ -122,17 +122,7 @@ export default defineWorld({
         points: "uint32",
       },
       type: "offchainTable"
-    },
-
-    // Randomness, want this to be namespaced separately
-    Randomness: {
-      key: ["id"],
-      schema: {
-        id: "uint256",
-        value: "uint256",
-      },
-      type: "offchainTable",
-    },
+    }
   },
   enums: {
     BonusType: ["MULTIPLY_WORD", "MULTIPLY_LETTER"],

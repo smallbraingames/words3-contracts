@@ -24,5 +24,5 @@
 [profile.base-testnet]
   eth_rpc_url = "https://goerli.base.org"
 
-[profile.base-mainnet]
+[profile.base]
   eth_rpc_url = "https://base-mainnet.blastapi.io"

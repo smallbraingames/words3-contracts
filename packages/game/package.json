@@ -5,12 +5,11 @@
   "scripts": {
     "build": "mud worldgen && mud tablegen && forge build",
     "clean": "forge clean && rimraf src/codegen",
-    "deploy:local": "bun run build && mud deploy",
-    "deploy:testnet": "bun run build && mud deploy --profile=redstone-garnet",
-    "deploy:testnet-legacy": "bun run build && mud deploy --profile=redstone-holesky-legacy",
-    "deploy:base": "bun run build && mud deploy --profile=base-mainnet",
-    "dev": "bun mud dev-contracts",
-    "test": "mud test"
+    "deploy:local": "bun run build && mud deploy --worldAddress=$(jq -r '.[\"31337\"].address' ../../packages/rng/worlds.json) --alwaysRunPostDeploy",
+    "deploy:testnet": "bun run build && mud deploy --profile=redstone-garnet --worldAddress=$(jq -r '.[\"17069\"].address' ../../packages/rng/worlds.json)",
+    "deploy:base": "bun run build && mud deploy --profile=base --worldAddress=$(jq -r '.[\"8453\"].address' ../../packages/rng/worlds.json)",
+    "test": "mud test --worldAddress=$(jq -r '.[\"31337\"].address' ../../packages/rng/worlds.json) --rpc http://localhost:8545",
+    "dev": "mud build && mud dev-contracts --worldAddress=$(jq -r '.[\"31337\"].address' ../../packages/rng/worlds.json) --rpc http://localhost:8545 --alwaysRunPostDeploy"
   },
   "devDependencies": {
     "@latticexyz/cli": "2.0.6",

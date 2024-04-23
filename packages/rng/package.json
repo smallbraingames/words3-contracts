@@ -7,8 +7,7 @@
     "clean": "forge clean && rimraf src/codegen",
     "deploy:local": "bun run build && mud deploy",
     "deploy:testnet": "bun run build && mud deploy --profile=redstone-garnet",
-    "deploy:testnet-legacy": "bun run build && mud deploy --profile=redstone-holesky-legacy",
-    "deploy:base": "bun run build && mud deploy --profile=base-mainnet",
+    "deploy:base": "bun run build && mud deploy --profile=base",
     "dev": "bun mud dev-contracts",
     "test": "mud test"
   },
