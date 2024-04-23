@@ -11,13 +11,6 @@ import { Words3Test } from "../Words3Test.t.sol";
 import "forge-std/Test.sol";
 
 contract LibGameTest is Words3Test {
-    IWorld world;
-
-    function setUp() public override {
-        super.setUp();
-        world = IWorld(worldAddress);
-    }
-
     function testCanPlay() public {
         assertFalse(LibGame.canPlay());
         vm.startPrank(deployerAddress);

@@ -8,7 +8,6 @@ import { SINGLETON_ADDRESS } from "common/Constants.sol";
 import { LibLetters } from "libraries/LibLetters.sol";
 import { LibPrice } from "libraries/LibPrice.sol";
 import { LibTreasury } from "libraries/LibTreasury.sol";
-
 import { Response } from "rng/src/codegen/index.sol";
 import { IWorld } from "rng/src/codegen/world/IWorld.sol";
 
@@ -17,7 +16,7 @@ contract DrawSystem is System {
     error NotEnoughValue();
     error AlreadyFulfilled();
 
-    function requestDraw(address player) public payable {
+    function requestDraw(address player) public payable returns (uint256) {
         if (player == address(0) || player == SINGLETON_ADDRESS) {
             revert InvalidDrawAddress();
         }
@@ -36,6 +35,8 @@ contract DrawSystem is System {
         DrawRequest.set({ id: id, player: player, fulfilled: false });
 
         LettersDrawn.set({ id: id, player: player, value: value, timestamp: block.timestamp });
+
+        return id;
     }
 
     function fulfillDraw(uint256 id) public {

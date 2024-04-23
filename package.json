@@ -5,7 +5,7 @@
     ],
     "private": true,
     "scripts": {
-        "lint": "forge fmt packages/game && forge fmt packages/rng && bun run solhint",
+        "lint": "cd packages/game && forge fmt && cd ../rng && forge fmt && cd ../.. && bun run solhint",
         "solhint": "solhint --config ./.solhint.json '**/src/**/*.sol' --fix"
     },
     "engines": {}

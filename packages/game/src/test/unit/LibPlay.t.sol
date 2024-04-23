@@ -31,14 +31,12 @@ import { Wrapper } from "./Wrapper.sol";
 import "forge-std/Test.sol";
 
 contract LibPlayTest is Words3Test {
-    IWorld world;
     bytes32[] public words;
     Merkle private m;
     Wrapper wrapper;
 
     function setUp() public override {
         super.setUp();
-        world = IWorld(worldAddress);
         wrapper = new Wrapper();
 
         m = new Merkle();

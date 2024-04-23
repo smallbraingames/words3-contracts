@@ -6,15 +6,32 @@ import { Letter } from "codegen/common.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 
 contract Words3Test is MudTest {
+    IWorld world;
     address deployerAddress;
 
     function setUp() public virtual override {
         super.setUp();
         deployerAddress = address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266);
+        world = IWorld(worldAddress);
+    }
+
+    function startEmpty() public {
+        Letter[] memory initialWord = new Letter[](2);
+        initialWord[0] = Letter.H;
+        initialWord[1] = Letter.I;
+        world.words3__start({
+            initialWord: initialWord,
+            merkleRoot: bytes32(0),
+            vrgdaTargetPrice: 1,
+            vrgdaPriceDecay: 1e17,
+            vrgdaPerDayInitial: 100e18,
+            vrgdaPower: 1e16,
+            crossWordRewardFraction: 3,
+            bonusDistance: 5
+        });
     }
 
     function setDefaultLetterOdds() public {
-        IWorld world = IWorld(worldAddress);
         uint8[] memory odds = new uint8[](27);
         odds[0] = 0;
         odds[uint8(Letter.A)] = 9;

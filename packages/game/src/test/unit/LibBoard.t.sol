@@ -16,12 +16,10 @@ import { Wrapper } from "./Wrapper.sol";
 import "forge-std/Test.sol";
 
 contract LibBoardTest is Words3Test {
-    IWorld world;
     Wrapper wrapper;
 
     function setUp() public override {
         super.setUp();
-        world = IWorld(worldAddress);
         wrapper = new Wrapper();
     }
 

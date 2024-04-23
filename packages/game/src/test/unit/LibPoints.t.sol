@@ -18,13 +18,11 @@ import { Wrapper } from "./Wrapper.sol";
 import "forge-std/Test.sol";
 
 contract LibPointsTest is Words3Test {
-    IWorld world;
     Wrapper wrapper;
 
     function setUp() public override {
         super.setUp();
         wrapper = new Wrapper();
-        world = IWorld(worldAddress);
     }
 
     function testGetBaseLetterPoints() public {

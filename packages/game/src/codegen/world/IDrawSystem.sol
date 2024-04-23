@@ -13,7 +13,7 @@ interface IDrawSystem {
     error NotEnoughValue();
     error AlreadyFulfilled();
 
-    function words3__requestDraw(address player) external payable;
+    function words3__requestDraw(address player) external payable returns (uint256);
 
     function words3__fulfillDraw(uint256 id) external;
 
