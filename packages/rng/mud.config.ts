@@ -9,13 +9,19 @@ export default defineWorld({
                 value: "uint256",
             }
         },
+        Config: {
+            key: [],
+            schema: {
+                period: "uint256", // In number of blocks
+                valueSet: "bool"
+            }
+        },
         Request: {
             key: ["id"],
             schema: {
                 id: "uint256",
                 blockNumber: "uint256",
                 timestamp: "uint256",
-                period: "uint256" // In number of blocks
             },
         },
         Response: {
