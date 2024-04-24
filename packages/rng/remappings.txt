@@ -1,0 +1,7 @@
+@latticexyz/=../../node_modules/@latticexyz/
+ds-test/=../../node_modules/ds-test/src/
+forge-std/=../../node_modules/forge-std/src/
+
+codegen/=src/codegen
+systems/=src/systems
+libraries/=src/libraries

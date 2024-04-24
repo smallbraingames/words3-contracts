@@ -1,0 +1,36 @@
+{
+  "name": "game",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "mud worldgen && mud tablegen && forge build",
+    "clean": "forge clean && rimraf src/codegen",
+    "deploy:local": "bun run build && mud deploy --worldAddress=$(jq -r '.[\"31337\"].address' ../../packages/rng/worlds.json) --alwaysRunPostDeploy",
+    "deploy:testnet": "bun run build && mud deploy --profile=redstone-garnet --worldAddress=$(jq -r '.[\"17069\"].address' ../../packages/rng/worlds.json)",
+    "deploy:base": "bun run build && mud deploy --profile=base --worldAddress=$(jq -r '.[\"8453\"].address' ../../packages/rng/worlds.json)",
+    "test": "bun run build && mud test --worldAddress=$(jq -r '.[\"31337\"].address' ../../packages/rng/worlds.json) --rpc http://localhost:8545",
+    "dev": "bun run build && mud dev-contracts --worldAddress=$(jq -r '.[\"31337\"].address' ../../packages/rng/worlds.json) --rpc http://localhost:8545 --alwaysRunPostDeploy"
+  },
+  "devDependencies": {
+    "@latticexyz/cli": "2.0.6",
+    "@latticexyz/config": "2.0.6",
+    "@latticexyz/faucet": "2.0.6",
+    "@latticexyz/schema-type": "2.0.6",
+    "@latticexyz/store": "2.0.6",
+    "@latticexyz/world": "2.0.6",
+    "@latticexyz/world-modules": "2.0.6",
+    "@openzeppelin/contracts": "5.0.2",
+    "@solidstate/contracts": "^0.0.52",
+    "@types/node": "^18.15.11",
+    "ds-test": "https://github.com/dapphub/ds-test.git#e282159d5170298eb2455a6c05280ab5a73a4ef0",
+    "forge-std": "https://github.com/foundry-rs/forge-std.git#74cfb77e308dd188d2f58864aaf44963ae6b88b1",
+    "prettier": "3.2.5",
+    "prettier-plugin-solidity": "1.3.1",
+    "rimraf": "^3.0.2",
+    "solhint": "^3.4.1",
+    "solhint-config-mud": "2.0.6",
+    "solhint-plugin-mud": "2.0.6",
+    "solmate": "6.2.0",
+    "typescript": "5.4.2"
+  }
+}

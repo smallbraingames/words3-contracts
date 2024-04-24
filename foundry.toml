@@ -1,31 +1,3 @@
-[fmt]
-  sort_imports=true
-  bracket_spacing = true
-  int_types = "long"
-  line_length = 120
-  multiline_func_header = "all"
-  number_underscore = "thousands"
-  quote_style = "double"
-  tab_width = 4
-  wrap_comments = true
-
-
-[profile.default]
-  solc_version = "0.8.24"
-  ffi = false
-  optimizer = true
-  optimizer_runs = 3000
-  verbosity = 1
-  src = "src"
-  test = "test"
-  out = "out"
-  allow_paths = ["./node_modules"]
-  extra_output_files = [
-    "abi",
-    "evm.bytecode"
-  ]
-  fs_permissions = [{ access = "read", path = "./"}]
-
 [fuzz]
   runs = 1028
 
@@ -41,5 +13,5 @@
 [profile.base-testnet]
   eth_rpc_url = "https://goerli.base.org"
 
-[profile.base-mainnet]
-  eth_rpc_url = "https://base-mainnet.blastapi.io/"
+[profile.base]
+  eth_rpc_url = "https://base-mainnet.blastapi.io"
