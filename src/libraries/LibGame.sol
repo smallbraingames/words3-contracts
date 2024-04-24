@@ -20,7 +20,8 @@ library LibGame {
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
         uint32 crossWordRewardFraction,
-        uint16 bonusDistance
+        uint16 bonusDistance,
+        uint8 numDrawLetters
     )
         internal
     {
@@ -28,7 +29,8 @@ library LibGame {
             GameConfigData({
                 status: Status.STARTED,
                 crossWordRewardFraction: crossWordRewardFraction,
-                bonusDistance: bonusDistance
+                bonusDistance: bonusDistance,
+                numDrawLetters: numDrawLetters
             })
         );
         MerkleRootConfig.set(merkleRoot);

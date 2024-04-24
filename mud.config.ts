@@ -9,6 +9,7 @@ export default defineWorld({
         status: "Status",
         crossWordRewardFraction: "uint32",
         bonusDistance: "uint16",
+        numDrawLetters: "uint8"
       },
     },
     MerkleRootConfig: {

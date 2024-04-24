@@ -3,9 +3,10 @@ pragma solidity >=0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { Points, PointsClaimedUpdate } from "codegen/index.sol";
-import {LibUpdateId} from "libraries/LibUpdateId.sol";
+
 import { LibPlayer } from "libraries/LibPlayer.sol";
 import { LibTreasury } from "libraries/LibTreasury.sol";
+import { LibUpdateId } from "libraries/LibUpdateId.sol";
 
 contract ClaimSystem is System {
     error AlreadyClaimed();
@@ -21,7 +22,7 @@ contract ClaimSystem is System {
         }
 
         uint256 claimAmount = LibTreasury.getClaimAmount({ points: points });
-        
+
         LibPlayer.decrementPoints({ player: player, decrement: points });
         LibTreasury.decrementTreasury({ decrement: claimAmount });
 
