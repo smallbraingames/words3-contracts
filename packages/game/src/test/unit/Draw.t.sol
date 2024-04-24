@@ -23,4 +23,13 @@ contract DrawTest is Words3Test {
         vm.roll(block.number + 1);
         world.words3__fulfillDraw(id);
     }
-}
+
+    function test_InstantDraw() public {
+        address player = address(0x123face);
+        startEmpty();
+        vm.deal(player, 100 ether);
+
+        vm.prank(player);
+        world.words3__instantDraw{ value: 100 ether }(player);
+    }
+ }

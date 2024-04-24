@@ -9,7 +9,7 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface ISetRandaoSystem {
-    error WithinPeriod();
+  error WithinPeriod();
 
-    function rng__setRandao(uint256 id) external returns (uint256);
+  function rng__setRandao(uint256 id) external returns (uint256);
 }

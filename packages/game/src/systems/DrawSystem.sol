@@ -30,7 +30,7 @@ contract DrawSystem is System {
         LibTreasury.incrementTreasury(_msgSender(), value);
 
         IWorld world = IWorld(_world());
-        uint256 id = world.rng__request({ period: 1 });
+        uint256 id = world.rng__request();
 
         DrawRequest.set({ id: id, player: player, fulfilled: false });
 
