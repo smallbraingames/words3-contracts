@@ -18,7 +18,8 @@ contract StartSystem is System {
         int256 vrgdaPerDayInitial,
         int256 vrgdaPower,
         uint32 crossWordRewardFraction,
-        uint16 bonusDistance
+        uint16 bonusDistance,
+        uint8 numDrawLetters
     )
         public
     {
@@ -30,7 +31,8 @@ contract StartSystem is System {
             vrgdaPerDayInitial: vrgdaPerDayInitial,
             vrgdaPower: vrgdaPower,
             crossWordRewardFraction: crossWordRewardFraction,
-            bonusDistance: bonusDistance
+            bonusDistance: bonusDistance,
+            numDrawLetters: numDrawLetters
         });
     }
 
