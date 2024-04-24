@@ -19,7 +19,7 @@ import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 // Import user types
 import { Direction } from "./../common.sol";
 
-struct PlayResultData {
+struct PlayUpdateData {
   address player;
   Direction direction;
   uint256 timestamp;
@@ -29,9 +29,9 @@ struct PlayResultData {
   uint8[] filledWord;
 }
 
-library PlayResult {
-  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "PlayResult", typeId: RESOURCE_OFFCHAIN_TABLE });`
-  ResourceId constant _tableId = ResourceId.wrap(0x6f740000000000000000000000000000506c6179526573756c74000000000000);
+library PlayUpdate {
+  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "PlayUpdate", typeId: RESOURCE_OFFCHAIN_TABLE });`
+  ResourceId constant _tableId = ResourceId.wrap(0x6f740000000000000000000000000000506c6179557064617465000000000000);
 
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x003d050214012004040000000000000000000000000000000000000000000000);
@@ -230,7 +230,7 @@ library PlayResult {
   /**
    * @notice Set the full data using the data struct.
    */
-  function set(uint256 id, PlayResultData memory _table) internal {
+  function set(uint256 id, PlayUpdateData memory _table) internal {
     bytes memory _staticData = encodeStatic(_table.player, _table.direction, _table.timestamp, _table.x, _table.y);
 
     EncodedLengths _encodedLengths = encodeLengths(_table.word, _table.filledWord);
@@ -245,7 +245,7 @@ library PlayResult {
   /**
    * @notice Set the full data using the data struct.
    */
-  function _set(uint256 id, PlayResultData memory _table) internal {
+  function _set(uint256 id, PlayUpdateData memory _table) internal {
     bytes memory _staticData = encodeStatic(_table.player, _table.direction, _table.timestamp, _table.x, _table.y);
 
     EncodedLengths _encodedLengths = encodeLengths(_table.word, _table.filledWord);
@@ -305,7 +305,7 @@ library PlayResult {
     bytes memory _staticData,
     EncodedLengths _encodedLengths,
     bytes memory _dynamicData
-  ) internal pure returns (PlayResultData memory _table) {
+  ) internal pure returns (PlayUpdateData memory _table) {
     (_table.player, _table.direction, _table.timestamp, _table.x, _table.y) = decodeStatic(_staticData);
 
     (_table.word, _table.filledWord) = decodeDynamic(_encodedLengths, _dynamicData);

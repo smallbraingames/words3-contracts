@@ -27,7 +27,14 @@ export default defineWorld({
         power: "int256",
       },
     },
-    // Game
+    DrawLetterOdds: {
+      key: [],
+      schema: {
+       value: "uint8[]" // Letters index the array (A is index 1, B is index 2, etc.)
+      },
+    },
+    
+    // Board
     TileLetter: {
       key: ["x", "y"],
       schema: { x: "int32", y: "int32", value: "Letter" },
@@ -36,6 +43,8 @@ export default defineWorld({
       key: ["x", "y"],
       schema: { x: "int32", y: "int32", value: "address" }
     },
+
+    // Letters
     PlayerLetters: {
       key: ["player", "letter"],
       schema: {
@@ -44,23 +53,25 @@ export default defineWorld({
         value: "uint32",
       },
     },
-    DrawLetterOdds: {
+    DrawCount: {
       key: [],
       schema: {
-       value: "uint8[]" // Letters index the array (A is index 1, B is index 2, etc.)
+        value: "uint32",
+      },
+    },
+
+    // Points & Treasury
+    Points: {
+      key: ["player"],
+      schema: {
+        player: "address",
+        value: "uint32",
       },
     },
     Treasury: {
       key: [],
       schema: {
         value: "uint256",
-      },
-    },
-    Points: {
-      key: ["player"],
-      schema: {
-        player: "address",
-        value: "uint32",
       },
     },
     Spent: {
@@ -70,14 +81,15 @@ export default defineWorld({
         value: "uint256",
       },
     },
-    DrawCount: {
+    
+    // Activity (offchain tables used to emit events useful for indexing)
+    UpdateId: {
       key: [],
       schema: {
-        value: "uint32",
+        value: "uint256",
       },
     },
-    // Activity
-    PlayResult: {
+    PlayUpdate: {
       key: ["id"],
       schema: {
         id: "uint256",
@@ -89,30 +101,9 @@ export default defineWorld({
         word: "uint8[]",
         filledWord: "uint8[]",
       },
-      type: "offchainTable",
+      type: "offchainTable"
     },
-    PointsClaimed: {
-      key: ["id"],
-      schema: {
-        id: "uint256",
-        player: "address",
-        points: "uint32",
-        value: "uint256",
-        timestamp: "uint256",
-      },
-      type: "offchainTable",
-    },
-    LettersDrawn: {
-      key: ["id"],
-      schema: {
-        id: "uint256",
-        player: "address",
-        value: "uint256",
-        timestamp: "uint256",
-      },
-      type: "offchainTable",
-    },
-    PointsResult: {
+    PointsUpdate: {
       key: ["id", "pointsId"],
       schema: {
         id: "uint256",
@@ -122,6 +113,27 @@ export default defineWorld({
       },
       type: "offchainTable"
     },
+    PointsClaimedUpdate: {
+      key: ["id"],
+      schema: {
+        id: "uint256",
+        player: "address",
+        points: "uint32",
+        value: "uint256",
+        timestamp: "uint256",
+      },
+      type: "offchainTable",
+    },
+    DrawUpdate: {
+      key: ["id"],
+      schema: {
+        id: "uint256",
+        player: "address",
+        value: "uint256",
+        timestamp: "uint256",
+      },
+      type: "offchainTable",
+    }
   },
   enums: {
     BonusType: ["MULTIPLY_WORD", "MULTIPLY_LETTER"],
