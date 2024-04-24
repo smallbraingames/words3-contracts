@@ -28,18 +28,18 @@ contract DrawSystem is System {
         LibTreasury.incrementTreasury(_msgSender(), value);
 
         // Draw 8 letters for now, undecided on whether players can control
+        uint32 drawCount = DrawCount.get() + 1;
         Letter[] memory drawnLetters = LibLetters.getDraw({
             odds: DrawLetterOdds.get(),
             numLetters: 8,
-            random: uint256(keccak256(abi.encodePacked(block.timestamp, _msgSender())))
+            random: uint256(keccak256(abi.encodePacked(block.prevrandao, drawCount)))
         });
 
         for (uint256 i = 0; i < drawnLetters.length; i++) {
             LibLetters.addLetter({ player: player, letter: drawnLetters[i] });
         }
 
-        uint32 drawCount = DrawCount.get() + 1;
-        DrawCount.set(drawCount);
+        DrawCount.set({ value: drawCount });
 
         LettersDrawn.set({ id: drawCount, player: player, value: value, timestamp: block.timestamp });
     }
