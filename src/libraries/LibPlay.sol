@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { Direction, Letter } from "codegen/common.sol";
-import { MerkleRootConfig, PlayResult } from "codegen/index.sol";
+import { MerkleRootConfig, PlayUpdate } from "codegen/index.sol";
 import { Bound } from "common/Bound.sol";
 import { MAX_WORD_LENGTH } from "common/Constants.sol";
 import { Coord } from "common/Coord.sol";
@@ -55,7 +55,7 @@ library LibPlay {
     )
         internal
     {
-        PlayResult.set(
+        PlayUpdate.set(
             playResultId,
             player,
             direction,

@@ -16,31 +16,32 @@ import { Schema } from "@latticexyz/store/src/Schema.sol";
 import { EncodedLengths, EncodedLengthsLib } from "@latticexyz/store/src/EncodedLengths.sol";
 import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 
-struct PointsResultData {
+struct PointsClaimedUpdateData {
   address player;
   uint32 points;
+  uint256 value;
+  uint256 timestamp;
 }
 
-library PointsResult {
-  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "PointsResult", typeId: RESOURCE_OFFCHAIN_TABLE });`
-  ResourceId constant _tableId = ResourceId.wrap(0x6f740000000000000000000000000000506f696e7473526573756c7400000000);
+library PointsClaimedUpdate {
+  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "PointsClaimedUpd", typeId: RESOURCE_OFFCHAIN_TABLE });`
+  ResourceId constant _tableId = ResourceId.wrap(0x6f740000000000000000000000000000506f696e7473436c61696d6564557064);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0018020014040000000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0058040014042020000000000000000000000000000000000000000000000000);
 
-  // Hex-encoded key schema of (uint256, int16)
-  Schema constant _keySchema = Schema.wrap(0x002202001f210000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (address, uint32)
-  Schema constant _valueSchema = Schema.wrap(0x0018020061030000000000000000000000000000000000000000000000000000);
+  // Hex-encoded key schema of (uint256)
+  Schema constant _keySchema = Schema.wrap(0x002001001f000000000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (address, uint32, uint256, uint256)
+  Schema constant _valueSchema = Schema.wrap(0x0058040061031f1f000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
    * @return keyNames An array of strings with the names of key fields.
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
-    keyNames = new string[](2);
+    keyNames = new string[](1);
     keyNames[0] = "id";
-    keyNames[1] = "pointsId";
   }
 
   /**
@@ -48,9 +49,11 @@ library PointsResult {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](2);
+    fieldNames = new string[](4);
     fieldNames[0] = "player";
     fieldNames[1] = "points";
+    fieldNames[2] = "value";
+    fieldNames[3] = "timestamp";
   }
 
   /**
@@ -70,10 +73,9 @@ library PointsResult {
   /**
    * @notice Set player.
    */
-  function setPlayer(uint256 id, int16 pointsId, address player) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function setPlayer(uint256 id, address player) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((player)), _fieldLayout);
   }
@@ -81,10 +83,9 @@ library PointsResult {
   /**
    * @notice Set player.
    */
-  function _setPlayer(uint256 id, int16 pointsId, address player) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function _setPlayer(uint256 id, address player) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((player)), _fieldLayout);
   }
@@ -92,10 +93,9 @@ library PointsResult {
   /**
    * @notice Set points.
    */
-  function setPoints(uint256 id, int16 pointsId, uint32 points) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function setPoints(uint256 id, uint32 points) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((points)), _fieldLayout);
   }
@@ -103,26 +103,64 @@ library PointsResult {
   /**
    * @notice Set points.
    */
-  function _setPoints(uint256 id, int16 pointsId, uint32 points) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function _setPoints(uint256 id, uint32 points) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((points)), _fieldLayout);
   }
 
   /**
+   * @notice Set value.
+   */
+  function setValue(uint256 id, uint256 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((value)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set value.
+   */
+  function _setValue(uint256 id, uint256 value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((value)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set timestamp.
+   */
+  function setTimestamp(uint256 id, uint256 timestamp) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((timestamp)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set timestamp.
+   */
+  function _setTimestamp(uint256 id, uint256 timestamp) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((timestamp)), _fieldLayout);
+  }
+
+  /**
    * @notice Set the full data using individual values.
    */
-  function set(uint256 id, int16 pointsId, address player, uint32 points) internal {
-    bytes memory _staticData = encodeStatic(player, points);
+  function set(uint256 id, address player, uint32 points, uint256 value, uint256 timestamp) internal {
+    bytes memory _staticData = encodeStatic(player, points, value, timestamp);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -130,15 +168,14 @@ library PointsResult {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(uint256 id, int16 pointsId, address player, uint32 points) internal {
-    bytes memory _staticData = encodeStatic(player, points);
+  function _set(uint256 id, address player, uint32 points, uint256 value, uint256 timestamp) internal {
+    bytes memory _staticData = encodeStatic(player, points, value, timestamp);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -146,15 +183,14 @@ library PointsResult {
   /**
    * @notice Set the full data using the data struct.
    */
-  function set(uint256 id, int16 pointsId, PointsResultData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.player, _table.points);
+  function set(uint256 id, PointsClaimedUpdateData memory _table) internal {
+    bytes memory _staticData = encodeStatic(_table.player, _table.points, _table.value, _table.timestamp);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -162,15 +198,14 @@ library PointsResult {
   /**
    * @notice Set the full data using the data struct.
    */
-  function _set(uint256 id, int16 pointsId, PointsResultData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.player, _table.points);
+  function _set(uint256 id, PointsClaimedUpdateData memory _table) internal {
+    bytes memory _staticData = encodeStatic(_table.player, _table.points, _table.value, _table.timestamp);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -178,10 +213,16 @@ library PointsResult {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(bytes memory _blob) internal pure returns (address player, uint32 points) {
+  function decodeStatic(
+    bytes memory _blob
+  ) internal pure returns (address player, uint32 points, uint256 value, uint256 timestamp) {
     player = (address(Bytes.getBytes20(_blob, 0)));
 
     points = (uint32(Bytes.getBytes4(_blob, 20)));
+
+    value = (uint256(Bytes.getBytes32(_blob, 24)));
+
+    timestamp = (uint256(Bytes.getBytes32(_blob, 56)));
   }
 
   /**
@@ -194,17 +235,16 @@ library PointsResult {
     bytes memory _staticData,
     EncodedLengths,
     bytes memory
-  ) internal pure returns (PointsResultData memory _table) {
-    (_table.player, _table.points) = decodeStatic(_staticData);
+  ) internal pure returns (PointsClaimedUpdateData memory _table) {
+    (_table.player, _table.points, _table.value, _table.timestamp) = decodeStatic(_staticData);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(uint256 id, int16 pointsId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function deleteRecord(uint256 id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -212,10 +252,9 @@ library PointsResult {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(uint256 id, int16 pointsId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function _deleteRecord(uint256 id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -224,8 +263,13 @@ library PointsResult {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(address player, uint32 points) internal pure returns (bytes memory) {
-    return abi.encodePacked(player, points);
+  function encodeStatic(
+    address player,
+    uint32 points,
+    uint256 value,
+    uint256 timestamp
+  ) internal pure returns (bytes memory) {
+    return abi.encodePacked(player, points, value, timestamp);
   }
 
   /**
@@ -234,8 +278,13 @@ library PointsResult {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(address player, uint32 points) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(player, points);
+  function encode(
+    address player,
+    uint32 points,
+    uint256 value,
+    uint256 timestamp
+  ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
+    bytes memory _staticData = encodeStatic(player, points, value, timestamp);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
@@ -246,10 +295,9 @@ library PointsResult {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(uint256 id, int16 pointsId) internal pure returns (bytes32[] memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function encodeKeyTuple(uint256 id) internal pure returns (bytes32[] memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
-    _keyTuple[1] = bytes32(uint256(int256(pointsId)));
 
     return _keyTuple;
   }

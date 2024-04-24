@@ -6,15 +6,16 @@ import { Letter } from "codegen/common.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 
 contract Words3Test is MudTest {
+    IWorld public world;
     address deployerAddress;
 
     function setUp() public virtual override {
         super.setUp();
+        world = IWorld(worldAddress);
         deployerAddress = address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266);
     }
 
     function setDefaultLetterOdds() public {
-        IWorld world = IWorld(worldAddress);
         uint8[] memory odds = new uint8[](27);
         odds[0] = 0;
         odds[uint8(Letter.A)] = 9;
@@ -43,7 +44,6 @@ contract Words3Test is MudTest {
         odds[uint8(Letter.X)] = 1;
         odds[uint8(Letter.Y)] = 2;
         odds[uint8(Letter.Z)] = 1;
-
         world.setDrawLetterOdds(odds);
     }
 }

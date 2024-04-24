@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { BonusType, Direction, Letter } from "codegen/common.sol";
-import { GameConfig, Points, PointsResult } from "codegen/index.sol";
+import { GameConfig, Points, PointsUpdate } from "codegen/index.sol";
 import { Bonus } from "common/Bonus.sol";
 import { Bound } from "common/Bound.sol";
 import { SINGLETON_ADDRESS } from "common/Constants.sol";
@@ -29,7 +29,7 @@ library LibPoints {
     {
         uint32 points = getPoints(playWord, filledWord, start, direction, bounds);
         LibPlayer.incrementPoints(player, points);
-        PointsResult.set({ id: playResultId, player: player, pointsId: -1, points: points });
+        PointsUpdate.set({ id: playResultId, player: player, pointsId: -1, points: points });
         return points;
     }
 
@@ -91,7 +91,7 @@ library LibPoints {
             if (buildsOnPlayers[i] != address(0)) {
                 address player = buildsOnPlayers[i];
                 LibPlayer.incrementPoints(player, rewardPoints);
-                PointsResult.set({ id: playResultId, player: player, pointsId: int16(uint16(i)), points: rewardPoints });
+                PointsUpdate.set({ id: playResultId, player: player, pointsId: int16(uint16(i)), points: rewardPoints });
             }
         }
     }

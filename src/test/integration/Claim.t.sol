@@ -1,26 +1,22 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
-
-import { Direction, Letter } from "codegen/common.sol";
-import { MerkleRootConfig, Points, TileLetter, TilePlayer, Treasury } from "codegen/index.sol";
-import { IWorld } from "codegen/world/IWorld.sol";
-
-import { Bound } from "common/Bound.sol";
-import { SINGLETON_ADDRESS } from "common/Constants.sol";
-import { Coord } from "common/Coord.sol";
+pragma solidity >=0.8.24;
+/* solhint-disable no-global-import */
+/* solhint-disable func-name-mixedcase */
 
 import { Words3Test } from "../Words3Test.t.sol";
 import { Merkle } from "../murky/src/Merkle.sol";
+import { Direction, Letter } from "codegen/common.sol";
+import { Points, Treasury } from "codegen/index.sol";
+import { Bound } from "common/Bound.sol";
+import { Coord } from "common/Coord.sol";
 import "forge-std/Test.sol";
 
 contract Claim is Words3Test {
-    IWorld world;
     bytes32[] public words;
     Merkle private m;
 
     function setUp() public override {
         super.setUp();
-        world = IWorld(worldAddress);
         m = new Merkle();
         Letter[] memory hello = new Letter[](5);
         hello[0] = Letter.H;
@@ -71,8 +67,8 @@ contract Claim is Words3Test {
         words.push(keccak256(bytes.concat(keccak256(abi.encode(riot))))); // riot
         words.push(keccak256(bytes.concat(keccak256(abi.encode(emi))))); // emi
         words.push(keccak256(bytes.concat(keccak256(abi.encode(om))))); // om
-        words.push(keccak256(bytes.concat(keccak256(abi.encode(omq))))); // omq
-        words.push(keccak256(bytes.concat(keccak256(abi.encode(bqt))))); // qt
+        words.push(keccak256(bytes.concat(keccak256(abi.encode(omq))))); // omq, made up for testing
+        words.push(keccak256(bytes.concat(keccak256(abi.encode(bqt))))); // bqt, made up for testing
 
         setDefaultLetterOdds();
     }

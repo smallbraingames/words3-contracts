@@ -16,15 +16,15 @@ import { Schema } from "@latticexyz/store/src/Schema.sol";
 import { EncodedLengths, EncodedLengthsLib } from "@latticexyz/store/src/EncodedLengths.sol";
 import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 
-struct LettersDrawnData {
+struct DrawUpdateData {
   address player;
   uint256 value;
   uint256 timestamp;
 }
 
-library LettersDrawn {
-  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "LettersDrawn", typeId: RESOURCE_OFFCHAIN_TABLE });`
-  ResourceId constant _tableId = ResourceId.wrap(0x6f7400000000000000000000000000004c657474657273447261776e00000000);
+library DrawUpdate {
+  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "DrawUpdate", typeId: RESOURCE_OFFCHAIN_TABLE });`
+  ResourceId constant _tableId = ResourceId.wrap(0x6f74000000000000000000000000000044726177557064617465000000000000);
 
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0054030014202000000000000000000000000000000000000000000000000000);
@@ -161,7 +161,7 @@ library LettersDrawn {
   /**
    * @notice Set the full data using the data struct.
    */
-  function set(uint256 id, LettersDrawnData memory _table) internal {
+  function set(uint256 id, DrawUpdateData memory _table) internal {
     bytes memory _staticData = encodeStatic(_table.player, _table.value, _table.timestamp);
 
     EncodedLengths _encodedLengths;
@@ -176,7 +176,7 @@ library LettersDrawn {
   /**
    * @notice Set the full data using the data struct.
    */
-  function _set(uint256 id, LettersDrawnData memory _table) internal {
+  function _set(uint256 id, DrawUpdateData memory _table) internal {
     bytes memory _staticData = encodeStatic(_table.player, _table.value, _table.timestamp);
 
     EncodedLengths _encodedLengths;
@@ -209,7 +209,7 @@ library LettersDrawn {
     bytes memory _staticData,
     EncodedLengths,
     bytes memory
-  ) internal pure returns (LettersDrawnData memory _table) {
+  ) internal pure returns (DrawUpdateData memory _table) {
     (_table.player, _table.value, _table.timestamp) = decodeStatic(_staticData);
   }
 
