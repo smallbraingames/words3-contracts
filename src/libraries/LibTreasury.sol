@@ -23,17 +23,17 @@ library LibTreasury {
 
     function incrementTreasury(address msgSender, uint256 msgValue) internal {
         uint256 incrementedTreasury = Treasury.get() + msgValue;
-        Treasury.set(incrementedTreasury);
+        Treasury.set({ value: incrementedTreasury });
         incrementSpent(msgSender, msgValue);
     }
 
     function decrementTreasury(uint256 decrement) internal {
         uint256 decrementedTreasury = Treasury.get() - decrement;
-        Treasury.set(decrementedTreasury);
+        Treasury.set({ value: decrementedTreasury });
     }
 
     function incrementSpent(address msgSender, uint256 msgValue) internal {
-        uint256 incrementedSpent = Spent.get(msgSender) + msgValue;
-        Spent.set(msgSender, incrementedSpent);
+        uint256 incrementedSpent = Spent.get({ player: msgSender }) + msgValue;
+        Spent.set({ player: msgSender, value: incrementedSpent });
     }
 }

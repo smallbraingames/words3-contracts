@@ -22,14 +22,20 @@ library LibPoints {
         Direction direction,
         Bound[] memory bounds,
         address player,
-        uint256 playResultId
+        uint256 playUpdateId
     )
         internal
         returns (uint32)
     {
-        uint32 points = getPoints(playWord, filledWord, start, direction, bounds);
-        LibPlayer.incrementPoints(player, points);
-        PointsUpdate.set({ id: playResultId, player: player, pointsId: -1, points: points });
+        uint32 points = getPoints({
+            playWord: playWord,
+            filledWord: filledWord,
+            start: start,
+            direction: direction,
+            bounds: bounds
+        });
+        LibPlayer.incrementPoints({ player: player, increment: points });
+        PointsUpdate.set({ id: playUpdateId, player: player, pointsId: -1, points: points });
         return points;
     }
 
@@ -44,7 +50,7 @@ library LibPoints {
         view
         returns (uint32)
     {
-        uint32 points = getWordPoints(playWord, filledWord, start, direction);
+        uint32 points = getWordPoints({ word: playWord, filledWord: filledWord, start: start, direction: direction });
 
         // Count points for cross words (double counts by design)
         Direction crossDirection =
@@ -60,9 +66,15 @@ library LibPoints {
                 continue;
             }
 
-            Coord memory letterCoord = LibBoard.getRelativeCoord(start, int32(uint32(i)), direction);
+            Coord memory letterCoord =
+                LibBoard.getRelativeCoord({ startCoord: start, distance: int32(uint32(i)), direction: direction });
 
-            Letter[] memory crossFilledWord = LibBoard.getCrossWord(letterCoord, letter, direction, bounds[i]);
+            Letter[] memory crossFilledWord = LibBoard.getCrossWord({
+                letterCoord: letterCoord,
+                letter: letter,
+                wordDirection: direction,
+                bound: bounds[i]
+            });
             Letter[] memory crossPlayWord = new Letter[](crossFilledWord.length);
             for (uint256 j; j < crossFilledWord.length; j++) {
                 if (j == negative) {
@@ -72,15 +84,23 @@ library LibPoints {
                 }
             }
 
-            Coord memory crossStart =
-                LibBoard.getRelativeCoord(letterCoord, -1 * int32(uint32(negative)), crossDirection);
+            Coord memory crossStart = LibBoard.getRelativeCoord({
+                startCoord: letterCoord,
+                distance: -1 * int32(uint32(negative)),
+                direction: crossDirection
+            });
 
-            points += getWordPoints(crossPlayWord, crossFilledWord, crossStart, crossDirection);
+            points += getWordPoints({
+                word: crossPlayWord,
+                filledWord: crossFilledWord,
+                start: crossStart,
+                direction: crossDirection
+            });
         }
         return points;
     }
 
-    function setBuildsOnWordRewards(uint32 points, address[] memory buildsOnPlayers, uint256 playResultId) internal {
+    function setBuildsOnWordRewards(uint32 points, address[] memory buildsOnPlayers, uint256 playUpdateId) internal {
         if (buildsOnPlayers.length == 0) {
             return;
         }
@@ -90,14 +110,14 @@ library LibPoints {
         for (uint256 i; i < buildsOnPlayers.length; i++) {
             if (buildsOnPlayers[i] != address(0)) {
                 address player = buildsOnPlayers[i];
-                LibPlayer.incrementPoints(player, rewardPoints);
-                PointsUpdate.set({ id: playResultId, player: player, pointsId: int16(uint16(i)), points: rewardPoints });
+                LibPlayer.incrementPoints({ player: player, increment: rewardPoints });
+                PointsUpdate.set({ id: playUpdateId, player: player, pointsId: int16(uint16(i)), points: rewardPoints });
             }
         }
     }
 
     function getTotalPoints() internal view returns (uint32) {
-        return Points.get(SINGLETON_ADDRESS);
+        return Points.get({ player: SINGLETON_ADDRESS });
     }
 
     function getWordPoints(
@@ -114,16 +134,20 @@ library LibPoints {
         uint32 multiplier = 1;
 
         for (uint256 i; i < word.length; i++) {
-            Coord memory letterCoord = LibBoard.getRelativeCoord(start, int32(uint32(i)), direction);
-            if (word[i] != Letter.EMPTY && LibBonus.isBonusTile(letterCoord, GameConfig.getBonusDistance())) {
-                Bonus memory bonus = LibBonus.getTileBonus(letterCoord);
+            Coord memory letterCoord =
+                LibBoard.getRelativeCoord({ startCoord: start, distance: int32(uint32(i)), direction: direction });
+            if (
+                word[i] != Letter.EMPTY
+                    && LibBonus.isBonusTile({ coord: letterCoord, bonusDistance: GameConfig.getBonusDistance() })
+            ) {
+                Bonus memory bonus = LibBonus.getTileBonus({ coord: letterCoord });
                 if (bonus.bonusType == BonusType.MULTIPLY_WORD) {
                     multiplier *= bonus.bonusValue;
                 }
 
-                points += getBonusLetterPoints(word[i], bonus);
+                points += getBonusLetterPoints({ letter: word[i], bonus: bonus });
             } else {
-                points += getBaseLetterPoints(filledWord[i]);
+                points += getBaseLetterPoints({ letter: filledWord[i] });
             }
         }
 
@@ -131,7 +155,7 @@ library LibPoints {
     }
 
     function getBonusLetterPoints(Letter letter, Bonus memory bonus) internal pure returns (uint32) {
-        uint32 basePoints = getBaseLetterPoints(letter);
+        uint32 basePoints = getBaseLetterPoints({ letter: letter });
         if (bonus.bonusType == BonusType.MULTIPLY_LETTER) {
             return basePoints * bonus.bonusValue;
         }

@@ -9,8 +9,6 @@ import { LibTreasury } from "libraries/LibTreasury.sol";
 import { LibUpdateId } from "libraries/LibUpdateId.sol";
 
 contract ClaimSystem is System {
-    error AlreadyClaimed();
-    error InvalidClaimAddress();
     error NotEnoughPoints();
 
     function claim(uint32 points) public {

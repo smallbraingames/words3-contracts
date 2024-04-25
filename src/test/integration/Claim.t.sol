@@ -9,7 +9,9 @@ import { Direction, Letter } from "codegen/common.sol";
 import { Points, Treasury } from "codegen/index.sol";
 import { Bound } from "common/Bound.sol";
 import { Coord } from "common/Coord.sol";
+
 import "forge-std/Test.sol";
+import { ClaimSystem } from "systems/ClaimSystem.sol";
 
 contract Claim is Words3Test {
     bytes32[] public words;
@@ -87,12 +89,13 @@ contract Claim is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 1,
+            vrgdaTargetPrice: 1e13,
             vrgdaPriceDecay: 1e17,
-            vrgdaPerDayInitial: 100e18,
-            vrgdaPower: 1e16,
+            vrgdaPerDayInitial: 10e18,
+            vrgdaPower: 1e18,
             crossWordRewardFraction: 3,
-            bonusDistance: 5
+            bonusDistance: 5,
+            numDrawLetters: 7
         });
 
         Letter[] memory word = new Letter[](4);
@@ -101,24 +104,24 @@ contract Claim is Words3Test {
         word[2] = Letter.N;
         word[3] = Letter.E;
 
-        vm.deal(player1, 10 ether);
+        vm.deal(player1, 50 ether);
 
         Bound[] memory bounds = new Bound[](4);
         bytes32[] memory proof = m.getProof(words, 1);
 
         // Play zone
         vm.startPrank(player1);
-        for (uint256 i = 0; i < 20; i++) {
+        for (uint256 i = 0; i < 100; i++) {
             vm.warp(block.timestamp + 1 days);
             world.draw{ value: 0.5 ether }(player1);
         }
         world.play(word, proof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, bounds);
         vm.stopPrank();
         assertEq(address(player1).balance, 0);
-        assertEq(address(worldAddress).balance, 10 ether);
+        assertEq(address(worldAddress).balance, 50 ether);
 
         // Play zebra on zone
-        vm.deal(player2, 10 ether);
+        vm.deal(player2, 50 ether);
         Letter[] memory word2 = new Letter[](5);
         word2[0] = Letter.EMPTY;
         word2[1] = Letter.E;
@@ -129,8 +132,8 @@ contract Claim is Words3Test {
         bytes32[] memory proof2 = m.getProof(words, 3);
         Bound[] memory bounds2 = new Bound[](5);
         vm.startPrank(player2);
-        for (uint256 i = 0; i < 20; i++) {
-            vm.warp(block.timestamp + 1 days);
+        for (uint256 i = 0; i < 100; i++) {
+            vm.warp(block.timestamp + 5 days);
             world.draw{ value: 0.5 ether }(player2);
         }
         world.play(word2, proof2, Coord({ x: 4, y: -1 }), Direction.LEFT_TO_RIGHT, bounds2);
@@ -138,7 +141,7 @@ contract Claim is Words3Test {
         uint32 player1Points = Points.get(player1);
         uint32 player2Points = Points.get(player2);
 
-        assertEq(Treasury.get(), 20 ether);
+        assertEq(Treasury.get(), 100 ether);
 
         vm.prank(player1);
         world.claim(player1Points);
@@ -146,9 +149,115 @@ contract Claim is Words3Test {
         vm.prank(player2);
         world.claim(player2Points);
 
-        uint256 player1ExpectedBalance = (20 ether * player1Points) / (player1Points + player2Points);
+        uint256 player1ExpectedBalance = (100 ether * player1Points) / (player1Points + player2Points);
 
         assertEq(address(player1).balance, player1ExpectedBalance);
-        assertEq(address(player2).balance, 20 ether - player1ExpectedBalance);
+        assertEq(address(player2).balance, 100 ether - player1ExpectedBalance);
+    }
+
+    function test_ClaimAfterDonation() public {
+        address player = address(0x12345);
+
+        Letter[] memory initialWord = new Letter[](5);
+        initialWord[0] = Letter.H;
+        initialWord[1] = Letter.E;
+        initialWord[2] = Letter.L;
+        initialWord[3] = Letter.L;
+        initialWord[4] = Letter.O;
+
+        world.start({
+            initialWord: initialWord,
+            merkleRoot: m.getRoot(words),
+            vrgdaTargetPrice: 1,
+            vrgdaPriceDecay: 1e17,
+            vrgdaPerDayInitial: 100e18,
+            vrgdaPower: 1e18,
+            crossWordRewardFraction: 3,
+            bonusDistance: 5,
+            numDrawLetters: 10
+        });
+
+        Letter[] memory word = new Letter[](2);
+        word[0] = Letter.EMPTY;
+        word[1] = Letter.M;
+
+        vm.deal(player, 50 ether);
+
+        Bound[] memory bounds = new Bound[](2);
+        bytes32[] memory proof = m.getProof(words, 6);
+
+        // Play om
+        vm.startPrank(player);
+        for (uint256 i = 0; i < 100; i++) {
+            vm.warp(block.timestamp + 1 days);
+            world.draw{ value: 0.5 ether }(player);
+        }
+        world.play(word, proof, Coord({ x: 4, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
+        vm.stopPrank();
+        assertEq(address(player).balance, 0);
+        assertEq(address(worldAddress).balance, 50 ether);
+
+        address donor = address(0x54321);
+        vm.deal(donor, 50 ether);
+        vm.prank(donor);
+        world.donate{ value: 50 ether }();
+
+        uint32 points = Points.get(player);
+        vm.prank(player);
+        world.claim(points);
+
+        assertEq(address(player).balance, 100 ether);
+    }
+
+    function testFuzz_RevertsWhen_DoubleClaim(uint32 points) public {
+        points = uint32(bound(points, 1, 4_294_967_295));
+
+        address player = address(0x12345);
+
+        Letter[] memory initialWord = new Letter[](5);
+        initialWord[0] = Letter.R;
+        initialWord[1] = Letter.I;
+        initialWord[2] = Letter.O;
+        initialWord[3] = Letter.T;
+
+        world.start({
+            initialWord: initialWord,
+            merkleRoot: m.getRoot(words),
+            vrgdaTargetPrice: 1,
+            vrgdaPriceDecay: 1e17,
+            vrgdaPerDayInitial: 100e18,
+            vrgdaPower: 1e18,
+            crossWordRewardFraction: 3,
+            bonusDistance: 5,
+            numDrawLetters: 20
+        });
+
+        Letter[] memory word = new Letter[](3);
+        word[0] = Letter.E;
+        word[1] = Letter.M;
+        word[2] = Letter.EMPTY;
+
+        vm.deal(player, 50 ether);
+
+        Bound[] memory bounds = new Bound[](3);
+        bytes32[] memory proof = m.getProof(words, 5);
+
+        // Play emi
+        vm.startPrank(player);
+        for (uint256 i = 0; i < 10; i++) {
+            vm.warp(block.timestamp + 1 days);
+            world.draw{ value: 5 ether }(player);
+        }
+        world.play(word, proof, Coord({ x: 1, y: -2 }), Direction.TOP_TO_BOTTOM, bounds);
+        world.claim(Points.get(player));
+        vm.stopPrank();
+
+        assertEq(address(player).balance, 50 ether);
+
+        vm.expectRevert(ClaimSystem.NotEnoughPoints.selector);
+        vm.prank(player);
+        world.claim(points);
+
+        assertEq(address(player).balance, 50 ether);
     }
 }

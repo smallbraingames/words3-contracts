@@ -22,6 +22,7 @@ import {
 import { LibBoard } from "libraries/LibBoard.sol";
 import { LibPoints } from "libraries/LibPoints.sol";
 import { LibTile } from "libraries/LibTile.sol";
+import { LibUpdateId } from "libraries/LibUpdateId.sol";
 
 import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
@@ -36,13 +37,29 @@ library LibPlay {
     )
         internal
     {
-        checkWord(word, proof, coord, direction);
-        address[] memory buildsOnPlayers = checkCrossWords(word, coord, direction, bounds);
-        Letter[] memory filledWord = setTiles(word, coord, direction, player);
-        uint256 playResultId = getPlayResultId(word, coord, direction);
-        uint32 points = LibPoints.setScore(word, filledWord, coord, direction, bounds, player, playResultId);
-        LibPoints.setBuildsOnWordRewards(points, buildsOnPlayers, playResultId);
-        emitPlayResult(word, filledWord, coord, direction, player, playResultId);
+        checkWord({ word: word, proof: proof, coord: coord, direction: direction });
+        address[] memory buildsOnPlayers =
+            checkCrossWords({ word: word, coord: coord, direction: direction, bounds: bounds });
+        Letter[] memory filledWord = setTiles({ word: word, coord: coord, direction: direction, player: player });
+        uint256 playUpdateId = LibUpdateId.getUpdateId();
+        uint32 points = LibPoints.setScore({
+            playWord: word,
+            filledWord: filledWord,
+            start: coord,
+            direction: direction,
+            bounds: bounds,
+            player: player,
+            playUpdateId: playUpdateId
+        });
+        LibPoints.setBuildsOnWordRewards({ points: points, buildsOnPlayers: buildsOnPlayers, playUpdateId: playUpdateId });
+        emitPlayResult({
+            word: word,
+            filledWord: filledWord,
+            coord: coord,
+            direction: direction,
+            player: player,
+            playUpdateId: playUpdateId
+        });
     }
 
     function emitPlayResult(
@@ -51,20 +68,20 @@ library LibPlay {
         Coord memory coord,
         Direction direction,
         address player,
-        uint256 playResultId
+        uint256 playUpdateId
     )
         internal
     {
-        PlayUpdate.set(
-            playResultId,
-            player,
-            direction,
-            block.timestamp,
-            coord.x,
-            coord.y,
-            wordToUint8Array(word),
-            wordToUint8Array(filledWord)
-        );
+        PlayUpdate.set({
+            id: playUpdateId,
+            player: player,
+            direction: direction,
+            timestamp: block.timestamp,
+            x: coord.x,
+            y: coord.y,
+            word: wordToUint8Array({ word: word }),
+            filledWord: wordToUint8Array({ word: filledWord })
+        });
     }
 
     function setTiles(
@@ -80,12 +97,13 @@ library LibPlay {
 
         // Place tiles and fill filledWord
         for (uint256 i = 0; i < word.length; i++) {
-            Coord memory letterCoord = LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction);
+            Coord memory letterCoord =
+                LibBoard.getRelativeCoord({ startCoord: coord, distance: int32(uint32(i)), direction: direction });
             if (word[i] == Letter.EMPTY) {
-                filledWord[i] = LibTile.getLetter(letterCoord);
+                filledWord[i] = LibTile.getLetter({ coord: letterCoord });
             } else {
                 filledWord[i] = word[i];
-                LibTile.setTile(letterCoord, word[i], player);
+                LibTile.setTile({ coord: letterCoord, letter: word[i], player: player });
             }
         }
         return filledWord;
@@ -116,7 +134,8 @@ library LibPlay {
                 revert WordTooLong();
             }
 
-            Coord memory letterCoord = LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction);
+            Coord memory letterCoord =
+                LibBoard.getRelativeCoord({ startCoord: coord, distance: int32(uint32(i)), direction: direction });
 
             if (word[i] == Letter.EMPTY) {
                 // Ensure bounds are 0 if letter is empty
@@ -128,39 +147,51 @@ library LibPlay {
                 bool hasPlayedLetterNegative = i > 0 && word[i - 1] != Letter.EMPTY;
                 bool hasPlayedLetterPositive = i < word.length - 1 && word[i + 1] != Letter.EMPTY;
                 if (hasPlayedLetterNegative || hasPlayedLetterPositive) {
-                    buildsOnPlayers[i * 2] = LibTile.getPlayer(letterCoord);
+                    buildsOnPlayers[i * 2] = LibTile.getPlayer({ coord: letterCoord });
                 }
             } else {
                 // Ensure bounds are valid (empty at edges) for nonempty letters
                 // Bounds that are too large will be caught while verifying formed words
                 Bound memory bound = bounds[i];
 
-                (Coord memory start, Coord memory end) = LibBoard.getCoordsOutsideBound(letterCoord, direction, bound);
-                if (LibTile.getLetter(start) != Letter.EMPTY || LibTile.getLetter(end) != Letter.EMPTY) {
+                (Coord memory start, Coord memory end) =
+                    LibBoard.getCoordsOutsideBound({ letterCoord: letterCoord, wordDirection: direction, bound: bound });
+                if (
+                    LibTile.getLetter({ coord: start }) != Letter.EMPTY
+                        || LibTile.getLetter({ coord: end }) != Letter.EMPTY
+                ) {
                     revert NonemptyBoundEdges();
                 }
 
                 if (positive != 0 || negative != 0) {
                     // Ensure cross word is valid
                     Letter[] memory crossWord = LibBoard.getCrossWord(letterCoord, word[i], direction, bound);
-                    if (!isWordInDictionary(crossWord, bound.proof)) {
+                    if (!isWordInDictionary({ word: crossWord, proof: bound.proof })) {
                         revert WordNotInDictionary();
                     }
 
                     Direction crossDirection =
                         direction == Direction.LEFT_TO_RIGHT ? Direction.TOP_TO_BOTTOM : Direction.LEFT_TO_RIGHT;
                     if (positive > 0) {
-                        Coord memory buildsOnWordPositive = LibBoard.getRelativeCoord(letterCoord, 1, crossDirection);
-                        buildsOnPlayers[i * 2] = LibTile.getPlayer(buildsOnWordPositive);
+                        Coord memory buildsOnWordPositive = LibBoard.getRelativeCoord({
+                            startCoord: letterCoord,
+                            distance: 1,
+                            direction: crossDirection
+                        });
+                        buildsOnPlayers[i * 2] = LibTile.getPlayer({ coord: buildsOnWordPositive });
                     }
                     if (negative > 0) {
-                        Coord memory buildsOnWordNegative = LibBoard.getRelativeCoord(letterCoord, -1, crossDirection);
-                        buildsOnPlayers[i * 2 + 1] = LibTile.getPlayer(buildsOnWordNegative);
+                        Coord memory buildsOnWordNegative = LibBoard.getRelativeCoord({
+                            startCoord: letterCoord,
+                            distance: -1,
+                            direction: crossDirection
+                        });
+                        buildsOnPlayers[i * 2 + 1] = LibTile.getPlayer({ coord: buildsOnWordNegative });
                     }
                 }
             }
         }
-        return stripZeroAddresses(buildsOnPlayers);
+        return stripZeroAddresses({ addresses: buildsOnPlayers });
     }
 
     /// @notice Checks if a word is a valid move (without checking cross words)
@@ -179,12 +210,13 @@ library LibPlay {
         if (word.length > MAX_WORD_LENGTH) {
             revert WordTooLong();
         }
-        Coord memory startEdge = LibBoard.getRelativeCoord(coord, -1, direction);
-        if (LibTile.getLetter(startEdge) != Letter.EMPTY) {
+        Coord memory startEdge = LibBoard.getRelativeCoord({ startCoord: coord, distance: -1, direction: direction });
+        if (LibTile.getLetter({ coord: startEdge }) != Letter.EMPTY) {
             revert InvalidWordStart();
         }
-        Coord memory endEdge = LibBoard.getRelativeCoord(coord, int32(uint32(word.length)), direction);
-        if (LibTile.getLetter(endEdge) != Letter.EMPTY) {
+        Coord memory endEdge =
+            LibBoard.getRelativeCoord({ startCoord: coord, distance: int32(uint32(word.length)), direction: direction });
+        if (LibTile.getLetter({ coord: endEdge }) != Letter.EMPTY) {
             revert InvalidWordEnd();
         }
 
@@ -195,12 +227,13 @@ library LibPlay {
         Letter[] memory filledWord = new Letter[](word.length);
 
         for (uint256 i = 0; i < word.length; i++) {
-            Coord memory letterCoord = LibBoard.getRelativeCoord(coord, int32(uint32(i)), direction);
+            Coord memory letterCoord =
+                LibBoard.getRelativeCoord({ startCoord: coord, distance: int32(uint32(i)), direction: direction });
             if (word[i] == Letter.EMPTY) {
                 containsEmpty = true;
 
                 // Ensure empty letter is played on existing letter
-                Letter existingLetter = LibTile.getLetter(letterCoord);
+                Letter existingLetter = LibTile.getLetter({ coord: letterCoord });
                 if (existingLetter == Letter.EMPTY) {
                     revert EmptyLetterNotOnExistingLetter();
                 }
@@ -210,7 +243,7 @@ library LibPlay {
                 containsLetter = true;
 
                 // Ensure non-empty letter is played on empty tile
-                if (LibTile.getLetter(letterCoord) != Letter.EMPTY) {
+                if (LibTile.getLetter({ coord: letterCoord }) != Letter.EMPTY) {
                     revert LetterOnExistingLetter();
                 }
 
@@ -228,7 +261,7 @@ library LibPlay {
         }
 
         // 3. Ensure word is a valid word
-        if (!isWordInDictionary(filledWord, proof)) {
+        if (!isWordInDictionary({ word: filledWord, proof: proof })) {
             revert WordNotInDictionary();
         }
     }
@@ -236,7 +269,7 @@ library LibPlay {
     function isWordInDictionary(Letter[] memory word, bytes32[] memory proof) internal view returns (bool) {
         bytes32 merkleRoot = MerkleRootConfig.get();
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(word))));
-        bool isValidLeaf = MerkleProof.verify(proof, merkleRoot, leaf);
+        bool isValidLeaf = MerkleProof.verify({ proof: proof, root: merkleRoot, leaf: leaf });
         return isValidLeaf;
     }
 
@@ -266,17 +299,5 @@ library LibPlay {
             uint8Word[i] = uint8(word[i]);
         }
         return uint8Word;
-    }
-
-    function getPlayResultId(
-        Letter[] memory word,
-        Coord memory coord,
-        Direction direction
-    )
-        internal
-        pure
-        returns (uint256)
-    {
-        return uint256(keccak256(abi.encode(word, coord, direction)));
     }
 }

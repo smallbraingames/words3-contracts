@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { Status } from "codegen/common.sol";
-import { GameConfig, GameConfigData, MerkleRootConfig, VRGDAConfig, VRGDAConfigData } from "codegen/index.sol";
+import { GameConfig, MerkleRootConfig, VRGDAConfig } from "codegen/index.sol";
 
 library LibGame {
     function getGameStatus() internal view returns (Status) {
@@ -25,23 +25,19 @@ library LibGame {
     )
         internal
     {
-        GameConfig.set(
-            GameConfigData({
-                status: Status.STARTED,
-                crossWordRewardFraction: crossWordRewardFraction,
-                bonusDistance: bonusDistance,
-                numDrawLetters: numDrawLetters
-            })
-        );
-        MerkleRootConfig.set(merkleRoot);
-        VRGDAConfig.set(
-            VRGDAConfigData({
-                startTime: block.timestamp,
-                targetPrice: vrgdaTargetPrice,
-                priceDecay: vrgdaPriceDecay,
-                perDayInitial: vrgdaPerDayInitial,
-                power: vrgdaPower
-            })
-        );
+        GameConfig.set({
+            status: Status.STARTED,
+            crossWordRewardFraction: crossWordRewardFraction,
+            bonusDistance: bonusDistance,
+            numDrawLetters: numDrawLetters
+        });
+        MerkleRootConfig.set({ value: merkleRoot });
+        VRGDAConfig.set({
+            startTime: block.timestamp,
+            targetPrice: vrgdaTargetPrice,
+            priceDecay: vrgdaPriceDecay,
+            perDayInitial: vrgdaPerDayInitial,
+            power: vrgdaPower
+        });
     }
 }

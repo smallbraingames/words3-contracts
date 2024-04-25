@@ -19,6 +19,6 @@ contract SetDrawLetterOddsSystem is System {
         if (odds[0] != 0) {
             revert NonzeroFirstValue();
         }
-        DrawLetterOdds.set(odds);
+        DrawLetterOdds.set({ value: odds });
     }
 }
