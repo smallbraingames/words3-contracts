@@ -27,7 +27,7 @@ contract DrawSystem is System {
         }
 
         // Sender might be different than player, track the spend under sender
-        LibTreasury.incrementTreasury(_msgSender(), value);
+        LibTreasury.incrementTreasury({ msgSender: _msgSender(), msgValue: value });
 
         uint32 drawCount = DrawCount.get() + 1;
         uint256 random = uint256(keccak256(abi.encodePacked(block.prevrandao, drawCount)));

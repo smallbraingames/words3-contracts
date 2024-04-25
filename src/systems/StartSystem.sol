@@ -3,9 +3,10 @@ pragma solidity >=0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { Letter, Status } from "codegen/common.sol";
-import { TileLetter, TilePlayer } from "codegen/index.sol";
+
 import { Coord } from "common/Coord.sol";
 import { LibGame } from "libraries/LibGame.sol";
+import { LibTile } from "libraries/LibTile.sol";
 
 contract StartSystem is System {
     error GameAlreadyStarted();
@@ -23,7 +24,7 @@ contract StartSystem is System {
     )
         public
     {
-        checkStartInputs(initialWord);
+        writeInitialWordChecked({ initialWord: initialWord });
         LibGame.startGame({
             merkleRoot: merkleRoot,
             vrgdaTargetPrice: vrgdaTargetPrice,
@@ -36,14 +37,13 @@ contract StartSystem is System {
         });
     }
 
-    function checkStartInputs(Letter[] memory initialWord) private {
+    function writeInitialWordChecked(Letter[] memory initialWord) private {
         if (LibGame.getGameStatus() != Status.NOT_STARTED) {
             revert GameAlreadyStarted();
         }
         for (uint256 i = 0; i < initialWord.length; i++) {
             Coord memory coord = Coord({ x: int32(uint32(i)), y: 0 });
-            TileLetter.set(coord.x, coord.y, initialWord[i]);
-            TilePlayer.set(coord.x, coord.y, address(0));
+            LibTile.setTile({ coord: coord, letter: initialWord[i], player: address(0) });
         }
     }
 }

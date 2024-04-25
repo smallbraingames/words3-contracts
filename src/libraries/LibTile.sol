@@ -7,15 +7,15 @@ import { Coord } from "common/Coord.sol";
 
 library LibTile {
     function setTile(Coord memory coord, Letter letter, address player) internal {
-        TileLetter.set(coord.x, coord.y, letter);
-        TilePlayer.set(coord.x, coord.y, player);
+        TileLetter.set({ x: coord.x, y: coord.y, value: letter });
+        TilePlayer.set({ x: coord.x, y: coord.y, value: player });
     }
 
     function getLetter(Coord memory coord) internal view returns (Letter) {
-        return TileLetter.get(coord.x, coord.y);
+        return TileLetter.get({ x: coord.x, y: coord.y });
     }
 
     function getPlayer(Coord memory coord) internal view returns (address) {
-        return TilePlayer.get(coord.x, coord.y);
+        return TilePlayer.get({ x: coord.x, y: coord.y });
     }
 }

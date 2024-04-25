@@ -73,12 +73,19 @@ library LibBoard {
         Direction crossDirection =
             wordDirection == Direction.TOP_TO_BOTTOM ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
 
-        Coord memory startCoord =
-            LibBoard.getRelativeCoord(letterCoord, -1 * int32(uint32(bound.negative)), crossDirection);
+        Coord memory startCoord = LibBoard.getRelativeCoord({
+            startCoord: letterCoord,
+            distance: -1 * int32(uint32(bound.negative)),
+            direction: crossDirection
+        });
 
         for (uint16 i = 0; i < wordLength; i++) {
-            Coord memory coord = LibBoard.getRelativeCoord(startCoord, int32(uint32(i)), crossDirection);
-            word[i] = LibTile.getLetter(coord);
+            Coord memory coord = LibBoard.getRelativeCoord({
+                startCoord: startCoord,
+                distance: int32(uint32(i)),
+                direction: crossDirection
+            });
+            word[i] = LibTile.getLetter({ coord: coord });
 
             if (i == bound.negative) {
                 word[i] = letter;

@@ -33,10 +33,10 @@ contract PlaySystem is System {
         if (!LibGame.canPlay()) {
             revert CannotPlay();
         }
-        if (!LibLetters.hasLetters(player, word)) {
+        if (!LibLetters.hasLetters({ player: player, letters: word })) {
             revert PlayMissingLetters();
         }
-        LibLetters.useLetters(player, word);
-        LibPlay.play(word, proof, coord, direction, bounds, player);
+        LibLetters.useLetters({ player: player, letters: word });
+        LibPlay.play({ word: word, proof: proof, coord: coord, direction: direction, bounds: bounds, player: player });
     }
 }

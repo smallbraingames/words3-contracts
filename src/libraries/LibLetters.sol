@@ -53,7 +53,7 @@ library LibLetters {
             if (letter == Letter.EMPTY) {
                 continue;
             }
-            removeLetter(player, letter);
+            removeLetter({ player: player, letter: letter });
         }
     }
 
