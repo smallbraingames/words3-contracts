@@ -7,7 +7,7 @@ import { IWorld } from "codegen/world/IWorld.sol";
 
 contract Words3Test is MudTest {
     IWorld public world;
-    address deployerAddress;
+    address public deployerAddress;
 
     function setUp() public virtual override {
         super.setUp();
