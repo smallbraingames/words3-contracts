@@ -3,15 +3,13 @@ pragma solidity >=0.8.24;
 /* solhint-disable no-global-import */
 /* solhint-disable func-name-mixedcase */
 
+import { Words3Test } from "../Words3Test.t.sol";
 import { Status } from "codegen/common.sol";
 import { GameConfig, MerkleRootConfig, VRGDAConfig } from "codegen/index.sol";
-import { IWorld } from "codegen/world/IWorld.sol";
-import { LibGame } from "libraries/LibGame.sol";
-import { Words3Test } from "../Words3Test.t.sol";
 import "forge-std/Test.sol";
+import { LibGame } from "libraries/LibGame.sol";
 
 contract LibGameTest is Words3Test {
-
     function test_CanPlay() public {
         assertFalse(LibGame.canPlay());
         vm.startPrank(deployerAddress);
@@ -34,8 +32,14 @@ contract LibGameTest is Words3Test {
     {
         vm.startPrank(deployerAddress);
         LibGame.startGame(
-            merkleRoot, vrgdaTargetPrice, vrgdaPriceDecay, vrgdaPerDayInitial, vrgdaPower, crossWordRewardFraction,
-            bonusDistance, numDrawLetters
+            merkleRoot,
+            vrgdaTargetPrice,
+            vrgdaPriceDecay,
+            vrgdaPerDayInitial,
+            vrgdaPower,
+            crossWordRewardFraction,
+            bonusDistance,
+            numDrawLetters
         );
         vm.stopPrank();
         assertEq(merkleRoot, MerkleRootConfig.get());
