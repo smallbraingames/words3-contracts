@@ -30,7 +30,7 @@
   runs = 1028
 
 [profile.redstone-garnet]
-  eth_rpc_url = "https://rpc.garnet.qry.live"
+  eth_rpc_url = "https://rpc.garnetchain.com"
 
 [profile.redstone-holesky-legacy]
   eth_rpc_url = "https://rpc.holesky.redstone.xyz"
