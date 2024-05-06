@@ -20,28 +20,26 @@ import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 
 import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 
-// Import user types
-import { Status } from "./../common.sol";
-
-struct GameConfigData {
-    Status status;
-    uint32 crossWordRewardFraction;
-    uint16 bonusDistance;
-    uint8 numDrawLetters;
+struct PriceConfigData {
+    uint256 minPrice;
+    int256 wadFactor;
+    int256 wadDurationRoot;
+    int256 wadDurationScale;
+    int256 wadDurationConstant;
 }
 
-library GameConfig {
-    // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "GameConfig", typeId: RESOURCE_TABLE
-    // });`
-    ResourceId constant _tableId = ResourceId.wrap(0x7462000000000000000000000000000047616d65436f6e666967000000000000);
+library PriceConfig {
+    // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "PriceConfig", typeId:
+    // RESOURCE_TABLE });`
+    ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005072696365436f6e6669670000000000);
 
     FieldLayout constant _fieldLayout =
-        FieldLayout.wrap(0x0008040001040201000000000000000000000000000000000000000000000000);
+        FieldLayout.wrap(0x00a0050020202020200000000000000000000000000000000000000000000000);
 
     // Hex-encoded key schema of ()
     Schema constant _keySchema = Schema.wrap(0x0000000000000000000000000000000000000000000000000000000000000000);
-    // Hex-encoded value schema of (uint8, uint32, uint16, uint8)
-    Schema constant _valueSchema = Schema.wrap(0x0008040000030100000000000000000000000000000000000000000000000000);
+    // Hex-encoded value schema of (uint256, int256, int256, int256, int256)
+    Schema constant _valueSchema = Schema.wrap(0x00a005001f3f3f3f3f0000000000000000000000000000000000000000000000);
 
     /**
      * @notice Get the table's key field names.
@@ -56,11 +54,12 @@ library GameConfig {
      * @return fieldNames An array of strings with the names of value fields.
      */
     function getFieldNames() internal pure returns (string[] memory fieldNames) {
-        fieldNames = new string[](4);
-        fieldNames[0] = "status";
-        fieldNames[1] = "crossWordRewardFraction";
-        fieldNames[2] = "bonusDistance";
-        fieldNames[3] = "numDrawLetters";
+        fieldNames = new string[](5);
+        fieldNames[0] = "minPrice";
+        fieldNames[1] = "wadFactor";
+        fieldNames[2] = "wadDurationRoot";
+        fieldNames[3] = "wadDurationScale";
+        fieldNames[4] = "wadDurationConstant";
     }
 
     /**
@@ -78,161 +77,199 @@ library GameConfig {
     }
 
     /**
-     * @notice Get status.
+     * @notice Get minPrice.
      */
-    function getStatus() internal view returns (Status status) {
+    function getMinPrice() internal view returns (uint256 minPrice) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-        return Status(uint8(bytes1(_blob)));
+        return (uint256(bytes32(_blob)));
     }
 
     /**
-     * @notice Get status.
+     * @notice Get minPrice.
      */
-    function _getStatus() internal view returns (Status status) {
+    function _getMinPrice() internal view returns (uint256 minPrice) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-        return Status(uint8(bytes1(_blob)));
+        return (uint256(bytes32(_blob)));
     }
 
     /**
-     * @notice Set status.
+     * @notice Set minPrice.
      */
-    function setStatus(Status status) internal {
+    function setMinPrice(uint256 minPrice) internal {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
-        StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(status)), _fieldLayout);
+        StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((minPrice)), _fieldLayout);
     }
 
     /**
-     * @notice Set status.
+     * @notice Set minPrice.
      */
-    function _setStatus(Status status) internal {
+    function _setMinPrice(uint256 minPrice) internal {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
-        StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(status)), _fieldLayout);
+        StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((minPrice)), _fieldLayout);
     }
 
     /**
-     * @notice Get crossWordRewardFraction.
+     * @notice Get wadFactor.
      */
-    function getCrossWordRewardFraction() internal view returns (uint32 crossWordRewardFraction) {
+    function getWadFactor() internal view returns (int256 wadFactor) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
-        return (uint32(bytes4(_blob)));
+        return (int256(uint256(bytes32(_blob))));
     }
 
     /**
-     * @notice Get crossWordRewardFraction.
+     * @notice Get wadFactor.
      */
-    function _getCrossWordRewardFraction() internal view returns (uint32 crossWordRewardFraction) {
+    function _getWadFactor() internal view returns (int256 wadFactor) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
-        return (uint32(bytes4(_blob)));
+        return (int256(uint256(bytes32(_blob))));
     }
 
     /**
-     * @notice Set crossWordRewardFraction.
+     * @notice Set wadFactor.
      */
-    function setCrossWordRewardFraction(uint32 crossWordRewardFraction) internal {
+    function setWadFactor(int256 wadFactor) internal {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
-        StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((crossWordRewardFraction)), _fieldLayout);
+        StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((wadFactor)), _fieldLayout);
     }
 
     /**
-     * @notice Set crossWordRewardFraction.
+     * @notice Set wadFactor.
      */
-    function _setCrossWordRewardFraction(uint32 crossWordRewardFraction) internal {
+    function _setWadFactor(int256 wadFactor) internal {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
-        StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((crossWordRewardFraction)), _fieldLayout);
+        StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((wadFactor)), _fieldLayout);
     }
 
     /**
-     * @notice Get bonusDistance.
+     * @notice Get wadDurationRoot.
      */
-    function getBonusDistance() internal view returns (uint16 bonusDistance) {
+    function getWadDurationRoot() internal view returns (int256 wadDurationRoot) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-        return (uint16(bytes2(_blob)));
+        return (int256(uint256(bytes32(_blob))));
     }
 
     /**
-     * @notice Get bonusDistance.
+     * @notice Get wadDurationRoot.
      */
-    function _getBonusDistance() internal view returns (uint16 bonusDistance) {
+    function _getWadDurationRoot() internal view returns (int256 wadDurationRoot) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-        return (uint16(bytes2(_blob)));
+        return (int256(uint256(bytes32(_blob))));
     }
 
     /**
-     * @notice Set bonusDistance.
+     * @notice Set wadDurationRoot.
      */
-    function setBonusDistance(uint16 bonusDistance) internal {
+    function setWadDurationRoot(int256 wadDurationRoot) internal {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
-        StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((bonusDistance)), _fieldLayout);
+        StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((wadDurationRoot)), _fieldLayout);
     }
 
     /**
-     * @notice Set bonusDistance.
+     * @notice Set wadDurationRoot.
      */
-    function _setBonusDistance(uint16 bonusDistance) internal {
+    function _setWadDurationRoot(int256 wadDurationRoot) internal {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
-        StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((bonusDistance)), _fieldLayout);
+        StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((wadDurationRoot)), _fieldLayout);
     }
 
     /**
-     * @notice Get numDrawLetters.
+     * @notice Get wadDurationScale.
      */
-    function getNumDrawLetters() internal view returns (uint8 numDrawLetters) {
+    function getWadDurationScale() internal view returns (int256 wadDurationScale) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
-        return (uint8(bytes1(_blob)));
+        return (int256(uint256(bytes32(_blob))));
     }
 
     /**
-     * @notice Get numDrawLetters.
+     * @notice Get wadDurationScale.
      */
-    function _getNumDrawLetters() internal view returns (uint8 numDrawLetters) {
+    function _getWadDurationScale() internal view returns (int256 wadDurationScale) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
-        return (uint8(bytes1(_blob)));
+        return (int256(uint256(bytes32(_blob))));
     }
 
     /**
-     * @notice Set numDrawLetters.
+     * @notice Set wadDurationScale.
      */
-    function setNumDrawLetters(uint8 numDrawLetters) internal {
+    function setWadDurationScale(int256 wadDurationScale) internal {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
-        StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((numDrawLetters)), _fieldLayout);
+        StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((wadDurationScale)), _fieldLayout);
     }
 
     /**
-     * @notice Set numDrawLetters.
+     * @notice Set wadDurationScale.
      */
-    function _setNumDrawLetters(uint8 numDrawLetters) internal {
+    function _setWadDurationScale(int256 wadDurationScale) internal {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
-        StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((numDrawLetters)), _fieldLayout);
+        StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((wadDurationScale)), _fieldLayout);
+    }
+
+    /**
+     * @notice Get wadDurationConstant.
+     */
+    function getWadDurationConstant() internal view returns (int256 wadDurationConstant) {
+        bytes32[] memory _keyTuple = new bytes32[](0);
+
+        bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
+        return (int256(uint256(bytes32(_blob))));
+    }
+
+    /**
+     * @notice Get wadDurationConstant.
+     */
+    function _getWadDurationConstant() internal view returns (int256 wadDurationConstant) {
+        bytes32[] memory _keyTuple = new bytes32[](0);
+
+        bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
+        return (int256(uint256(bytes32(_blob))));
+    }
+
+    /**
+     * @notice Set wadDurationConstant.
+     */
+    function setWadDurationConstant(int256 wadDurationConstant) internal {
+        bytes32[] memory _keyTuple = new bytes32[](0);
+
+        StoreSwitch.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((wadDurationConstant)), _fieldLayout);
+    }
+
+    /**
+     * @notice Set wadDurationConstant.
+     */
+    function _setWadDurationConstant(int256 wadDurationConstant) internal {
+        bytes32[] memory _keyTuple = new bytes32[](0);
+
+        StoreCore.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((wadDurationConstant)), _fieldLayout);
     }
 
     /**
      * @notice Get the full data.
      */
-    function get() internal view returns (GameConfigData memory _table) {
+    function get() internal view returns (PriceConfigData memory _table) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) =
@@ -243,7 +280,7 @@ library GameConfig {
     /**
      * @notice Get the full data.
      */
-    function _get() internal view returns (GameConfigData memory _table) {
+    function _get() internal view returns (PriceConfigData memory _table) {
         bytes32[] memory _keyTuple = new bytes32[](0);
 
         (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) =
@@ -254,8 +291,17 @@ library GameConfig {
     /**
      * @notice Set the full data using individual values.
      */
-    function set(Status status, uint32 crossWordRewardFraction, uint16 bonusDistance, uint8 numDrawLetters) internal {
-        bytes memory _staticData = encodeStatic(status, crossWordRewardFraction, bonusDistance, numDrawLetters);
+    function set(
+        uint256 minPrice,
+        int256 wadFactor,
+        int256 wadDurationRoot,
+        int256 wadDurationScale,
+        int256 wadDurationConstant
+    )
+        internal
+    {
+        bytes memory _staticData =
+            encodeStatic(minPrice, wadFactor, wadDurationRoot, wadDurationScale, wadDurationConstant);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -268,8 +314,17 @@ library GameConfig {
     /**
      * @notice Set the full data using individual values.
      */
-    function _set(Status status, uint32 crossWordRewardFraction, uint16 bonusDistance, uint8 numDrawLetters) internal {
-        bytes memory _staticData = encodeStatic(status, crossWordRewardFraction, bonusDistance, numDrawLetters);
+    function _set(
+        uint256 minPrice,
+        int256 wadFactor,
+        int256 wadDurationRoot,
+        int256 wadDurationScale,
+        int256 wadDurationConstant
+    )
+        internal
+    {
+        bytes memory _staticData =
+            encodeStatic(minPrice, wadFactor, wadDurationRoot, wadDurationScale, wadDurationConstant);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -282,9 +337,14 @@ library GameConfig {
     /**
      * @notice Set the full data using the data struct.
      */
-    function set(GameConfigData memory _table) internal {
-        bytes memory _staticData =
-            encodeStatic(_table.status, _table.crossWordRewardFraction, _table.bonusDistance, _table.numDrawLetters);
+    function set(PriceConfigData memory _table) internal {
+        bytes memory _staticData = encodeStatic(
+            _table.minPrice,
+            _table.wadFactor,
+            _table.wadDurationRoot,
+            _table.wadDurationScale,
+            _table.wadDurationConstant
+        );
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -297,9 +357,14 @@ library GameConfig {
     /**
      * @notice Set the full data using the data struct.
      */
-    function _set(GameConfigData memory _table) internal {
-        bytes memory _staticData =
-            encodeStatic(_table.status, _table.crossWordRewardFraction, _table.bonusDistance, _table.numDrawLetters);
+    function _set(PriceConfigData memory _table) internal {
+        bytes memory _staticData = encodeStatic(
+            _table.minPrice,
+            _table.wadFactor,
+            _table.wadDurationRoot,
+            _table.wadDurationScale,
+            _table.wadDurationConstant
+        );
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;
@@ -315,15 +380,23 @@ library GameConfig {
     function decodeStatic(bytes memory _blob)
         internal
         pure
-        returns (Status status, uint32 crossWordRewardFraction, uint16 bonusDistance, uint8 numDrawLetters)
+        returns (
+            uint256 minPrice,
+            int256 wadFactor,
+            int256 wadDurationRoot,
+            int256 wadDurationScale,
+            int256 wadDurationConstant
+        )
     {
-        status = Status(uint8(Bytes.getBytes1(_blob, 0)));
+        minPrice = (uint256(Bytes.getBytes32(_blob, 0)));
 
-        crossWordRewardFraction = (uint32(Bytes.getBytes4(_blob, 1)));
+        wadFactor = (int256(uint256(Bytes.getBytes32(_blob, 32))));
 
-        bonusDistance = (uint16(Bytes.getBytes2(_blob, 5)));
+        wadDurationRoot = (int256(uint256(Bytes.getBytes32(_blob, 64))));
 
-        numDrawLetters = (uint8(Bytes.getBytes1(_blob, 7)));
+        wadDurationScale = (int256(uint256(Bytes.getBytes32(_blob, 96))));
+
+        wadDurationConstant = (int256(uint256(Bytes.getBytes32(_blob, 128))));
     }
 
     /**
@@ -339,10 +412,10 @@ library GameConfig {
     )
         internal
         pure
-        returns (GameConfigData memory _table)
+        returns (PriceConfigData memory _table)
     {
-        (_table.status, _table.crossWordRewardFraction, _table.bonusDistance, _table.numDrawLetters) =
-            decodeStatic(_staticData);
+        (_table.minPrice, _table.wadFactor, _table.wadDurationRoot, _table.wadDurationScale, _table.wadDurationConstant)
+        = decodeStatic(_staticData);
     }
 
     /**
@@ -368,16 +441,17 @@ library GameConfig {
      * @return The static data, encoded into a sequence of bytes.
      */
     function encodeStatic(
-        Status status,
-        uint32 crossWordRewardFraction,
-        uint16 bonusDistance,
-        uint8 numDrawLetters
+        uint256 minPrice,
+        int256 wadFactor,
+        int256 wadDurationRoot,
+        int256 wadDurationScale,
+        int256 wadDurationConstant
     )
         internal
         pure
         returns (bytes memory)
     {
-        return abi.encodePacked(status, crossWordRewardFraction, bonusDistance, numDrawLetters);
+        return abi.encodePacked(minPrice, wadFactor, wadDurationRoot, wadDurationScale, wadDurationConstant);
     }
 
     /**
@@ -387,16 +461,18 @@ library GameConfig {
      * @return The dynamic (variable length) data, encoded into a sequence of bytes.
      */
     function encode(
-        Status status,
-        uint32 crossWordRewardFraction,
-        uint16 bonusDistance,
-        uint8 numDrawLetters
+        uint256 minPrice,
+        int256 wadFactor,
+        int256 wadDurationRoot,
+        int256 wadDurationScale,
+        int256 wadDurationConstant
     )
         internal
         pure
         returns (bytes memory, EncodedLengths, bytes memory)
     {
-        bytes memory _staticData = encodeStatic(status, crossWordRewardFraction, bonusDistance, numDrawLetters);
+        bytes memory _staticData =
+            encodeStatic(minPrice, wadFactor, wadDurationRoot, wadDurationScale, wadDurationConstant);
 
         EncodedLengths _encodedLengths;
         bytes memory _dynamicData;

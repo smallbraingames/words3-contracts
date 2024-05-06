@@ -1,23 +1,70 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { DrawCount, VRGDAConfig, VRGDAConfigData } from "codegen/index.sol";
-import {
-    toDaysWadUnsafe, toWadUnsafe, wadDiv, wadExp, wadLn, wadMul, wadPow
-} from "solmate/src/utils/SignedWadMath.sol";
+import { DrawCount, DrawLastSold, DrawLastSoldData, PriceConfig, PriceConfigData } from "codegen/index.sol";
+import { toWadUnsafe, wadDiv, wadMul, wadPow } from "solmate/src/utils/SignedWadMath.sol";
 
 library LibPrice {
-    function wadRoot(int256 x, int256 root) internal pure returns (int256) {
-        return wadPow(x, wadDiv(1e18, root));
+    function setLastDraw(uint256 price) internal {
+        DrawLastSold.set({ price: price, blockNumber: block.number });
+        DrawCount.set(DrawCount.get() + 1);
     }
 
-    // Adapted from transmissions11/VRGDAs (https://github.com/transmissions11/VRGDAs)
     function getDrawPrice() internal view returns (uint256) {
-        VRGDAConfigData memory vrgdaConfig = VRGDAConfig.get();
-        int256 decayConstant = wadLn(1e18 - vrgdaConfig.priceDecay);
-        int256 daysSinceStart = toDaysWadUnsafe(block.timestamp - vrgdaConfig.startTime);
-        uint256 drawCount = uint256(DrawCount.get());
-        int256 inverse = wadRoot(wadDiv(toWadUnsafe(drawCount + 1), vrgdaConfig.perDayInitial), vrgdaConfig.power);
-        return uint256(wadMul(vrgdaConfig.targetPrice, wadExp(wadMul(decayConstant, daysSinceStart - inverse))));
+        PriceConfigData memory priceConfig = PriceConfig.get();
+        DrawLastSoldData memory drawLastSold = DrawLastSold.get();
+
+        uint256 gdaStartPrice = uint256(wadMul(toWadUnsafe(drawLastSold.price), priceConfig.wadFactor)) / 1e18;
+        uint256 gdaEndPrice = priceConfig.minPrice;
+        uint256 gdaDuration = getGDADuration({
+            startPrice: gdaStartPrice,
+            wadDurationRoot: priceConfig.wadDurationRoot,
+            wadDurationScale: priceConfig.wadDurationScale,
+            wadDurationConstant: priceConfig.wadDurationConstant
+        });
+        return getGDAPrice({
+            startPrice: gdaStartPrice,
+            endPrice: gdaEndPrice,
+            duration: gdaDuration,
+            passed: block.number - drawLastSold.blockNumber
+        });
+    }
+
+    function getGDAPrice(
+        uint256 startPrice,
+        uint256 endPrice,
+        uint256 duration,
+        uint256 passed
+    )
+        internal
+        pure
+        returns (uint256)
+    {
+        uint256 price = startPrice;
+        if (passed > duration) {
+            return endPrice;
+        }
+        uint256 deltaPrice = startPrice - endPrice;
+        price -= passed * deltaPrice / duration;
+        return price;
+    }
+
+    function getGDADuration(
+        uint256 startPrice,
+        int256 wadDurationRoot,
+        int256 wadDurationScale,
+        int256 wadDurationConstant
+    )
+        internal
+        pure
+        returns (uint256)
+    {
+        int256 duration =
+            wadMul(wadRoot(toWadUnsafe(startPrice), wadDurationRoot), wadDurationScale) + wadDurationConstant;
+        return uint256(duration / 1e18);
+    }
+
+    function wadRoot(int256 x, int256 root) internal pure returns (int256) {
+        return wadPow(x, wadDiv(1e18, root));
     }
 }

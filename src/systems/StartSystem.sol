@@ -14,10 +14,12 @@ contract StartSystem is System {
     function start(
         Letter[] memory initialWord,
         bytes32 merkleRoot,
-        int256 vrgdaTargetPrice,
-        int256 vrgdaPriceDecay,
-        int256 vrgdaPerDayInitial,
-        int256 vrgdaPower,
+        uint256 initialPrice,
+        uint256 minPrice,
+        int256 wadFactor,
+        int256 wadDurationRoot,
+        int256 wadDurationScale,
+        int256 wadDurationConstant,
         uint32 crossWordRewardFraction,
         uint16 bonusDistance,
         uint8 numDrawLetters
@@ -27,10 +29,12 @@ contract StartSystem is System {
         writeInitialWordChecked({ initialWord: initialWord });
         LibGame.startGame({
             merkleRoot: merkleRoot,
-            vrgdaTargetPrice: vrgdaTargetPrice,
-            vrgdaPriceDecay: vrgdaPriceDecay,
-            vrgdaPerDayInitial: vrgdaPerDayInitial,
-            vrgdaPower: vrgdaPower,
+            initialPrice: initialPrice,
+            minPrice: minPrice,
+            wadFactor: wadFactor,
+            wadDurationRoot: wadDurationRoot,
+            wadDurationScale: wadDurationScale,
+            wadDurationConstant: wadDurationConstant,
             crossWordRewardFraction: crossWordRewardFraction,
             bonusDistance: bonusDistance,
             numDrawLetters: numDrawLetters
