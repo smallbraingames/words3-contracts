@@ -18,14 +18,14 @@ export default defineWorld({
         value: "bytes32",
       },
     },
-    VRGDAConfig: {
+    PriceConfig: {
       key: [],
       schema: {
-        startTime: "uint256",
-        targetPrice: "int256",
-        priceDecay: "int256",
-        perDayInitial: "int256",
-        power: "int256",
+        minPrice: "uint256",
+        wadFactor: "int256",
+        wadDurationRoot: "int256",
+        wadDurationScale: "int256",
+        wadDurationConstant: "int256"
       },
     },
     DrawLetterOdds: {
@@ -53,6 +53,13 @@ export default defineWorld({
         letter: "Letter",
         value: "uint32",
       },
+    },
+    DrawLastSold: {
+      key: [],
+      schema: {
+        price: "uint256",
+        blockNumber: "uint256",
+      }
     },
     DrawCount: {
       key: [],

@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { System } from "@latticexyz/world/src/System.sol";
 
 import { Letter } from "codegen/common.sol";
-import { DrawCount, DrawLetterOdds, DrawUpdate, GameConfig } from "codegen/index.sol";
+import { DrawCount, DrawLastSold, DrawLetterOdds, DrawUpdate, GameConfig } from "codegen/index.sol";
 import { SINGLETON_ADDRESS } from "common/Constants.sol";
 import { LibLetters } from "libraries/LibLetters.sol";
 import { LibPrice } from "libraries/LibPrice.sol";
@@ -29,7 +29,7 @@ contract DrawSystem is System {
         // Sender might be different than player, track the spend under sender
         LibTreasury.incrementTreasury({ msgSender: _msgSender(), msgValue: value });
 
-        uint32 drawCount = DrawCount.get() + 1;
+        uint32 drawCount = DrawCount.get();
         uint256 random = uint256(keccak256(abi.encodePacked(block.prevrandao, drawCount)));
         Letter[] memory drawnLetters = LibLetters.getDraw({
             odds: DrawLetterOdds.get(),
@@ -41,8 +41,8 @@ contract DrawSystem is System {
             LibLetters.addLetter({ player: player, letter: drawnLetters[i] });
         }
 
-        DrawCount.set({ value: drawCount });
-
+        DrawLastSold.set({ price: value, blockNumber: block.number });
+        DrawCount.set(DrawCount.get() + 1);
         DrawUpdate.set({ id: LibUpdateId.getUpdateId(), player: player, value: value, timestamp: block.timestamp });
     }
 
