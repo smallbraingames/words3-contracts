@@ -20,10 +20,14 @@
     "blockNumber": 603227
   },
   "31337": {
-    "address": "0xd6c8022f1af8e9d7c3825557a1374ee518c65a4e"
+    "address": "0x8d8b6b8414e1e3dcfd4168561b9be6bd3bf6ec4b"
   },
   "84531": {
     "address": "0xEF7c64d4773C13158A2419D43b68B6808C00421b",
     "blockNumber": 7978538
+  },
+  "84532": {
+    "address": "0x15311e9c012650e34f256ef91b9e39d5521b5ced",
+    "blockNumber": 9590364
   }
 }

@@ -38,8 +38,8 @@
 [profile.lattice-901]
   eth_rpc_url = "https://redstone.linfra.xyz"
 
-[profile.base-testnet]
-  eth_rpc_url = "https://goerli.base.org"
+[profile.base-sepolia]
+    eth_rpc_url = "https://sepolia.base.org"
 
 [profile.base-mainnet]
   eth_rpc_url = "https://base-mainnet.blastapi.io/"
