@@ -9,7 +9,7 @@ library LibBonus {
     function isBonusTile(Coord memory coord, uint16 bonusDistance) internal pure returns (bool) {
         int32 x = abs(coord.x);
         int32 y = abs(coord.y);
-        return ((x - y) % int32(uint32(bonusDistance))) == 0;
+        return ((x + y) % int32(uint32(bonusDistance))) == 0;
     }
 
     /// @notice Assumes that isBonusTile is called to check if the tile is a bonus tile first
