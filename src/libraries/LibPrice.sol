@@ -13,8 +13,7 @@ library LibPrice {
     function getDrawPrice() internal view returns (uint256) {
         PriceConfigData memory priceConfig = PriceConfig.get();
         DrawLastSoldData memory drawLastSold = DrawLastSold.get();
-
-        uint256 gdaStartPrice = uint256(wadMul(toWadUnsafe(drawLastSold.price), priceConfig.wadFactor)) / 1e18;
+        uint256 gdaStartPrice = uint256(wadMul(int256(drawLastSold.price), priceConfig.wadFactor));
         uint256 gdaEndPrice = priceConfig.minPrice;
         uint256 gdaDuration = getGDADuration({
             startPrice: gdaStartPrice,
@@ -59,9 +58,8 @@ library LibPrice {
         pure
         returns (uint256)
     {
-        int256 duration =
-            wadMul(wadRoot(toWadUnsafe(startPrice), wadDurationRoot), wadDurationScale) + wadDurationConstant;
-        return uint256(duration / 1e18);
+        int256 duration = wadMul(wadRoot(int256(startPrice), wadDurationRoot), wadDurationScale) + wadDurationConstant;
+        return uint256(duration / 1e18) + 1;
     }
 
     function wadRoot(int256 x, int256 root) internal pure returns (int256) {

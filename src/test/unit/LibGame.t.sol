@@ -5,7 +5,7 @@ pragma solidity >=0.8.24;
 
 import { Words3Test } from "../Words3Test.t.sol";
 import { Status } from "codegen/common.sol";
-import { GameConfig, MerkleRootConfig, VRGDAConfig } from "codegen/index.sol";
+import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig } from "codegen/index.sol";
 import "forge-std/Test.sol";
 import { LibGame } from "libraries/LibGame.sol";
 
@@ -20,10 +20,12 @@ contract LibGameTest is Words3Test {
 
     function testFuzzStartGame(
         bytes32 merkleRoot,
-        int256 vrgdaTargetPrice,
-        int256 vrgdaPriceDecay,
-        int256 vrgdaPerDayInitial,
-        int256 vrgdaPower,
+        uint256 initialPrice,
+        uint256 minPrice,
+        int256 wadFactor,
+        int256 wadDurationRoot,
+        int256 wadDurationScale,
+        int256 wadDurationConstant,
         uint32 crossWordRewardFraction,
         uint16 bonusDistance,
         uint8 numDrawLetters
@@ -31,22 +33,26 @@ contract LibGameTest is Words3Test {
         public
     {
         vm.startPrank(deployerAddress);
-        LibGame.startGame(
-            merkleRoot,
-            vrgdaTargetPrice,
-            vrgdaPriceDecay,
-            vrgdaPerDayInitial,
-            vrgdaPower,
-            crossWordRewardFraction,
-            bonusDistance,
-            numDrawLetters
-        );
+        LibGame.startGame({
+            merkleRoot: merkleRoot,
+            initialPrice: initialPrice,
+            minPrice: minPrice,
+            wadFactor: wadFactor,
+            wadDurationRoot: wadDurationRoot,
+            wadDurationScale: wadDurationScale,
+            wadDurationConstant: wadDurationConstant,
+            crossWordRewardFraction: crossWordRewardFraction,
+            bonusDistance: bonusDistance,
+            numDrawLetters: numDrawLetters
+        });
         vm.stopPrank();
         assertEq(merkleRoot, MerkleRootConfig.get());
-        assertEq(vrgdaTargetPrice, VRGDAConfig.getTargetPrice());
-        assertEq(vrgdaPriceDecay, VRGDAConfig.getPriceDecay());
-        assertEq(vrgdaPerDayInitial, VRGDAConfig.getPerDayInitial());
-        assertEq(vrgdaPower, VRGDAConfig.getPower());
+        assertEq(minPrice, PriceConfig.getMinPrice());
+        assertEq(wadDurationRoot, PriceConfig.getWadDurationRoot());
+        assertEq(wadDurationScale, PriceConfig.getWadDurationScale());
+        assertEq(wadDurationConstant, PriceConfig.getWadDurationConstant());
+        assertEq(initialPrice, DrawLastSold.getPrice());
+        assertEq(block.number, DrawLastSold.getBlockNumber());
         assertEq(crossWordRewardFraction, GameConfig.getCrossWordRewardFraction());
         assertEq(bonusDistance, GameConfig.getBonusDistance());
         assertEq(numDrawLetters, GameConfig.getNumDrawLetters());

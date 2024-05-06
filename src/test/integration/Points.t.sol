@@ -72,10 +72,12 @@ contract PointsTest is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 1e14,
-            vrgdaPriceDecay: 2e17,
-            vrgdaPerDayInitial: 100e18,
-            vrgdaPower: 2e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 10,
             numDrawLetters: 7
@@ -94,8 +96,8 @@ contract PointsTest is Words3Test {
         vm.deal(player1, 50 ether);
         vm.startPrank(player1);
         for (uint256 i = 0; i < 50; i++) {
-            vm.warp(block.timestamp + 1 days);
-            world.draw{ value: 1 ether }(player1);
+            vm.roll(block.number + 100);
+            world.draw{ value: world.getDrawPrice() }(player1);
         }
         world.play(word, proof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, bounds);
         vm.stopPrank();
@@ -114,8 +116,8 @@ contract PointsTest is Words3Test {
         vm.deal(player2, 50 ether);
         vm.startPrank(player2);
         for (uint256 i = 0; i < 50; i++) {
-            vm.warp(block.timestamp + 1 days);
-            world.draw{ value: 1 ether }(player2);
+            vm.roll(block.number + 100);
+            world.draw{ value: world.getDrawPrice() }(player2);
         }
         world.play(ext, extProof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, extBounds);
         vm.stopPrank();
@@ -136,10 +138,12 @@ contract PointsTest is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 1e14,
-            vrgdaPriceDecay: 2e17,
-            vrgdaPerDayInitial: 100e18,
-            vrgdaPower: 2e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 5,
             numDrawLetters: 7
@@ -157,8 +161,8 @@ contract PointsTest is Words3Test {
 
         vm.deal(address(this), 50 ether);
         for (uint256 i = 0; i < 50; i++) {
-            vm.warp(block.timestamp + 1 days);
-            world.draw{ value: 1 ether }(address(this));
+            vm.roll(block.number + 100);
+            world.draw{ value: world.getDrawPrice() }(address(this));
         }
         world.play(word, proof, Coord({ x: 4, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
 

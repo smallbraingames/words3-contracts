@@ -89,10 +89,12 @@ contract Claim is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 1e13,
-            vrgdaPriceDecay: 1e17,
-            vrgdaPerDayInitial: 10e18,
-            vrgdaPower: 1e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 5,
             numDrawLetters: 7
@@ -112,7 +114,7 @@ contract Claim is Words3Test {
         // Play zone
         vm.startPrank(player1);
         for (uint256 i = 0; i < 100; i++) {
-            vm.warp(block.timestamp + 1 days);
+            vm.roll(block.number + 1000);
             world.draw{ value: 0.5 ether }(player1);
         }
         world.play(word, proof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, bounds);
@@ -133,7 +135,7 @@ contract Claim is Words3Test {
         Bound[] memory bounds2 = new Bound[](5);
         vm.startPrank(player2);
         for (uint256 i = 0; i < 100; i++) {
-            vm.warp(block.timestamp + 5 days);
+            vm.roll(block.number + 1000);
             world.draw{ value: 0.5 ether }(player2);
         }
         world.play(word2, proof2, Coord({ x: 4, y: -1 }), Direction.LEFT_TO_RIGHT, bounds2);
@@ -168,10 +170,12 @@ contract Claim is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 1,
-            vrgdaPriceDecay: 1e17,
-            vrgdaPerDayInitial: 100e18,
-            vrgdaPower: 1e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 5,
             numDrawLetters: 10
@@ -189,7 +193,7 @@ contract Claim is Words3Test {
         // Play om
         vm.startPrank(player);
         for (uint256 i = 0; i < 100; i++) {
-            vm.warp(block.timestamp + 1 days);
+            vm.roll(block.number + 1000);
             world.draw{ value: 0.5 ether }(player);
         }
         world.play(word, proof, Coord({ x: 4, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
@@ -223,10 +227,12 @@ contract Claim is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 1,
-            vrgdaPriceDecay: 1e17,
-            vrgdaPerDayInitial: 100e18,
-            vrgdaPower: 1e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 5,
             numDrawLetters: 20
@@ -245,7 +251,7 @@ contract Claim is Words3Test {
         // Play emi
         vm.startPrank(player);
         for (uint256 i = 0; i < 10; i++) {
-            vm.warp(block.timestamp + 1 days);
+            vm.roll(block.number + 1e8);
             world.draw{ value: 5 ether }(player);
         }
         world.play(word, proof, Coord({ x: 1, y: -2 }), Direction.TOP_TO_BOTTOM, bounds);

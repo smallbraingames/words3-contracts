@@ -77,10 +77,12 @@ contract LibPointsTest is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: bytes32(0),
-            vrgdaTargetPrice: 1,
-            vrgdaPriceDecay: 1e17,
-            vrgdaPerDayInitial: 100e18,
-            vrgdaPower: 1e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: bonusDistance,
             numDrawLetters: 20
@@ -116,10 +118,12 @@ contract LibPointsTest is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: bytes32(0),
-            vrgdaTargetPrice: 1,
-            vrgdaPriceDecay: 1e17,
-            vrgdaPerDayInitial: 100e18,
-            vrgdaPower: 1e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 5,
             numDrawLetters: 20
