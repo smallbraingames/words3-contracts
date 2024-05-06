@@ -1,15 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import { DrawCount, DrawLastSold, DrawLastSoldData, PriceConfig, PriceConfigData } from "codegen/index.sol";
-import { toWadUnsafe, wadDiv, wadMul, wadPow } from "solmate/src/utils/SignedWadMath.sol";
+import { DrawLastSold, DrawLastSoldData, PriceConfig, PriceConfigData } from "codegen/index.sol";
+import { wadDiv, wadMul, wadPow } from "solmate/src/utils/SignedWadMath.sol";
 
 library LibPrice {
-    function setLastDraw(uint256 price) internal {
-        DrawLastSold.set({ price: price, blockNumber: block.number });
-        DrawCount.set(DrawCount.get() + 1);
-    }
-
     function getDrawPrice() internal view returns (uint256) {
         PriceConfigData memory priceConfig = PriceConfig.get();
         DrawLastSoldData memory drawLastSold = DrawLastSold.get();
