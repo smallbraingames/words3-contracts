@@ -6,7 +6,7 @@ pragma solidity >=0.8.24;
 import { Words3Test } from "../Words3Test.t.sol";
 import "forge-std/Test.sol";
 import { LibPrice } from "libraries/LibPrice.sol";
-import { fromDaysWadUnsafe, toWadUnsafe, unsafeWadDiv, wadPow } from "solmate/src/utils/SignedWadMath.sol";
+import { toWadUnsafe, wadPow } from "solmate/src/utils/SignedWadMath.sol";
 
 contract LibPriceTest is Words3Test {
     function test_WadRoot() public {
