@@ -41,10 +41,12 @@ contract SimpleWord is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 1e14,
-            vrgdaPriceDecay: 2e17,
-            vrgdaPerDayInitial: 100e18,
-            vrgdaPower: 2e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 10,
             numDrawLetters: 7
@@ -60,10 +62,12 @@ contract SimpleWord is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 12e14,
-            vrgdaPriceDecay: 2e17,
-            vrgdaPerDayInitial: 10e18,
-            vrgdaPower: 2e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 3,
             numDrawLetters: 8
@@ -76,11 +80,11 @@ contract SimpleWord is Words3Test {
         bytes32[] memory proof = m.getProof(words, 0);
 
         address player = address(0x123);
-        vm.deal(player, 50 ether);
         vm.startPrank(player);
         for (uint256 i = 0; i < 50; i++) {
             uint256 price = world.getDrawPrice();
-            vm.warp(block.timestamp + 1 days);
+            vm.deal(player, price);
+            vm.roll(block.number + 100);
             world.draw{ value: price }(player);
         }
         world.play(word, proof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
@@ -91,10 +95,12 @@ contract SimpleWord is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 1e14,
-            vrgdaPriceDecay: 2e17,
-            vrgdaPerDayInitial: 100e18,
-            vrgdaPower: 2e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 10,
             numDrawLetters: 7
@@ -106,19 +112,19 @@ contract SimpleWord is Words3Test {
 
         world.draw{ value: world.getDrawPrice() }(player);
         world.draw{ value: world.getDrawPrice() }(player);
-        vm.warp(block.timestamp + 5);
+        vm.roll(block.number + 5);
         world.draw{ value: world.getDrawPrice() }(player);
-        vm.warp(block.timestamp + 10);
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
-        world.draw{ value: world.getDrawPrice() }(player);
-        vm.warp(block.timestamp + 10);
+        vm.roll(block.number + 10);
         world.draw{ value: world.getDrawPrice() }(player);
         world.draw{ value: world.getDrawPrice() }(player);
         world.draw{ value: world.getDrawPrice() }(player);
+        vm.roll(block.number + 10);
         world.draw{ value: world.getDrawPrice() }(player);
         world.draw{ value: world.getDrawPrice() }(player);
-        vm.warp(block.timestamp + 3);
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
+        world.draw{ value: world.getDrawPrice() }(player);
+        vm.roll(block.number + 3);
         world.draw{ value: world.getDrawPrice() }(player);
         world.draw{ value: world.getDrawPrice() }(player);
     }

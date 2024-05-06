@@ -102,10 +102,12 @@ contract CrossWord is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: m.getRoot(words),
-            vrgdaTargetPrice: 1e13,
-            vrgdaPriceDecay: 1e17,
-            vrgdaPerDayInitial: 10e18,
-            vrgdaPower: 1e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 5,
             numDrawLetters: 7
@@ -115,7 +117,7 @@ contract CrossWord is Words3Test {
         vm.deal(address(0xface), 50 ether);
         vm.startPrank(address(0xface));
         for (uint256 i = 0; i < 50; i++) {
-            vm.warp(block.timestamp + 1 days);
+            vm.roll(block.number + 1000);
             world.draw{ value: 1 ether }(address(0xface));
         }
         Letter[] memory word = new Letter[](4);
@@ -148,7 +150,7 @@ contract CrossWord is Words3Test {
         vm.deal(address(0xffff), 50 ether);
         vm.startPrank(address(0xffff));
         for (uint256 i = 0; i < 50; i++) {
-            vm.warp(block.timestamp + 1 days);
+            vm.roll(block.number + 1000);
             world.draw{ value: 1 ether }(address(0xffff));
         }
         // Play it on craft to make itcraft

@@ -21,10 +21,12 @@ contract Transfer is Words3Test {
         world.start({
             initialWord: initialWord,
             merkleRoot: bytes32(0),
-            vrgdaTargetPrice: 12e14,
-            vrgdaPriceDecay: 2e17,
-            vrgdaPerDayInitial: 10e18,
-            vrgdaPower: 2e18,
+            initialPrice: 0.001 ether,
+            minPrice: 0.0001 ether,
+            wadFactor: 1.3e18,
+            wadDurationRoot: 2e18,
+            wadDurationScale: 3000e18,
+            wadDurationConstant: 0,
             crossWordRewardFraction: 3,
             bonusDistance: 3,
             numDrawLetters: 8
@@ -32,11 +34,11 @@ contract Transfer is Words3Test {
 
         address player = address(0x123);
         address to = address(0x456);
-        vm.deal(player, 50 ether);
         vm.startPrank(player);
         for (uint256 i = 0; i < 50; i++) {
             uint256 price = world.getDrawPrice();
-            vm.warp(block.timestamp + 1 days);
+            vm.deal(player, price);
+            vm.roll(block.number + 100);
             world.draw{ value: price }(player);
         }
         assertEq(PlayerLetters.get({ player: to, letter: Letter.A }), 0);
