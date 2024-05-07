@@ -18,18 +18,24 @@ contract LibBonusTest is Words3Test {
         Coord memory coord2 = Coord({ x: 0, y: bonusDistance });
         Coord memory coord3 = Coord({ x: 0, y: bonusDistance * 2 });
         Coord memory coord4 = Coord({ x: -bonusDistance - 12, y: 12 });
+        Coord memory coord5 = Coord({ x: bonusDistance * 3 - 1, y: 1 });
+        Coord memory coord6 = Coord({ x: bonusDistance * 3 - 1, y: -1 });
+        Coord memory coord7 = Coord({ x: bonusDistance * 9 - 12, y: 12 });
 
         // Not bonus tiles
-        Coord memory coord5 = Coord({ x: 0, y: bonusDistance * 3 + 1 });
-        Coord memory coord6 = Coord({ x: 0, y: bonusDistance * 4 + 1 });
+        Coord memory coord8 = Coord({ x: 0, y: bonusDistance * 3 + 1 });
+        Coord memory coord9 = Coord({ x: 0, y: bonusDistance * 4 + 1 });
 
         assertTrue(LibBonus.isBonusTile(coord, 8));
         assertTrue(LibBonus.isBonusTile(coord2, 8));
         assertTrue(LibBonus.isBonusTile(coord3, 8));
         assertTrue(LibBonus.isBonusTile(coord4, 8));
+        assertTrue(LibBonus.isBonusTile(coord5, 8));
+        assertTrue(LibBonus.isBonusTile(coord6, 8));
+        assertTrue(LibBonus.isBonusTile(coord7, 8));
 
-        assertFalse(LibBonus.isBonusTile(coord5, 8));
-        assertFalse(LibBonus.isBonusTile(coord6, 8));
+        assertFalse(LibBonus.isBonusTile(coord8, 8));
+        assertFalse(LibBonus.isBonusTile(coord9, 8));
     }
 
     function testFuzz_IsBonusTile(int32 x, int32 y) public {
@@ -43,7 +49,7 @@ contract LibBonusTest is Words3Test {
             int32 absY = y < 0 ? -y : y;
             assertTrue(absX >= 0);
             assertTrue(absY >= 0);
-            assertEq((absX - absY) % int32(uint32(bonusDistance)), 0);
+            assertEq((absX + absY) % int32(uint32(bonusDistance)), 0);
         }
     }
 
@@ -53,15 +59,16 @@ contract LibBonusTest is Words3Test {
         vm.assume(bonusDistance > 1);
         vm.assume(bonusDistanceMultiple >= 0 && bonusDistanceMultiple <= 1e3);
         vm.assume(diff >= 0 && diff <= 1e8);
+        vm.assume(bonusDistance * bonusDistanceMultiple > diff);
 
         // Bonus Tiles
-        Coord memory coord = Coord({ x: diff, y: bonusDistance * bonusDistanceMultiple + diff });
-        Coord memory coord2 = Coord({ x: -diff, y: bonusDistance * bonusDistanceMultiple + diff });
+        Coord memory coord = Coord({ x: diff, y: bonusDistance * bonusDistanceMultiple - diff });
+        Coord memory coord2 = Coord({ x: -diff, y: bonusDistance * bonusDistanceMultiple - diff });
         Coord memory coord3 = Coord({ x: bonusDistance * bonusDistanceMultiple, y: 0 });
 
         // Not bonus tiles
-        Coord memory coord4 = Coord({ x: bonusDistance * bonusDistanceMultiple + diff, y: diff + 1 });
-        Coord memory coord5 = Coord({ x: bonusDistance * bonusDistanceMultiple + diff, y: -diff - 1 });
+        Coord memory coord4 = Coord({ x: bonusDistance * bonusDistanceMultiple - diff, y: diff + 1 });
+        Coord memory coord5 = Coord({ x: bonusDistance * bonusDistanceMultiple - diff, y: -diff - 1 });
 
         assertTrue(LibBonus.isBonusTile(coord, 6));
         assertTrue(LibBonus.isBonusTile(coord2, 6));

@@ -151,7 +151,8 @@ contract Claim is Words3Test {
         vm.prank(player2);
         world.claim(player2Points);
 
-        uint256 player1ExpectedBalance = (100 ether * player1Points) / (player1Points + player2Points);
+        uint256 player1ExpectedBalance =
+            (100 ether * uint256(player1Points)) / (uint256(player1Points) + uint256(player2Points));
 
         assertEq(address(player1).balance, player1ExpectedBalance);
         assertEq(address(player2).balance, 100 ether - player1ExpectedBalance);
