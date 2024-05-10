@@ -2,8 +2,7 @@
 pragma solidity >=0.8.24;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { ClaimRestrictionConfig, Points, PointsClaimedUpdate } from "codegen/index.sol";
-
+import { ClaimRestrictionConfig, FeeConfig, FeeConfigData, Points, PointsClaimedUpdate } from "codegen/index.sol";
 import { LibPlayer } from "libraries/LibPlayer.sol";
 import { LibTreasury } from "libraries/LibTreasury.sol";
 import { LibUpdateId } from "libraries/LibUpdateId.sol";
@@ -30,7 +29,11 @@ contract ClaimSystem is System {
         LibPlayer.decrementPoints({ player: player, decrement: points });
         LibTreasury.decrementTreasury({ decrement: claimAmount });
 
-        payable(player).transfer(claimAmount);
+        FeeConfigData memory feeConfig = FeeConfig.get();
+
+        uint256 feeAmount = LibTreasury.getFeeAmount({ value: claimAmount, feeBps: feeConfig.feeBps });
+        payable(player).transfer(claimAmount - feeAmount);
+        payable(feeConfig.feeTaker).transfer(feeAmount);
 
         PointsClaimedUpdate.set({
             id: LibUpdateId.getUpdateId(),

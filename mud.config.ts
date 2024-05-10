@@ -12,6 +12,13 @@ export default defineWorld({
         numDrawLetters: "uint8",
       },
     },
+    FeeConfig: {
+      key: [],
+      schema: {
+        feeTaker: "address",
+        feeBps: "uint16",
+      },
+    },
     ClaimRestrictionConfig: {
       key: [],
       schema: {

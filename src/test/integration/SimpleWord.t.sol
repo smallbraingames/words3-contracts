@@ -6,7 +6,7 @@ pragma solidity >=0.8.24;
 import { Words3Test } from "../Words3Test.t.sol";
 import { Merkle } from "../murky/src/Merkle.sol";
 import { Direction, Letter } from "codegen/common.sol";
-import { PriceConfigData, TileLetter } from "codegen/index.sol";
+import { FeeConfigData, PriceConfigData, TileLetter } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 import { Bound } from "common/Bound.sol";
 import { Coord } from "common/Coord.sol";
@@ -54,6 +54,7 @@ contract SimpleWord is Words3Test {
                 wadDurationScale: 3000e18,
                 wadDurationConstant: 0
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
             bonusDistance: 10,
             numDrawLetters: 7
@@ -82,6 +83,7 @@ contract SimpleWord is Words3Test {
                 wadDurationScale: 3000e18,
                 wadDurationConstant: 0
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
             bonusDistance: 3,
             numDrawLetters: 8
@@ -121,6 +123,7 @@ contract SimpleWord is Words3Test {
                 wadDurationScale: 3000e18,
                 wadDurationConstant: 0
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
             bonusDistance: 10,
             numDrawLetters: 7

@@ -5,7 +5,7 @@ pragma solidity >=0.8.24;
 
 import { Words3Test } from "../Words3Test.t.sol";
 import { Letter } from "codegen/common.sol";
-import { PlayerLetters, PriceConfigData } from "codegen/index.sol";
+import { FeeConfigData, PlayerLetters, PriceConfigData } from "codegen/index.sol";
 import "forge-std/Test.sol";
 import { TransferLettersSystem } from "systems/TransferLettersSystem.sol";
 
@@ -34,6 +34,7 @@ contract Transfer is Words3Test {
                 wadDurationScale: 3000e18,
                 wadDurationConstant: 0
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
             bonusDistance: 3,
             numDrawLetters: 8
@@ -86,6 +87,7 @@ contract Transfer is Words3Test {
                 wadDurationScale: 3000e18,
                 wadDurationConstant: 0
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
             bonusDistance: 3,
             numDrawLetters: 8
@@ -139,6 +141,7 @@ contract Transfer is Words3Test {
                 wadDurationScale: 3000e18,
                 wadDurationConstant: 0
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
             bonusDistance: 3,
             numDrawLetters: 8
