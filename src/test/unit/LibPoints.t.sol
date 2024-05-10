@@ -7,7 +7,7 @@ import { Words3Test } from "../Words3Test.t.sol";
 import { Wrapper } from "./Wrapper.sol";
 import { BonusType, Direction, Letter } from "codegen/common.sol";
 
-import { PriceConfigData } from "codegen/index.sol";
+import { FeeConfigData, PriceConfigData } from "codegen/index.sol";
 import { Bonus } from "common/Bonus.sol";
 import { Coord } from "common/Coord.sol";
 import "forge-std/Test.sol";
@@ -91,6 +91,7 @@ contract LibPointsTest is Words3Test {
                 wadDurationScale: 3000e18,
                 wadDurationConstant: 0
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
             bonusDistance: bonusDistance,
             numDrawLetters: 20
@@ -138,6 +139,7 @@ contract LibPointsTest is Words3Test {
                 wadDurationScale: 3000e18,
                 wadDurationConstant: 0
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
             bonusDistance: 5,
             numDrawLetters: 20

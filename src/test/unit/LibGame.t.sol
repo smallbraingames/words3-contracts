@@ -5,7 +5,9 @@ pragma solidity >=0.8.24;
 
 import { Words3Test } from "../Words3Test.t.sol";
 import { Status } from "codegen/common.sol";
-import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig, PriceConfigData } from "codegen/index.sol";
+import {
+    DrawLastSold, FeeConfigData, GameConfig, MerkleRootConfig, PriceConfig, PriceConfigData
+} from "codegen/index.sol";
 import "forge-std/Test.sol";
 import { LibGame } from "libraries/LibGame.sol";
 
@@ -44,6 +46,7 @@ contract LibGameTest is Words3Test {
                 wadDurationScale: wadDurationScale,
                 wadDurationConstant: wadDurationConstant
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: crossWordRewardFraction,
             bonusDistance: bonusDistance,
             numDrawLetters: numDrawLetters

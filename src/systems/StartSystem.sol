@@ -4,7 +4,7 @@ pragma solidity >=0.8.24;
 import { System } from "@latticexyz/world/src/System.sol";
 import { Letter, Status } from "codegen/common.sol";
 
-import { PriceConfigData } from "codegen/index.sol";
+import { FeeConfigData, PriceConfigData } from "codegen/index.sol";
 import { MAX_WORD_LENGTH } from "common/Constants.sol";
 import { Coord } from "common/Coord.sol";
 import { LibGame } from "libraries/LibGame.sol";
@@ -23,6 +23,7 @@ contract StartSystem is System {
         uint256 initialPrice,
         uint256 claimRestrictionDurationBlocks,
         PriceConfigData memory priceConfig,
+        FeeConfigData memory feeConfig,
         uint32 crossWordRewardFraction,
         uint16 bonusDistance,
         uint8 numDrawLetters
@@ -39,6 +40,7 @@ contract StartSystem is System {
             initialPrice: initialPrice,
             claimRestrictionDurationBlocks: claimRestrictionDurationBlocks,
             priceConfig: priceConfig,
+            feeConfig: feeConfig,
             crossWordRewardFraction: crossWordRewardFraction,
             bonusDistance: bonusDistance,
             numDrawLetters: numDrawLetters

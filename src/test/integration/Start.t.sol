@@ -6,7 +6,9 @@ pragma solidity >=0.8.24;
 import { Words3Test } from "../Words3Test.t.sol";
 import { Letter } from "codegen/common.sol";
 
-import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig, PriceConfigData } from "codegen/index.sol";
+import {
+    DrawLastSold, FeeConfigData, GameConfig, MerkleRootConfig, PriceConfig, PriceConfigData
+} from "codegen/index.sol";
 import { Coord } from "common/Coord.sol";
 import "forge-std/Test.sol";
 
@@ -41,6 +43,7 @@ contract StartTest is Words3Test {
                 wadDurationScale: wadDurationScale,
                 wadDurationConstant: wadDurationConstant
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: crossWordRewardFraction,
             bonusDistance: bonusDistance,
             numDrawLetters: numDrawLetters
@@ -79,6 +82,7 @@ contract StartTest is Words3Test {
                 wadDurationScale: 1,
                 wadDurationConstant: 1
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 1,
             bonusDistance: 1,
             numDrawLetters: 1
@@ -108,6 +112,7 @@ contract StartTest is Words3Test {
                 wadDurationScale: 1,
                 wadDurationConstant: 1
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 1,
             bonusDistance: 1,
             numDrawLetters: 1
@@ -127,6 +132,7 @@ contract StartTest is Words3Test {
                 wadDurationScale: 1,
                 wadDurationConstant: 1
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 1,
             bonusDistance: 1,
             numDrawLetters: 1
@@ -151,6 +157,7 @@ contract StartTest is Words3Test {
                 wadDurationScale: 1,
                 wadDurationConstant: 1
             }),
+            feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 1,
             bonusDistance: 1,
             numDrawLetters: 1

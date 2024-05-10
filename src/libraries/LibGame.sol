@@ -5,6 +5,8 @@ import { Status } from "codegen/common.sol";
 import {
     ClaimRestrictionConfig,
     DrawLastSold,
+    FeeConfig,
+    FeeConfigData,
     GameConfig,
     MerkleRootConfig,
     PriceConfig,
@@ -25,6 +27,7 @@ library LibGame {
         uint256 initialPrice,
         uint256 claimRestrictionDurationBlocks,
         PriceConfigData memory priceConfig,
+        FeeConfigData memory feeConfig,
         uint32 crossWordRewardFraction,
         uint16 bonusDistance,
         uint8 numDrawLetters
@@ -42,5 +45,6 @@ library LibGame {
         MerkleRootConfig.set({ value: merkleRoot });
         DrawLastSold.set({ price: initialPrice, blockNumber: blockNumber });
         PriceConfig.set(priceConfig);
+        FeeConfig.set(feeConfig);
     }
 }

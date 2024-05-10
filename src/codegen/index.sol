@@ -10,7 +10,9 @@ import { DrawLastSold, DrawLastSoldData } from "./tables/DrawLastSold.sol";
 import { DrawLetterOdds } from "./tables/DrawLetterOdds.sol";
 
 import { DrawUpdate, DrawUpdateData } from "./tables/DrawUpdate.sol";
+import { FeeConfig, FeeConfigData } from "./tables/FeeConfig.sol";
 import { GameConfig, GameConfigData } from "./tables/GameConfig.sol";
+
 import { MerkleRootConfig } from "./tables/MerkleRootConfig.sol";
 import { PlayUpdate, PlayUpdateData } from "./tables/PlayUpdate.sol";
 import { PlayerLetters } from "./tables/PlayerLetters.sol";
