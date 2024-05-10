@@ -2,7 +2,7 @@
 pragma solidity >=0.8.24;
 
 import { Status } from "codegen/common.sol";
-import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig } from "codegen/index.sol";
+import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig, PriceConfigData } from "codegen/index.sol";
 
 library LibGame {
     function getGameStatus() internal view returns (Status) {
@@ -16,11 +16,7 @@ library LibGame {
     function startGame(
         bytes32 merkleRoot,
         uint256 initialPrice,
-        uint256 minPrice,
-        int256 wadFactor,
-        int256 wadDurationRoot,
-        int256 wadDurationScale,
-        int256 wadDurationConstant,
+        PriceConfigData memory priceConfig,
         uint32 crossWordRewardFraction,
         uint16 bonusDistance,
         uint8 numDrawLetters
@@ -35,12 +31,6 @@ library LibGame {
         });
         MerkleRootConfig.set({ value: merkleRoot });
         DrawLastSold.set({ price: initialPrice, blockNumber: block.number });
-        PriceConfig.set({
-            minPrice: minPrice,
-            wadFactor: wadFactor,
-            wadDurationRoot: wadDurationRoot,
-            wadDurationScale: wadDurationScale,
-            wadDurationConstant: wadDurationConstant
-        });
+        PriceConfig.set(priceConfig);
     }
 }

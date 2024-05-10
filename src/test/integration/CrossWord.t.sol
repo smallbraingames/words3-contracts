@@ -6,7 +6,7 @@ pragma solidity >=0.8.24;
 import { Words3Test } from "../Words3Test.t.sol";
 import { Merkle } from "../murky/src/Merkle.sol";
 import { Direction, Letter } from "codegen/common.sol";
-import { Points } from "codegen/index.sol";
+import { Points, PriceConfigData } from "codegen/index.sol";
 import { Bound } from "common/Bound.sol";
 import { Coord } from "common/Coord.sol";
 import "forge-std/Test.sol";
@@ -107,15 +107,20 @@ contract CrossWord is Words3Test {
         initialWord[13] = Letter.T;
         initialWord[14] = Letter.E;
 
+        uint32[26] memory initialLetterAllocation;
         world.start({
             initialWord: initialWord,
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
             merkleRoot: m.getRoot(words),
             initialPrice: 0.001 ether,
-            minPrice: 0.0001 ether,
-            wadFactor: 1.3e18,
-            wadDurationRoot: 2e18,
-            wadDurationScale: 3000e18,
-            wadDurationConstant: 0,
+            priceConfig: PriceConfigData({
+                minPrice: 0.0001 ether,
+                wadFactor: 1.3e18,
+                wadDurationRoot: 2e18,
+                wadDurationScale: 3000e18,
+                wadDurationConstant: 0
+            }),
             crossWordRewardFraction: 3,
             bonusDistance: 5,
             numDrawLetters: 7

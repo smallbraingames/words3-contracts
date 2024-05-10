@@ -5,7 +5,7 @@ pragma solidity >=0.8.24;
 
 import { Words3Test } from "../Words3Test.t.sol";
 import { Status } from "codegen/common.sol";
-import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig } from "codegen/index.sol";
+import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig, PriceConfigData } from "codegen/index.sol";
 import "forge-std/Test.sol";
 import { LibGame } from "libraries/LibGame.sol";
 
@@ -36,11 +36,13 @@ contract LibGameTest is Words3Test {
         LibGame.startGame({
             merkleRoot: merkleRoot,
             initialPrice: initialPrice,
-            minPrice: minPrice,
-            wadFactor: wadFactor,
-            wadDurationRoot: wadDurationRoot,
-            wadDurationScale: wadDurationScale,
-            wadDurationConstant: wadDurationConstant,
+            priceConfig: PriceConfigData({
+                minPrice: minPrice,
+                wadFactor: wadFactor,
+                wadDurationRoot: wadDurationRoot,
+                wadDurationScale: wadDurationScale,
+                wadDurationConstant: wadDurationConstant
+            }),
             crossWordRewardFraction: crossWordRewardFraction,
             bonusDistance: bonusDistance,
             numDrawLetters: numDrawLetters

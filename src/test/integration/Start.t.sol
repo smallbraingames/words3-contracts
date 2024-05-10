@@ -6,7 +6,7 @@ pragma solidity >=0.8.24;
 import { Words3Test } from "../Words3Test.t.sol";
 import { Letter } from "codegen/common.sol";
 
-import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig } from "codegen/index.sol";
+import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig, PriceConfigData } from "codegen/index.sol";
 import { Coord } from "common/Coord.sol";
 import "forge-std/Test.sol";
 
@@ -18,8 +18,6 @@ contract StartTest is Words3Test {
     function testFuzz_SystemStartGame(
         bytes32 merkleRoot,
         uint256 initialPrice,
-        uint256 minPrice,
-        int256 wadFactor,
         int256 wadDurationRoot,
         int256 wadDurationScale,
         int256 wadDurationConstant,
@@ -29,21 +27,26 @@ contract StartTest is Words3Test {
     )
         public
     {
+        uint32[26] memory initialLetterAllocation;
         world.start({
             initialWord: new Letter[](0),
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
             merkleRoot: merkleRoot,
             initialPrice: initialPrice,
-            minPrice: minPrice,
-            wadFactor: wadFactor,
-            wadDurationRoot: wadDurationRoot,
-            wadDurationScale: wadDurationScale,
-            wadDurationConstant: wadDurationConstant,
+            priceConfig: PriceConfigData({
+                minPrice: 3,
+                wadFactor: 20e18,
+                wadDurationRoot: wadDurationRoot,
+                wadDurationScale: wadDurationScale,
+                wadDurationConstant: wadDurationConstant
+            }),
             crossWordRewardFraction: crossWordRewardFraction,
             bonusDistance: bonusDistance,
             numDrawLetters: numDrawLetters
         });
         assertEq(merkleRoot, MerkleRootConfig.get());
-        assertEq(minPrice, PriceConfig.getMinPrice());
+        assertEq(3, PriceConfig.getMinPrice());
         assertEq(wadDurationRoot, PriceConfig.getWadDurationRoot());
         assertEq(wadDurationScale, PriceConfig.getWadDurationScale());
         assertEq(wadDurationConstant, PriceConfig.getWadDurationConstant());
@@ -61,15 +64,20 @@ contract StartTest is Words3Test {
         for (uint256 i = 0; i < initialWord.length; i++) {
             initialWord[i] = Letter.A;
         }
+        uint32[26] memory initialLetterAllocation;
         world.start({
             initialWord: initialWord,
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
             merkleRoot: keccak256("merkleRoot"),
             initialPrice: 1,
-            minPrice: 1,
-            wadFactor: 1,
-            wadDurationRoot: 1,
-            wadDurationScale: 1,
-            wadDurationConstant: 1,
+            priceConfig: PriceConfigData({
+                minPrice: 1,
+                wadFactor: 1,
+                wadDurationRoot: 1,
+                wadDurationScale: 1,
+                wadDurationConstant: 1
+            }),
             crossWordRewardFraction: 1,
             bonusDistance: 1,
             numDrawLetters: 1
@@ -83,15 +91,21 @@ contract StartTest is Words3Test {
     }
 
     function test_RevertsWhen_StartTwice() public {
+        uint32[26] memory initialLetterAllocation;
+
         world.start({
             initialWord: new Letter[](0),
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
             merkleRoot: keccak256("merkleRoot"),
             initialPrice: 1,
-            minPrice: 1,
-            wadFactor: 1,
-            wadDurationRoot: 1,
-            wadDurationScale: 1,
-            wadDurationConstant: 1,
+            priceConfig: PriceConfigData({
+                minPrice: 1,
+                wadFactor: 1,
+                wadDurationRoot: 1,
+                wadDurationScale: 1,
+                wadDurationConstant: 1
+            }),
             crossWordRewardFraction: 1,
             bonusDistance: 1,
             numDrawLetters: 1
@@ -99,13 +113,17 @@ contract StartTest is Words3Test {
         vm.expectRevert(StartSystem.GameAlreadyStarted.selector);
         world.start({
             initialWord: new Letter[](0),
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
             merkleRoot: keccak256("merkleRoot"),
             initialPrice: 1,
-            minPrice: 1,
-            wadFactor: 1,
-            wadDurationRoot: 1,
-            wadDurationScale: 1,
-            wadDurationConstant: 1,
+            priceConfig: PriceConfigData({
+                minPrice: 1,
+                wadFactor: 1,
+                wadDurationRoot: 1,
+                wadDurationScale: 1,
+                wadDurationConstant: 1
+            }),
             crossWordRewardFraction: 1,
             bonusDistance: 1,
             numDrawLetters: 1
@@ -113,16 +131,22 @@ contract StartTest is Words3Test {
     }
 
     function test_RevertsWhen_InitialWordTooLong() public {
+        uint32[26] memory initialLetterAllocation;
+
         vm.expectRevert(StartSystem.InitialWordTooLong.selector);
         world.start({
             initialWord: new Letter[](90),
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
             merkleRoot: keccak256("merkleRoot"),
             initialPrice: 1,
-            minPrice: 1,
-            wadFactor: 1,
-            wadDurationRoot: 1,
-            wadDurationScale: 1,
-            wadDurationConstant: 1,
+            priceConfig: PriceConfigData({
+                minPrice: 1,
+                wadFactor: 1,
+                wadDurationRoot: 1,
+                wadDurationScale: 1,
+                wadDurationConstant: 1
+            }),
             crossWordRewardFraction: 1,
             bonusDistance: 1,
             numDrawLetters: 1
