@@ -344,7 +344,6 @@ contract Claim is Words3Test {
         Bound[] memory bounds = new Bound[](2);
         bytes32[] memory proof = m.getProof(words, 6);
 
-        // Play om
         vm.startPrank(player);
         for (uint256 i = 0; i < 100; i++) {
             vm.roll(block.number + 1000);
@@ -367,5 +366,67 @@ contract Claim is Words3Test {
         world.claim(points);
 
         assertEq(address(player).balance, 50 ether);
+    }
+
+    function test_ClaimWithFee() public {
+        address player = address(0x12345);
+
+        Letter[] memory initialWord = new Letter[](9);
+        initialWord[0] = Letter.S;
+        initialWord[1] = Letter.U;
+        initialWord[2] = Letter.P;
+        initialWord[3] = Letter.E;
+        initialWord[4] = Letter.R;
+        initialWord[5] = Letter.H;
+        initialWord[6] = Letter.E;
+        initialWord[7] = Letter.R;
+        initialWord[8] = Letter.O;
+        address feeTaker = address(0x54321);
+        uint32[26] memory initialLetterAllocation;
+        world.start({
+            initialWord: initialWord,
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
+            merkleRoot: m.getRoot(words),
+            initialPrice: 0.001 ether,
+            claimRestrictionDurationBlocks: 0,
+            priceConfig: PriceConfigData({
+                minPrice: 0.0001 ether,
+                wadFactor: 1.3e18,
+                wadDurationRoot: 2e18,
+                wadDurationScale: 3000e18,
+                wadDurationConstant: 0
+            }),
+            feeConfig: FeeConfigData({ feeBps: 1000, feeTaker: feeTaker }),
+            crossWordRewardFraction: 3,
+            bonusDistance: 5,
+            numDrawLetters: 10
+        });
+
+        Letter[] memory word = new Letter[](2);
+        word[0] = Letter.EMPTY;
+        word[1] = Letter.M;
+
+        vm.deal(player, 50 ether);
+
+        Bound[] memory bounds = new Bound[](2);
+        bytes32[] memory proof = m.getProof(words, 6);
+
+        vm.startPrank(player);
+        for (uint256 i = 0; i < 100; i++) {
+            vm.roll(block.number + 1000);
+            world.draw{ value: 0.5 ether }(player);
+        }
+        world.play(word, proof, Coord({ x: 4, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
+        vm.stopPrank();
+        assertEq(address(player).balance, 0);
+        assertEq(address(worldAddress).balance, 50 ether);
+
+        uint32 points = Points.get(player);
+        vm.prank(player);
+        world.claim(points);
+
+        assertEq(address(feeTaker).balance, 5 ether);
+        assertEq(address(player).balance, 45 ether);
     }
 }
