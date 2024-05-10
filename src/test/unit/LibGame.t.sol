@@ -18,7 +18,7 @@ contract LibGameTest is Words3Test {
         assertTrue(LibGame.canPlay());
     }
 
-    function testFuzzStartGame(
+    function testFuzz_StartGame(
         bytes32 merkleRoot,
         uint256 initialPrice,
         uint256 minPrice,

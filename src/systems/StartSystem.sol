@@ -10,7 +10,7 @@ import { LibTile } from "libraries/LibTile.sol";
 
 contract StartSystem is System {
     error GameAlreadyStarted();
-    error WordTooLong();
+    error InitialWordTooLong();
 
     function start(
         Letter[] memory initialWord,
@@ -48,7 +48,7 @@ contract StartSystem is System {
     function writeInitialWordChecked(Letter[] memory initialWord) private {
         uint256 wordLength = initialWord.length;
         if (wordLength > MAX_WORD_LENGTH) {
-            revert WordTooLong();
+            revert InitialWordTooLong();
         }
         int32 xOffset = int32(uint32(wordLength)) / 2;
         for (uint256 i = 0; i < initialWord.length; i++) {
