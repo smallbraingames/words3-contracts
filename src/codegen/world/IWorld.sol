@@ -10,6 +10,7 @@ import { IDonateSystem } from "./IDonateSystem.sol";
 import { IDrawSystem } from "./IDrawSystem.sol";
 import { IPlaySystem } from "./IPlaySystem.sol";
 import { ISetDrawLetterOddsSystem } from "./ISetDrawLetterOddsSystem.sol";
+import { ISetFeeConfigSystem } from "./ISetFeeConfigSystem.sol";
 import { IStartSystem } from "./IStartSystem.sol";
 import { ITransferLettersSystem } from "./ITransferLettersSystem.sol";
 
@@ -27,6 +28,7 @@ interface IWorld is
     IDrawSystem,
     IPlaySystem,
     ISetDrawLetterOddsSystem,
+    ISetFeeConfigSystem,
     IStartSystem,
     ITransferLettersSystem
 { }
