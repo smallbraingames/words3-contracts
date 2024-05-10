@@ -9,8 +9,14 @@ export default defineWorld({
         status: "Status",
         crossWordRewardFraction: "uint32",
         bonusDistance: "uint16",
-        numDrawLetters: "uint8"
+        numDrawLetters: "uint8",
       },
+    },
+    ClaimRestrictionConfig: {
+      key: [],
+      schema: {
+        claimRestrictionBlock: "uint256"
+      }
     },
     MerkleRootConfig: {
       key: [],

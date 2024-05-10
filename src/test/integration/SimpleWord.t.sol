@@ -46,6 +46,7 @@ contract SimpleWord is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: m.getRoot(words),
             initialPrice: 0.001 ether,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,
@@ -73,6 +74,7 @@ contract SimpleWord is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: m.getRoot(words),
             initialPrice: 0.001 ether,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,
@@ -111,6 +113,7 @@ contract SimpleWord is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: m.getRoot(words),
             initialPrice: 0.001 ether,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,

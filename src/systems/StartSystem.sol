@@ -21,6 +21,7 @@ contract StartSystem is System {
         address initialLettersTo,
         bytes32 merkleRoot,
         uint256 initialPrice,
+        uint256 claimRestrictionDurationBlocks,
         PriceConfigData memory priceConfig,
         uint32 crossWordRewardFraction,
         uint16 bonusDistance,
@@ -36,6 +37,7 @@ contract StartSystem is System {
         LibGame.startGame({
             merkleRoot: merkleRoot,
             initialPrice: initialPrice,
+            claimRestrictionDurationBlocks: claimRestrictionDurationBlocks,
             priceConfig: priceConfig,
             crossWordRewardFraction: crossWordRewardFraction,
             bonusDistance: bonusDistance,

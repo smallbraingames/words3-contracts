@@ -18,7 +18,6 @@ contract StartTest is Words3Test {
     function testFuzz_SystemStartGame(
         bytes32 merkleRoot,
         uint256 initialPrice,
-        int256 wadDurationRoot,
         int256 wadDurationScale,
         int256 wadDurationConstant,
         uint32 crossWordRewardFraction,
@@ -34,10 +33,11 @@ contract StartTest is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: merkleRoot,
             initialPrice: initialPrice,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 3,
                 wadFactor: 20e18,
-                wadDurationRoot: wadDurationRoot,
+                wadDurationRoot: 1e17,
                 wadDurationScale: wadDurationScale,
                 wadDurationConstant: wadDurationConstant
             }),
@@ -47,7 +47,7 @@ contract StartTest is Words3Test {
         });
         assertEq(merkleRoot, MerkleRootConfig.get());
         assertEq(3, PriceConfig.getMinPrice());
-        assertEq(wadDurationRoot, PriceConfig.getWadDurationRoot());
+        assertEq(1e17, PriceConfig.getWadDurationRoot());
         assertEq(wadDurationScale, PriceConfig.getWadDurationScale());
         assertEq(wadDurationConstant, PriceConfig.getWadDurationConstant());
         assertEq(initialPrice, DrawLastSold.getPrice());
@@ -71,6 +71,7 @@ contract StartTest is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: keccak256("merkleRoot"),
             initialPrice: 1,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 1,
                 wadFactor: 1,
@@ -99,6 +100,7 @@ contract StartTest is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: keccak256("merkleRoot"),
             initialPrice: 1,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 1,
                 wadFactor: 1,
@@ -117,6 +119,7 @@ contract StartTest is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: keccak256("merkleRoot"),
             initialPrice: 1,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 1,
                 wadFactor: 1,
@@ -140,6 +143,7 @@ contract StartTest is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: keccak256("merkleRoot"),
             initialPrice: 1,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 1,
                 wadFactor: 1,

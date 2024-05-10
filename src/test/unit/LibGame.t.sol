@@ -36,6 +36,7 @@ contract LibGameTest is Words3Test {
         LibGame.startGame({
             merkleRoot: merkleRoot,
             initialPrice: initialPrice,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: minPrice,
                 wadFactor: wadFactor,
