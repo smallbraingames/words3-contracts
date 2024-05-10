@@ -99,7 +99,7 @@ contract PointsTest is Words3Test {
             vm.roll(block.number + 100);
             world.draw{ value: world.getDrawPrice() }(player1);
         }
-        world.play(word, proof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, bounds);
+        world.play(word, proof, Coord({ x: 2, y: -1 }), Direction.TOP_TO_BOTTOM, bounds);
         vm.stopPrank();
         assertEq(Points.get(player1), 13);
 
@@ -119,7 +119,7 @@ contract PointsTest is Words3Test {
             vm.roll(block.number + 100);
             world.draw{ value: world.getDrawPrice() }(player2);
         }
-        world.play(ext, extProof, Coord({ x: 4, y: -1 }), Direction.TOP_TO_BOTTOM, extBounds);
+        world.play(ext, extProof, Coord({ x: 2, y: -1 }), Direction.TOP_TO_BOTTOM, extBounds);
         vm.stopPrank();
         assertEq(Points.get(player2), 14);
 
@@ -128,12 +128,16 @@ contract PointsTest is Words3Test {
     }
 
     function test_Bonus() public {
-        Letter[] memory initialWord = new Letter[](5);
-        initialWord[0] = Letter.H;
-        initialWord[1] = Letter.E;
-        initialWord[2] = Letter.L;
-        initialWord[3] = Letter.L;
-        initialWord[4] = Letter.O;
+        Letter[] memory initialWord = new Letter[](9);
+        initialWord[0] = Letter.S;
+        initialWord[1] = Letter.U;
+        initialWord[2] = Letter.P;
+        initialWord[3] = Letter.E;
+        initialWord[4] = Letter.R;
+        initialWord[5] = Letter.H;
+        initialWord[6] = Letter.E;
+        initialWord[7] = Letter.R;
+        initialWord[8] = Letter.O;
 
         world.start({
             initialWord: initialWord,
@@ -167,7 +171,8 @@ contract PointsTest is Words3Test {
         world.play(word, proof, Coord({ x: 4, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
 
         uint32 truePoints = 5;
-        Bonus memory bonus = LibBonus.getTileBonus(Coord({ x: 4, y: 4 }));
+        Bonus memory bonus = LibBonus.getTileBonus(Coord({ x: 4, y: 1 }));
+
         if (bonus.bonusType == BonusType.MULTIPLY_WORD) {
             truePoints *= bonus.bonusValue;
         } else {

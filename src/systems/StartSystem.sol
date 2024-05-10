@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.24;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { Letter, Status } from "codegen/common.sol";
-
+import { MAX_WORD_LENGTH } from "common/Constants.sol";
 import { Coord } from "common/Coord.sol";
 import { LibGame } from "libraries/LibGame.sol";
 import { LibTile } from "libraries/LibTile.sol";
 
 contract StartSystem is System {
     error GameAlreadyStarted();
+    error WordTooLong();
 
     function start(
         Letter[] memory initialWord,
@@ -26,6 +27,9 @@ contract StartSystem is System {
     )
         public
     {
+        if (LibGame.getGameStatus() != Status.NOT_STARTED) {
+            revert GameAlreadyStarted();
+        }
         writeInitialWordChecked({ initialWord: initialWord });
         LibGame.startGame({
             merkleRoot: merkleRoot,
@@ -42,11 +46,13 @@ contract StartSystem is System {
     }
 
     function writeInitialWordChecked(Letter[] memory initialWord) private {
-        if (LibGame.getGameStatus() != Status.NOT_STARTED) {
-            revert GameAlreadyStarted();
+        uint256 wordLength = initialWord.length;
+        if (wordLength > MAX_WORD_LENGTH) {
+            revert WordTooLong();
         }
+        int32 xOffset = int32(uint32(wordLength)) / 2;
         for (uint256 i = 0; i < initialWord.length; i++) {
-            Coord memory coord = Coord({ x: int32(uint32(i)), y: 0 });
+            Coord memory coord = Coord({ x: int32(uint32(i)) - xOffset, y: 0 });
             LibTile.setTile({ coord: coord, letter: initialWord[i], player: address(0) });
         }
     }

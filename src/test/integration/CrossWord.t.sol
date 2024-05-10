@@ -89,15 +89,23 @@ contract CrossWord is Words3Test {
     }
 
     function test_CrossWordsCraftAunt() public {
-        Letter[] memory initialWord = new Letter[](8);
-        initialWord[0] = Letter.I;
-        initialWord[1] = Letter.N;
-        initialWord[2] = Letter.F;
-        initialWord[3] = Letter.I;
-        initialWord[4] = Letter.N;
-        initialWord[5] = Letter.I;
-        initialWord[6] = Letter.T;
-        initialWord[7] = Letter.E;
+        // Push "infinite" so it starts at (0,0)
+        Letter[] memory initialWord = new Letter[](15);
+        initialWord[0] = Letter.EMPTY;
+        initialWord[1] = Letter.EMPTY;
+        initialWord[2] = Letter.EMPTY;
+        initialWord[3] = Letter.EMPTY;
+        initialWord[4] = Letter.EMPTY;
+        initialWord[5] = Letter.EMPTY;
+        initialWord[6] = Letter.EMPTY;
+        initialWord[7] = Letter.I;
+        initialWord[8] = Letter.N;
+        initialWord[9] = Letter.F;
+        initialWord[10] = Letter.I;
+        initialWord[11] = Letter.N;
+        initialWord[12] = Letter.I;
+        initialWord[13] = Letter.T;
+        initialWord[14] = Letter.E;
 
         world.start({
             initialWord: initialWord,
