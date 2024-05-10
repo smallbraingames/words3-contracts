@@ -12,7 +12,7 @@ import { Letter } from "codegen/common.sol";
  */
 interface IStartSystem {
     error GameAlreadyStarted();
-    error WordTooLong();
+    error InitialWordTooLong();
 
     function start(
         Letter[] memory initialWord,
