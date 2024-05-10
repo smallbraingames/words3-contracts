@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.24;
 
 import { DrawLastSold, DrawLastSoldData, PriceConfig, PriceConfigData } from "codegen/index.sol";
 import { wadDiv, wadMul, wadPow } from "solmate/src/utils/SignedWadMath.sol";

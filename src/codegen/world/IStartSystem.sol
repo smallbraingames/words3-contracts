@@ -11,21 +11,20 @@ import { Letter } from "codegen/common.sol";
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IStartSystem {
-    error GameAlreadyStarted();
-    error InitialWordTooLong();
+  error GameAlreadyStarted();
+  error InitialWordTooLong();
 
-    function start(
-        Letter[] memory initialWord,
-        bytes32 merkleRoot,
-        uint256 initialPrice,
-        uint256 minPrice,
-        int256 wadFactor,
-        int256 wadDurationRoot,
-        int256 wadDurationScale,
-        int256 wadDurationConstant,
-        uint32 crossWordRewardFraction,
-        uint16 bonusDistance,
-        uint8 numDrawLetters
-    )
-        external;
+  function start(
+    Letter[] memory initialWord,
+    bytes32 merkleRoot,
+    uint256 initialPrice,
+    uint256 minPrice,
+    int256 wadFactor,
+    int256 wadDurationRoot,
+    int256 wadDurationScale,
+    int256 wadDurationConstant,
+    uint32 crossWordRewardFraction,
+    uint16 bonusDistance,
+    uint8 numDrawLetters
+  ) external;
 }

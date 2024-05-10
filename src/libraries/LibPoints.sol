@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.24;
 
 import { BonusType, Direction, Letter } from "codegen/common.sol";
 import { GameConfig, Points, PointsUpdate } from "codegen/index.sol";

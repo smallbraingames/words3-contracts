@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.24;
 
 import { Letter } from "codegen/common.sol";
 import { TileLetter, TilePlayer } from "codegen/index.sol";
