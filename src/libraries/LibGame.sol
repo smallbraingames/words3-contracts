@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.24;
 
 import { Status } from "codegen/common.sol";
 import { DrawLastSold, GameConfig, MerkleRootConfig, PriceConfig } from "codegen/index.sol";

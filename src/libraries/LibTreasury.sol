@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Unlicensed
-pragma solidity >=0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.24;
 
 import { Spent, Treasury } from "codegen/index.sol";
 import { NoPoints } from "common/Errors.sol";
@@ -32,7 +32,7 @@ library LibTreasury {
         Treasury.set({ value: decrementedTreasury });
     }
 
-    function incrementSpent(address msgSender, uint256 msgValue) internal {
+    function incrementSpent(address msgSender, uint256 msgValue) private {
         uint256 incrementedSpent = Spent.get({ player: msgSender }) + msgValue;
         Spent.set({ player: msgSender, value: incrementedSpent });
     }
