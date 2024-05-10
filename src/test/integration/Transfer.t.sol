@@ -5,7 +5,7 @@ pragma solidity >=0.8.24;
 
 import { Words3Test } from "../Words3Test.t.sol";
 import { Letter } from "codegen/common.sol";
-import { PlayerLetters } from "codegen/index.sol";
+import { PlayerLetters, PriceConfigData } from "codegen/index.sol";
 import "forge-std/Test.sol";
 
 contract Transfer is Words3Test {
@@ -18,15 +18,20 @@ contract Transfer is Words3Test {
         Letter[] memory initialWord = new Letter[](2);
         initialWord[0] = Letter.H;
         initialWord[1] = Letter.I;
+        uint32[26] memory initialLetterAllocation;
         world.start({
             initialWord: initialWord,
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
             merkleRoot: bytes32(0),
             initialPrice: 0.001 ether,
-            minPrice: 0.0001 ether,
-            wadFactor: 1.3e18,
-            wadDurationRoot: 2e18,
-            wadDurationScale: 3000e18,
-            wadDurationConstant: 0,
+            priceConfig: PriceConfigData({
+                minPrice: 0.0001 ether,
+                wadFactor: 1.3e18,
+                wadDurationRoot: 2e18,
+                wadDurationScale: 3000e18,
+                wadDurationConstant: 0
+            }),
             crossWordRewardFraction: 3,
             bonusDistance: 3,
             numDrawLetters: 8

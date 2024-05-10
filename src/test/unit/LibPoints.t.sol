@@ -6,6 +6,8 @@ pragma solidity >=0.8.24;
 import { Words3Test } from "../Words3Test.t.sol";
 import { Wrapper } from "./Wrapper.sol";
 import { BonusType, Direction, Letter } from "codegen/common.sol";
+
+import { PriceConfigData } from "codegen/index.sol";
 import { Bonus } from "common/Bonus.sol";
 import { Coord } from "common/Coord.sol";
 import "forge-std/Test.sol";
@@ -74,15 +76,20 @@ contract LibPointsTest is Words3Test {
         Letter[] memory initialWord = new Letter[](1);
         initialWord[0] = Letter.A;
         uint16 bonusDistance = 8;
+        uint32[26] memory initialLetterAllocation;
         world.start({
             initialWord: initialWord,
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
             merkleRoot: bytes32(0),
             initialPrice: 0.001 ether,
-            minPrice: 0.0001 ether,
-            wadFactor: 1.3e18,
-            wadDurationRoot: 2e18,
-            wadDurationScale: 3000e18,
-            wadDurationConstant: 0,
+            priceConfig: PriceConfigData({
+                minPrice: 0.0001 ether,
+                wadFactor: 1.3e18,
+                wadDurationRoot: 2e18,
+                wadDurationScale: 3000e18,
+                wadDurationConstant: 0
+            }),
             crossWordRewardFraction: 3,
             bonusDistance: bonusDistance,
             numDrawLetters: 20
@@ -115,15 +122,20 @@ contract LibPointsTest is Words3Test {
         Letter[] memory initialWord = new Letter[](1);
         initialWord[0] = Letter.A;
         uint16 bonusDistance = 3;
+        uint32[26] memory initialLetterAllocation;
         world.start({
             initialWord: initialWord,
+            initialLetterAllocation: initialLetterAllocation,
+            initialLettersTo: address(0),
             merkleRoot: bytes32(0),
             initialPrice: 0.001 ether,
-            minPrice: 0.0001 ether,
-            wadFactor: 1.3e18,
-            wadDurationRoot: 2e18,
-            wadDurationScale: 3000e18,
-            wadDurationConstant: 0,
+            priceConfig: PriceConfigData({
+                minPrice: 0.0001 ether,
+                wadFactor: 1.3e18,
+                wadDurationRoot: 2e18,
+                wadDurationScale: 3000e18,
+                wadDurationConstant: 0
+            }),
             crossWordRewardFraction: 3,
             bonusDistance: 5,
             numDrawLetters: 20
