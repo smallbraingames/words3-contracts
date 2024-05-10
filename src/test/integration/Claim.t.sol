@@ -79,12 +79,16 @@ contract Claim is Words3Test {
         address player1 = address(0x12345);
         address player2 = address(0x54321);
 
-        Letter[] memory initialWord = new Letter[](5);
-        initialWord[0] = Letter.H;
-        initialWord[1] = Letter.E;
-        initialWord[2] = Letter.L;
-        initialWord[3] = Letter.L;
-        initialWord[4] = Letter.O;
+        Letter[] memory initialWord = new Letter[](9);
+        initialWord[0] = Letter.S;
+        initialWord[1] = Letter.U;
+        initialWord[2] = Letter.P;
+        initialWord[3] = Letter.E;
+        initialWord[4] = Letter.R;
+        initialWord[5] = Letter.H;
+        initialWord[6] = Letter.E;
+        initialWord[7] = Letter.R;
+        initialWord[8] = Letter.O;
 
         world.start({
             initialWord: initialWord,
@@ -161,12 +165,16 @@ contract Claim is Words3Test {
     function test_ClaimAfterDonation() public {
         address player = address(0x12345);
 
-        Letter[] memory initialWord = new Letter[](5);
-        initialWord[0] = Letter.H;
-        initialWord[1] = Letter.E;
-        initialWord[2] = Letter.L;
-        initialWord[3] = Letter.L;
-        initialWord[4] = Letter.O;
+        Letter[] memory initialWord = new Letter[](9);
+        initialWord[0] = Letter.S;
+        initialWord[1] = Letter.U;
+        initialWord[2] = Letter.P;
+        initialWord[3] = Letter.E;
+        initialWord[4] = Letter.R;
+        initialWord[5] = Letter.H;
+        initialWord[6] = Letter.E;
+        initialWord[7] = Letter.R;
+        initialWord[8] = Letter.O;
 
         world.start({
             initialWord: initialWord,
@@ -219,11 +227,14 @@ contract Claim is Words3Test {
 
         address player = address(0x12345);
 
-        Letter[] memory initialWord = new Letter[](5);
-        initialWord[0] = Letter.R;
-        initialWord[1] = Letter.I;
-        initialWord[2] = Letter.O;
-        initialWord[3] = Letter.T;
+        Letter[] memory initialWord = new Letter[](7);
+        initialWord[0] = Letter.P;
+        initialWord[1] = Letter.A;
+        initialWord[2] = Letter.T;
+        initialWord[3] = Letter.R;
+        initialWord[4] = Letter.I;
+        initialWord[5] = Letter.O;
+        initialWord[6] = Letter.T;
 
         world.start({
             initialWord: initialWord,

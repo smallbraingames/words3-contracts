@@ -51,8 +51,8 @@ contract SimpleWord is Words3Test {
             bonusDistance: 10,
             numDrawLetters: 7
         });
-        assertEq(uint8(TileLetter.get(0, 0)), uint8(Letter.H));
-        assertEq(uint8(TileLetter.get(1, 0)), uint8(Letter.I));
+        assertEq(uint8(TileLetter.get(-1, 0)), uint8(Letter.H));
+        assertEq(uint8(TileLetter.get(0, 0)), uint8(Letter.I));
     }
 
     function test_PlayHi() public {
@@ -87,7 +87,7 @@ contract SimpleWord is Words3Test {
             vm.roll(block.number + 100);
             world.draw{ value: price }(player);
         }
-        world.play(word, proof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
+        world.play(word, proof, Coord({ x: -1, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
         vm.stopPrank();
     }
 
