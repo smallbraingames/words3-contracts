@@ -21,6 +21,7 @@ interface IStartSystem {
         address initialLettersTo,
         bytes32 merkleRoot,
         uint256 initialPrice,
+        uint256 claimRestrictionDurationBlocks,
         PriceConfigData memory priceConfig,
         uint32 crossWordRewardFraction,
         uint16 bonusDistance,

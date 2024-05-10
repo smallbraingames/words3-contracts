@@ -26,6 +26,7 @@ contract Transfer is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: bytes32(0),
             initialPrice: 0.001 ether,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,
@@ -77,6 +78,7 @@ contract Transfer is Words3Test {
             initialLettersTo: initialLettersTo,
             merkleRoot: bytes32(0),
             initialPrice: 0.001 ether,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,
@@ -129,6 +131,7 @@ contract Transfer is Words3Test {
             initialLettersTo: address(0),
             merkleRoot: bytes32(0),
             initialPrice: 0.001 ether,
+            claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,

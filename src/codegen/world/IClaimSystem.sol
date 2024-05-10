@@ -10,6 +10,7 @@ pragma solidity >=0.8.24;
  */
 interface IClaimSystem {
     error NotEnoughPoints();
+    error WithinClaimRestrictionPeriod();
 
     function claim(uint32 points) external;
 }
