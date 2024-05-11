@@ -14,6 +14,7 @@ import { LibTile } from "libraries/LibTile.sol";
 contract StartSystem is System {
     error GameAlreadyStarted();
     error InitialWordTooLong();
+    error PriceWadFactorTooSmall();
 
     function start(
         Letter[] memory initialWord,
@@ -32,6 +33,9 @@ contract StartSystem is System {
     {
         if (LibGame.getGameStatus() != Status.NOT_STARTED) {
             revert GameAlreadyStarted();
+        }
+        if (priceConfig.wadFactor < 1e18) {
+            revert PriceWadFactorTooSmall();
         }
         writeInitialWordChecked({ initialWord: initialWord });
         allocateInitialLetters({ initialLetterAllocation: initialLetterAllocation, initialLettersTo: initialLettersTo });
