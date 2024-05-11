@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 
+import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import { Direction, Letter } from "codegen/common.sol";
 import { MerkleRootConfig, PlayUpdate } from "codegen/index.sol";
 import { Bound } from "common/Bound.sol";
@@ -23,8 +24,6 @@ import { LibBoard } from "libraries/LibBoard.sol";
 import { LibPoints } from "libraries/LibPoints.sol";
 import { LibTile } from "libraries/LibTile.sol";
 import { LibUpdateId } from "libraries/LibUpdateId.sol";
-
-import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 library LibPlay {
     function play(
