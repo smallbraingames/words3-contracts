@@ -41,7 +41,7 @@ library LibPrice {
         returns (uint256)
     {
         uint256 price = startPrice;
-        if (passed > duration || startPrice <= endPrice) {
+        if (passed >= duration || startPrice <= endPrice) {
             return endPrice;
         }
         uint256 deltaPrice = startPrice - endPrice;

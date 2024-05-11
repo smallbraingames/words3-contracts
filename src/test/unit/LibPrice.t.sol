@@ -138,4 +138,46 @@ contract LibPriceTest is Words3Test {
             16_650
         );
     }
+
+    function test_GetGDAPrice() public {
+        assertEq(LibPrice.getGDAPrice({ startPrice: 1, endPrice: 1, duration: 1, passed: 1 }), 1);
+        assertEq(
+            LibPrice.getGDAPrice({ startPrice: 100 ether, endPrice: 1 ether, duration: 1000, passed: 1 }), 99.901 ether
+        );
+
+        assertEq(
+            LibPrice.getGDAPrice({
+                startPrice: 23_892_398_384,
+                endPrice: 132_932_832,
+                duration: 1_000_939_329_239,
+                passed: 328_328
+            }),
+            2.3892390591e10
+        );
+
+        assertEq(
+            LibPrice.getGDAPrice({
+                startPrice: 9_932_832_832 ether,
+                endPrice: 1_730_492 ether,
+                duration: 239,
+                passed: 238
+            }),
+            43_283_221_456_066_945_606_694_561
+        );
+    }
+
+    function testFuzz_GetGDAPriceNeverBelowEndPrice(
+        uint256 startPrice,
+        uint256 endPrice,
+        uint256 duration,
+        uint256 passed
+    )
+        public
+    {
+        passed = bound(passed, 0, uint256(type(uint128).max));
+        startPrice = bound(startPrice, 0, uint256(type(uint128).max));
+        uint256 price =
+            LibPrice.getGDAPrice({ startPrice: startPrice, endPrice: endPrice, duration: duration, passed: passed });
+        assertTrue(price >= endPrice);
+    }
 }
