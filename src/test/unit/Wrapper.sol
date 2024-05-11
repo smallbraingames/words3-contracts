@@ -10,6 +10,7 @@ import { Coord } from "common/Coord.sol";
 import { LibBoard } from "libraries/LibBoard.sol";
 import { LibPlay } from "libraries/LibPlay.sol";
 import { LibPoints } from "libraries/LibPoints.sol";
+import { LibPrice } from "libraries/LibPrice.sol";
 
 contract Wrapper {
     function playCheckCrossWords(
@@ -52,5 +53,9 @@ contract Wrapper {
 
     function pointsGetBonusLetterPoints(Letter letter, Bonus memory bonus) public pure returns (uint32) {
         return LibPoints.getBonusLetterPoints(letter, bonus);
+    }
+
+    function priceToWad(uint256 x) public pure returns (int256) {
+        return LibPrice.toWad(x);
     }
 }

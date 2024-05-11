@@ -164,7 +164,12 @@ library LibPlay {
 
                 if (positive != 0 || negative != 0) {
                     // Ensure cross word is valid
-                    Letter[] memory crossWord = LibBoard.getCrossWord({letterCoord: letterCoord, letter: word[i], wordDirection: direction, bound: bound});
+                    Letter[] memory crossWord = LibBoard.getCrossWord({
+                        letterCoord: letterCoord,
+                        letter: word[i],
+                        wordDirection: direction,
+                        bound: bound
+                    });
                     if (!isWordInDictionary({ word: crossWord, proof: bound.proof })) {
                         revert WordNotInDictionary();
                     }

@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 
-error GameStartedOrOver();
-error GameNotOver();
-error CannotPlay();
-
+// LibPoints
 error NoPointsForEmptyLetter();
 
+// LibBoard
 error BoundTooLong();
 error EmptyLetterInBounds();
 
+// LibPlay
 error WordTooLong();
 error InvalidWordStart();
 error InvalidWordEnd();
@@ -22,13 +21,8 @@ error InvalidBoundLength();
 error NonzeroEmptyLetterBound();
 error NonemptyBoundEdges();
 
-error NotEnoughValue();
-
-error AlreadyClaimed();
-error InvalidAddress();
-
-error NotEndTime();
-
-error Stop();
-
+// LibTreasury
 error NoPoints();
+
+// LibPrice
+error Overflow();

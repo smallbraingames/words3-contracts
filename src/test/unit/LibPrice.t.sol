@@ -4,6 +4,8 @@ pragma solidity >=0.8.24;
 /* solhint-disable func-name-mixedcase */
 
 import { Words3Test } from "../Words3Test.t.sol";
+
+import { Wrapper } from "./Wrapper.sol";
 import "forge-std/Test.sol";
 import { LibPrice } from "libraries/LibPrice.sol";
 import { toWadUnsafe, wadPow } from "solmate/src/utils/SignedWadMath.sol";
@@ -16,6 +18,8 @@ contract LibPriceTest is Words3Test {
         assertApproxEqRel(uint256(LibPrice.wadRoot(4e18, 2e18)), 2e18, 1);
         assertApproxEqRel(uint256(LibPrice.wadRoot(9e18, 2e18)), 3e18, 1);
         assertApproxEqRel(uint256(LibPrice.wadRoot(16e18, 4e18)), 2e18, 1);
+        assertApproxEqRel(uint256(LibPrice.wadRoot(16e18, 4e18)), 2e18, 1);
+        assertApproxEqRel(uint256(LibPrice.wadRoot(12e18, 3e18)), 2.28942848511e18, 0.00001e18);
     }
 
     function testFuzz_WadRootWhole(uint128 a, uint128 power) public {
@@ -38,5 +42,100 @@ contract LibPriceTest is Words3Test {
     function test_WadRootFraction() public {
         assertApproxEqRel(uint256(LibPrice.wadRoot(4e18, 1.5e18)), 2.51984209979e18, 1e8);
         assertApproxEqRel(uint256(LibPrice.wadRoot(12e18, 3.6e18)), 1.99421770808e18, 1e8);
+    }
+
+    function test_ToWad() public {
+        assertEq(LibPrice.toWad(1), 1e18);
+        assertEq(LibPrice.toWad(15), 15e18);
+        assertEq(LibPrice.toWad(1.5e18), 1.5e36);
+        assertEq(LibPrice.toWad(1e9 ether), 1e45);
+        // Reverts on overflow
+        Wrapper w = new Wrapper();
+        uint256 maxUint = 2 ** 256 - 1;
+        vm.expectRevert();
+        w.priceToWad(maxUint / 1e18);
+        vm.expectRevert();
+        w.priceToWad(maxUint);
+    }
+
+    function testFuzz_ToWad(uint256 x) public {
+        x = bound(x, 1, uint256(type(int256).max / 1e18));
+        int256 wad = LibPrice.toWad(x);
+        assertEq(uint256(wad), x * 1e18);
+    }
+
+    function test_GetGDADuration() public {
+        assertEq(
+            LibPrice.getGDADuration({
+                wadStartPrice: 1e18,
+                wadDurationRoot: 1e18,
+                wadDurationScale: 1e18,
+                wadDurationConstant: 1e18
+            }),
+            3
+        );
+        assertEq(
+            LibPrice.getGDADuration({
+                wadStartPrice: 12e18,
+                wadDurationRoot: 3e18,
+                wadDurationScale: 10e18,
+                wadDurationConstant: 18e18
+            }),
+            41
+        );
+        assertEq(
+            LibPrice.getGDADuration({
+                wadStartPrice: 100_000_000e18,
+                wadDurationRoot: 12e18,
+                wadDurationScale: 15_000e18,
+                wadDurationConstant: 23e18
+            }),
+            69_647
+        );
+        assertEq(
+            LibPrice.getGDADuration({
+                wadStartPrice: LibPrice.toWad(0.00034 ether),
+                wadDurationRoot: 1.7e18,
+                wadDurationScale: 1.72e11,
+                wadDurationConstant: 60e18
+            }),
+            121
+        );
+        assertEq(
+            LibPrice.getGDADuration({
+                wadStartPrice: LibPrice.toWad(0.0034 ether),
+                wadDurationRoot: 1.7e18,
+                wadDurationScale: 1.72e11,
+                wadDurationConstant: 60e18
+            }),
+            296
+        );
+        assertEq(
+            LibPrice.getGDADuration({
+                wadStartPrice: LibPrice.toWad(0.0182 ether),
+                wadDurationRoot: 1.7e18,
+                wadDurationScale: 1.72e11,
+                wadDurationConstant: 60e18
+            }),
+            692
+        );
+        assertEq(
+            LibPrice.getGDADuration({
+                wadStartPrice: LibPrice.toWad(100_000_000 ether),
+                wadDurationRoot: 1.7e18,
+                wadDurationScale: 1.72e11,
+                wadDurationConstant: 60e18
+            }),
+            338_568_205
+        );
+        assertEq(
+            LibPrice.getGDADuration({
+                wadStartPrice: LibPrice.toWad(0.1231 ether),
+                wadDurationRoot: 1.54e18,
+                wadDurationScale: 1.322e11,
+                wadDurationConstant: 99e18
+            }),
+            16_650
+        );
     }
 }

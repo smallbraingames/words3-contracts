@@ -291,7 +291,8 @@ contract CrossWord is Words3Test {
         uint8 proof3,
         uint8 proof4
     )
-        public view
+        public
+        view
         returns (Bound[] memory)
     {
         Bound[] memory bounds = new Bound[](4);

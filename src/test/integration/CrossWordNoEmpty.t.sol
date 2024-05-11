@@ -10,13 +10,12 @@ import { FeeConfigData, Points, PriceConfigData } from "codegen/index.sol";
 import { Bound } from "common/Bound.sol";
 import { Coord } from "common/Coord.sol";
 import "forge-std/Test.sol";
-import { ClaimSystem } from "systems/ClaimSystem.sol";
 
 contract CrossWordNoEmpty is Words3Test {
     bytes32[] public words;
     Merkle private m;
     address private player1 = address(0xcafe);
-        address private player2 = address(0xbabe);
+    address private player2 = address(0xbabe);
 
     function setUp() public override {
         super.setUp();
@@ -121,7 +120,6 @@ contract CrossWordNoEmpty is Words3Test {
         vm.prank(player1);
         world.transfer({ letters: lettersToTransfer, to: player2 });
 
-
         // play jobe
         vm.startPrank(player1);
         Letter[] memory playJobe = new Letter[](4);
@@ -189,7 +187,6 @@ contract CrossWordNoEmpty is Words3Test {
         assertEq(Points.get({ player: player1 }), 49);
         assertEq(Points.get({ player: player2 }), 17);
         assertEq(Points.get({ player: address(0) }), 66);
-
     }
 
     function test_CrossWordNoEmpty() public {
@@ -212,10 +209,15 @@ contract CrossWordNoEmpty is Words3Test {
         vm.stopPrank();
         assertEq(Points.get({ player: player1 }), 49);
         assertEq(Points.get({ player: player2 }), 43);
-        assertEq(Points.get({ player: address(0) }), 92);  
+        assertEq(Points.get({ player: address(0) }), 92);
     }
 
-    function testFuzz_RevertsWhen_CrossWordNoEmptyIncorrectBounds(uint16 boundsPositive, uint16 boundsNegative) public {
+    function testFuzz_RevertsWhen_CrossWordNoEmptyIncorrectBounds(
+        uint16 boundsPositive,
+        uint16 boundsNegative
+    )
+        public
+    {
         vm.assume(boundsPositive != 0 || boundsNegative != 4);
         vm.startPrank(player2);
         Letter[] memory playCoins = new Letter[](5);
