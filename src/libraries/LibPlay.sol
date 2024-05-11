@@ -37,7 +37,7 @@ library LibPlay {
     )
         internal
     {
-        checkWord({ word: word, proof: proof, coord: coord, direction: direction });
+        checkWord({ word: word, proof: proof, coord: coord, direction: direction, bounds: bounds });
         address[] memory buildsOnPlayers =
             checkCrossWords({ word: word, coord: coord, direction: direction, bounds: bounds });
         Letter[] memory filledWord = setTiles({ word: word, coord: coord, direction: direction, player: player });
@@ -201,7 +201,8 @@ library LibPlay {
         Letter[] memory word,
         bytes32[] memory proof,
         Coord memory coord,
-        Direction direction
+        Direction direction,
+        Bound[] memory bounds
     )
         internal
         view
@@ -253,7 +254,17 @@ library LibPlay {
 
         // Ensure word is played on another word
         if (!containsEmpty) {
-            revert LonelyWord();
+            // If it is not directly played on a word, check that it has at least one cross word
+            bool hasCrossWord = false;
+            for (uint256 i = 0; i < bounds.length; i++) {
+                if (bounds[i].positive != 0 || bounds[i].negative != 0) {
+                    hasCrossWord = true;
+                    break;
+                }
+            }
+            if (!hasCrossWord) {
+                revert LonelyWord();
+            }
         }
         // Ensure word has at least one letter
         if (!containsLetter) {

@@ -331,30 +331,32 @@ contract LibPlayTest is Words3Test {
         MerkleRootConfig.set(m.getRoot(words));
         vm.stopPrank();
 
+        Bound[] memory bounds = new Bound[](3);
+
         bytes32[] memory iceProof = m.getProof(words, 1);
         vm.expectRevert();
-        wrapper.playCheckWord(word, iceProof, Coord({ x: 1, y: 0 }), Direction.LEFT_TO_RIGHT);
+        wrapper.playCheckWord(word, iceProof, Coord({ x: 1, y: 0 }), Direction.LEFT_TO_RIGHT, bounds);
         vm.expectRevert();
-        wrapper.playCheckWord(word, iceProof, Coord({ x: -1, y: 0 }), Direction.LEFT_TO_RIGHT);
+        wrapper.playCheckWord(word, iceProof, Coord({ x: -1, y: 0 }), Direction.LEFT_TO_RIGHT, bounds);
         vm.expectRevert();
-        wrapper.playCheckWord(word, iceProof, Coord({ x: 0, y: 1 }), Direction.TOP_TO_BOTTOM);
+        wrapper.playCheckWord(word, iceProof, Coord({ x: 0, y: 1 }), Direction.TOP_TO_BOTTOM, bounds);
 
         word[0] = Letter.I;
         vm.expectRevert();
-        wrapper.playCheckWord(word, iceProof, Coord({ x: 3, y: 3 }), Direction.LEFT_TO_RIGHT);
+        wrapper.playCheckWord(word, iceProof, Coord({ x: 3, y: 3 }), Direction.LEFT_TO_RIGHT, bounds);
 
         Letter[] memory emptyWord = new Letter[](1);
         emptyWord[0] = Letter.EMPTY;
         bytes32[] memory emptyProof = new bytes32[](1);
         emptyProof[0] = bytes32(0x0);
         vm.expectRevert();
-        wrapper.playCheckWord(emptyWord, emptyProof, Coord({ x: 0, y: 0 }), Direction.LEFT_TO_RIGHT);
+        wrapper.playCheckWord(emptyWord, emptyProof, Coord({ x: 0, y: 0 }), Direction.LEFT_TO_RIGHT, bounds);
         vm.expectRevert();
-        wrapper.playCheckWord(emptyWord, emptyProof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM);
+        wrapper.playCheckWord(emptyWord, emptyProof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
 
         word[0] = Letter.EMPTY;
-        LibPlay.checkWord(word, iceProof, Coord({ x: 0, y: 0 }), Direction.LEFT_TO_RIGHT);
-        LibPlay.checkWord(word, iceProof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM);
+        LibPlay.checkWord(word, iceProof, Coord({ x: 0, y: 0 }), Direction.LEFT_TO_RIGHT, bounds);
+        LibPlay.checkWord(word, iceProof, Coord({ x: 0, y: 0 }), Direction.TOP_TO_BOTTOM, bounds);
     }
 
     function testFuzz_RevertsWhen_CheckWord(
@@ -362,7 +364,8 @@ contract LibPlayTest is Words3Test {
         int32 startY,
         uint8[] memory wordRaw,
         bytes32[] memory proof,
-        bool direction
+        bool direction,
+        Bound[] memory bounds
     )
         public
     {
@@ -372,7 +375,7 @@ contract LibPlayTest is Words3Test {
         }
         Direction dir = direction ? Direction.LEFT_TO_RIGHT : Direction.TOP_TO_BOTTOM;
         vm.expectRevert();
-        wrapper.playCheckWord(word, proof, Coord({ x: startX, y: startY }), dir);
+        wrapper.playCheckWord(word, proof, Coord({ x: startX, y: startY }), dir, bounds);
 
         vm.startPrank(deployerAddress);
         MerkleRootConfig.set(m.getRoot(words));
@@ -383,6 +386,6 @@ contract LibPlayTest is Words3Test {
         ice[0] = Letter.I;
         ice[1] = Letter.C;
         ice[2] = Letter.E;
-        wrapper.playCheckWord(ice, iceProof, Coord({ x: startX, y: startY }), dir);
+        wrapper.playCheckWord(ice, iceProof, Coord({ x: startX, y: startY }), dir, bounds);
     }
 }
