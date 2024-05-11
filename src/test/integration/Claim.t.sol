@@ -102,7 +102,7 @@ contract Claim is Words3Test {
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,
                 wadDurationRoot: 2e18,
-                wadDurationScale: 3000e18,
+                wadDurationScale: 1.72e11,
                 wadDurationConstant: 0
             }),
             feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
@@ -195,7 +195,7 @@ contract Claim is Words3Test {
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,
                 wadDurationRoot: 2e18,
-                wadDurationScale: 3000e18,
+                wadDurationScale: 1.72e11,
                 wadDurationConstant: 0
             }),
             feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
@@ -262,7 +262,7 @@ contract Claim is Words3Test {
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,
                 wadDurationRoot: 2e18,
-                wadDurationScale: 3000e18,
+                wadDurationScale: 1.72e11,
                 wadDurationConstant: 0
             }),
             feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
@@ -326,7 +326,7 @@ contract Claim is Words3Test {
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,
                 wadDurationRoot: 2e18,
-                wadDurationScale: 3000e18,
+                wadDurationScale: 1.72e11,
                 wadDurationConstant: 0
             }),
             feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
@@ -394,7 +394,7 @@ contract Claim is Words3Test {
                 minPrice: 0.0001 ether,
                 wadFactor: 1.3e18,
                 wadDurationRoot: 2e18,
-                wadDurationScale: 3000e18,
+                wadDurationScale: 1.72e11,
                 wadDurationConstant: 0
             }),
             feeConfig: FeeConfigData({ feeBps: 1000, feeTaker: feeTaker }),

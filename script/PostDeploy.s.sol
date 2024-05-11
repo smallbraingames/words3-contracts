@@ -2,8 +2,9 @@
 pragma solidity >=0.8.0;
 
 import { Letter } from "codegen/common.sol";
+
+import { FeeConfigData, PriceConfigData } from "codegen/index.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
-import {PriceConfigData, FeeConfigData} from "codegen/index.sol";
 import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 
