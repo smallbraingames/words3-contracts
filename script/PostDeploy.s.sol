@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import { Letter } from "codegen/common.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
-
+import {PriceConfigData, FeeConfigData} from "codegen/index.sol";
 import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 
@@ -26,15 +26,25 @@ contract PostDeploy is Script {
         // infinite[6] = Letter.T;
         // infinite[7] = Letter.E;
 
+        // uint32[26] memory initialLetterAllocation;
         // world.start({
         //     initialWord: infinite,
+        //     initialLetterAllocation: initialLetterAllocation,
+        //     initialLettersTo: address(0),
         //     merkleRoot: 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
         //     initialPrice: 0.005 ether,
-        //     minPrice: 0.0001 ether,
-        //     wadFactor: 1.1e18,
-        //     wadDurationRoot: 2e18,
-        //     wadDurationScale: 15_000e18,
-        //     wadDurationConstant: 0,
+        //     claimRestrictionDurationBlocks: 100,
+        //     priceConfig: PriceConfigData({
+        //         minPrice: 0.0001 ether,
+        //         wadFactor: 1.15e18,
+        //         wadDurationRoot: 2e18,
+        //         wadDurationScale: 15_000e18,
+        //         wadDurationConstant: 0
+        //     }),
+        //     feeConfig: FeeConfigData({
+        //         feeBps: 690,
+        //         feeTaker: address(0) // BURN, MAKE SURE TO CHANGE
+        //     }),
         //     crossWordRewardFraction: 3,
         //     bonusDistance: 8,
         //     numDrawLetters: 7
