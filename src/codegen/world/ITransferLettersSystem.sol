@@ -11,7 +11,7 @@ import { Letter } from "codegen/common.sol";
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface ITransferLettersSystem {
-    error TransferMissingLetters();
+  error TransferMissingLetters();
 
-    function transfer(Letter[] memory letters, address to) external;
+  function transfer(Letter[] memory letters, address to) external;
 }

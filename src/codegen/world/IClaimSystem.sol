@@ -9,8 +9,8 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IClaimSystem {
-    error NotEnoughPoints();
-    error WithinClaimRestrictionPeriod();
+  error NotEnoughPoints();
+  error WithinClaimRestrictionPeriod();
 
-    function claim(uint32 points) external;
+  function claim(uint32 points) external;
 }

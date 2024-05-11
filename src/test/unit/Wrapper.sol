@@ -29,12 +29,13 @@ contract Wrapper {
         Letter[] memory word,
         bytes32[] memory proof,
         Coord memory coord,
-        Direction direction
+        Direction direction,
+        Bound[] memory bounds
     )
         public
         view
     {
-        LibPlay.checkWord(word, proof, coord, direction);
+        LibPlay.checkWord(word, proof, coord, direction, bounds);
     }
 
     function boardGetCoordsOutsideBound(
