@@ -77,7 +77,7 @@ contract StartTest is Words3Test {
             claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 1,
-                wadFactor: 1,
+                wadFactor: 1e18,
                 wadDurationRoot: 1,
                 wadDurationScale: 1,
                 wadDurationConstant: 1
@@ -107,7 +107,7 @@ contract StartTest is Words3Test {
             claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 1,
-                wadFactor: 1,
+                wadFactor: 1e18,
                 wadDurationRoot: 1,
                 wadDurationScale: 1,
                 wadDurationConstant: 1
@@ -127,7 +127,7 @@ contract StartTest is Words3Test {
             claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 1,
-                wadFactor: 1,
+                wadFactor: 1e18,
                 wadDurationRoot: 1,
                 wadDurationScale: 1,
                 wadDurationConstant: 1
@@ -152,7 +152,7 @@ contract StartTest is Words3Test {
             claimRestrictionDurationBlocks: 0,
             priceConfig: PriceConfigData({
                 minPrice: 1,
-                wadFactor: 1,
+                wadFactor: 1e18,
                 wadDurationRoot: 1,
                 wadDurationScale: 1,
                 wadDurationConstant: 1

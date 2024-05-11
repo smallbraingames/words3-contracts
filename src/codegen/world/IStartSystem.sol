@@ -14,6 +14,7 @@ import { FeeConfigData, PriceConfigData } from "codegen/index.sol";
 interface IStartSystem {
     error GameAlreadyStarted();
     error InitialWordTooLong();
+    error PriceWadFactorTooSmall();
 
     function start(
         Letter[] memory initialWord,
