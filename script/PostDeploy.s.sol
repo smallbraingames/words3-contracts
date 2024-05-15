@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity >=0.8.24;
 
 import { Letter } from "codegen/common.sol";
 
@@ -41,12 +41,12 @@ contract PostDeploy is Script {
         //     priceConfig: PriceConfigData({
         //         minPrice: 0.001 ether,
         //         wadPriceIncreaseFactor: 1.115e18,
-        //         wadPower: 0.97e18,
-        //         wadScale: 2.03e37
+        //         wadPower: 0.95e18,
+        //         wadScale: 1.1715e37
         //     }),
         //     feeConfig: FeeConfigData({ feeBps: 690, feeTaker: address(0x7078272d7AbB477aed006190678054bB654815f4) }),
         //     crossWordRewardFraction: 3,
-        //     bonusDistance: 5,
+        //     bonusDistance: 4,
         //     numDrawLetters: 7
         // });
 

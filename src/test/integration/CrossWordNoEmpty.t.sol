@@ -135,9 +135,9 @@ contract CrossWordNoEmpty is Words3Test {
             bounds: jobeBounds
         });
         vm.stopPrank();
-        assertEq(Points.get({ player: player1 }), 15);
+        assertEq(Points.get({ player: player1 }), 28);
         assertEq(Points.get({ player: player2 }), 0);
-        assertEq(Points.get({ player: address(0) }), 15);
+        assertEq(Points.get({ player: address(0) }), 28);
 
         // play join
 
@@ -156,9 +156,9 @@ contract CrossWordNoEmpty is Words3Test {
             bounds: joinBounds
         });
         vm.stopPrank();
-        assertEq(Points.get({ player: player1 }), 19);
+        assertEq(Points.get({ player: player1 }), 32);
         assertEq(Points.get({ player: player2 }), 14);
-        assertEq(Points.get({ player: address(0) }), 33);
+        assertEq(Points.get({ player: address(0) }), 46);
 
         // Play colaborate
         vm.startPrank(player1);
@@ -184,9 +184,9 @@ contract CrossWordNoEmpty is Words3Test {
             bounds: colaborateBounds
         });
         vm.stopPrank();
-        assertEq(Points.get({ player: player1 }), 45);
+        assertEq(Points.get({ player: player1 }), 58);
         assertEq(Points.get({ player: player2 }), 16);
-        assertEq(Points.get({ player: address(0) }), 61);
+        assertEq(Points.get({ player: address(0) }), 74);
     }
 
     function test_CrossWordNoEmpty() public {
@@ -208,9 +208,9 @@ contract CrossWordNoEmpty is Words3Test {
         });
         vm.stopPrank();
 
-        assertEq(Points.get({ player: player1 }), 45);
+        assertEq(Points.get({ player: player1 }), 58);
         assertEq(Points.get({ player: player2 }), 42);
-        assertEq(Points.get({ player: address(0) }), 87);
+        assertEq(Points.get({ player: address(0) }), 100);
     }
 
     function testFuzz_RevertsWhen_CrossWordNoEmptyIncorrectBounds(
