@@ -107,8 +107,10 @@ contract LibPriceTest is Words3Test {
         int256 y = LibPrice.getInverseF({ y: f, wadPower: 0.9e18, wadScale: 9.96e36, wadConstant: 0.001 ether * 1e18 });
         assertApproxEqRel(uint256(y), x, 1000);
 
-        int256 f2 = LibPrice.getF({ x: int256(x), wadPower: 0.8e18, wadScale: 5.6e36, wadConstant: 0.001 ether * 1e18 });
-        int256 y2 = LibPrice.getInverseF({ y: f2, wadPower: 0.8e18, wadScale: 5.6e36, wadConstant: 0.001 ether * 1e18 });
+        int256 f2 =
+            LibPrice.getF({ x: int256(x), wadPower: 0.95e18, wadScale: 1.1715e37, wadConstant: 0.001 ether * 1e18 });
+        int256 y2 =
+            LibPrice.getInverseF({ y: f2, wadPower: 0.95e18, wadScale: 1.1715e37, wadConstant: 0.001 ether * 1e18 });
         assertApproxEqRel(uint256(y2), x, 1000);
 
         int256 f3 =

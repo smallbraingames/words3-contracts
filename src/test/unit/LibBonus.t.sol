@@ -57,8 +57,8 @@ contract LibBonusTest is Words3Test {
         int32 bonusDistance = int32(uint32(6));
 
         vm.assume(bonusDistance > 1);
-        vm.assume(bonusDistanceMultiple >= 0 && bonusDistanceMultiple <= 1e3);
-        vm.assume(diff >= 0 && diff <= 1e8);
+        bonusDistanceMultiple = int32(uint32(bound(uint256(uint32(bonusDistanceMultiple)), 0, 1e3)));
+        diff = int32(uint32(bound(uint256(uint32(diff)), 0, 1e8)));
         vm.assume(bonusDistance * bonusDistanceMultiple > diff);
 
         // Bonus Tiles
