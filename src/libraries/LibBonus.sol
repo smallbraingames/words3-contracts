@@ -17,16 +17,16 @@ library LibBonus {
         uint256 n = uint256(keccak256(abi.encodePacked(coord.x, coord.y)));
         int32 dist = abs(coord.x) + abs(coord.y);
 
-        uint256 bonusTypeThreshold = 3500 + min(uint256(uint32(dist)) * 5, 50_000);
+        uint256 bonusTypeThreshold = 6900 + min(uint256(uint32(dist)) * 5, 50_000);
         BonusType bonusType = n % 100_000 < bonusTypeThreshold ? BonusType.MULTIPLY_WORD : BonusType.MULTIPLY_LETTER;
 
         n = n % 100;
         uint32 bonusValue = 2;
         if (n < 1) {
             bonusValue = 5;
-        } else if (n < 3) {
+        } else if (n < 4) {
             bonusValue = 4;
-        } else if (n < 10) {
+        } else if (n < 12) {
             bonusValue = 3;
         }
 
