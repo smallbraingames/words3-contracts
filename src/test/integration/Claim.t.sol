@@ -99,10 +99,10 @@ contract Claim is Words3Test {
             initialPrice: 0.001 ether,
             claimRestrictionDurationBlocks: 50,
             priceConfig: PriceConfigData({
-                minPrice: 0.0001 ether,
-                wadPriceIncreaseFactor: 1.3e18,
-                wadPower: 0.2e18,
-                wadScale: 3000e18
+                minPrice: 0.001 ether,
+                wadPriceIncreaseFactor: 1.115e18,
+                wadPower: 0.95e18,
+                wadScale: 1.1715e37
             }),
             feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
@@ -193,8 +193,8 @@ contract Claim is Words3Test {
             priceConfig: PriceConfigData({
                 minPrice: 0.001 ether,
                 wadPriceIncreaseFactor: 1.115e18,
-                wadPower: 0.9e18,
-                wadScale: 9.96e36
+                wadPower: 0.95e18,
+                wadScale: 1.1715e37
             }),
             feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
@@ -259,8 +259,8 @@ contract Claim is Words3Test {
             priceConfig: PriceConfigData({
                 minPrice: 0.001 ether,
                 wadPriceIncreaseFactor: 1.115e18,
-                wadPower: 0.9e18,
-                wadScale: 9.96e36
+                wadPower: 0.95e18,
+                wadScale: 1.1715e37
             }),
             feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
@@ -322,8 +322,8 @@ contract Claim is Words3Test {
             priceConfig: PriceConfigData({
                 minPrice: 0.001 ether,
                 wadPriceIncreaseFactor: 1.115e18,
-                wadPower: 0.9e18,
-                wadScale: 9.96e36
+                wadPower: 0.95e18,
+                wadScale: 1.1715e37
             }),
             feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,
@@ -389,8 +389,8 @@ contract Claim is Words3Test {
             priceConfig: PriceConfigData({
                 minPrice: 0.001 ether,
                 wadPriceIncreaseFactor: 1.115e18,
-                wadPower: 0.9e18,
-                wadScale: 9.96e36
+                wadPower: 0.95e18,
+                wadScale: 1.1715e37
             }),
             feeConfig: FeeConfigData({ feeBps: 1000, feeTaker: feeTaker }),
             crossWordRewardFraction: 3,

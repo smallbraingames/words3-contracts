@@ -117,8 +117,8 @@ contract SimpleWord is Words3Test {
             priceConfig: PriceConfigData({
                 minPrice: 0.001 ether,
                 wadPriceIncreaseFactor: 1.115e18,
-                wadPower: 0.9e18,
-                wadScale: 9.96e36
+                wadPower: 0.95e18,
+                wadScale: 1.1715e37
             }),
             feeConfig: FeeConfigData({ feeBps: 0, feeTaker: address(0) }),
             crossWordRewardFraction: 3,

@@ -27,7 +27,7 @@
   fs_permissions = [{ access = "read", path = "./"}]
 
 [fuzz]
-  runs = 1028
+  runs = 2056
 
 [profile.redstone-mainnet]
   eth_rpc_url = "https://rpc.redstonechain.com"
