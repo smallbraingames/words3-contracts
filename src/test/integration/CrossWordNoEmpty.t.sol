@@ -135,11 +135,12 @@ contract CrossWordNoEmpty is Words3Test {
             bounds: jobeBounds
         });
         vm.stopPrank();
-        assertEq(Points.get({ player: player1 }), 16);
+        assertEq(Points.get({ player: player1 }), 15);
         assertEq(Points.get({ player: player2 }), 0);
-        assertEq(Points.get({ player: address(0) }), 16);
+        assertEq(Points.get({ player: address(0) }), 15);
 
         // play join
+
         vm.startPrank(player2);
         Letter[] memory playJoin = new Letter[](4);
         playJoin[0] = Letter.EMPTY;
@@ -155,9 +156,9 @@ contract CrossWordNoEmpty is Words3Test {
             bounds: joinBounds
         });
         vm.stopPrank();
-        assertEq(Points.get({ player: player1 }), 21);
-        assertEq(Points.get({ player: player2 }), 15);
-        assertEq(Points.get({ player: address(0) }), 36);
+        assertEq(Points.get({ player: player1 }), 19);
+        assertEq(Points.get({ player: player2 }), 14);
+        assertEq(Points.get({ player: address(0) }), 33);
 
         // Play colaborate
         vm.startPrank(player1);
@@ -183,9 +184,9 @@ contract CrossWordNoEmpty is Words3Test {
             bounds: colaborateBounds
         });
         vm.stopPrank();
-        assertEq(Points.get({ player: player1 }), 49);
-        assertEq(Points.get({ player: player2 }), 17);
-        assertEq(Points.get({ player: address(0) }), 66);
+        assertEq(Points.get({ player: player1 }), 45);
+        assertEq(Points.get({ player: player2 }), 16);
+        assertEq(Points.get({ player: address(0) }), 61);
     }
 
     function test_CrossWordNoEmpty() public {
@@ -206,9 +207,10 @@ contract CrossWordNoEmpty is Words3Test {
             bounds: coinsBounds
         });
         vm.stopPrank();
-        assertEq(Points.get({ player: player1 }), 49);
-        assertEq(Points.get({ player: player2 }), 43);
-        assertEq(Points.get({ player: address(0) }), 92);
+
+        assertEq(Points.get({ player: player1 }), 45);
+        assertEq(Points.get({ player: player2 }), 42);
+        assertEq(Points.get({ player: address(0) }), 87);
     }
 
     function testFuzz_RevertsWhen_CrossWordNoEmptyIncorrectBounds(

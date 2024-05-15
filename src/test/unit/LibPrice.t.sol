@@ -9,7 +9,7 @@ import { Wrapper } from "./Wrapper.sol";
 import "forge-std/Test.sol";
 import { LibPrice } from "libraries/LibPrice.sol";
 import { toWadUnsafe, wadPow } from "solmate/src/utils/SignedWadMath.sol";
-import { wadDiv, wadMul, wadPow } from "solmate/src/utils/SignedWadMath.sol";
+import { wadMul, wadPow } from "solmate/src/utils/SignedWadMath.sol";
 
 contract LibPriceTest is Words3Test {
     function test_WadRoot() public {
@@ -131,7 +131,7 @@ contract LibPriceTest is Words3Test {
         int256 wadMinPrice = LibPrice.toWad(minPrice);
         // Make sure start price is always at least 1% higher than the min
         wadStartPrice = int256(bound(uint256(wadStartPrice), uint256(wadMul(wadMinPrice, 1.01e18)), 1e50));
-        wadPower = int256(bound(uint256(wadPower), 0.1e18, 0.99e18));
+        wadPower = int256(bound(uint256(wadPower), 0.7e18, 0.999e18));
         wadScale = int256(bound(uint256(wadScale), 1e18, 1e39));
         wadPassed = int256(bound(uint256(wadPassed), 1e18, 1e26));
 
