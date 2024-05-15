@@ -296,20 +296,16 @@ contract CrossWord is Words3Test {
     {
         Bound[] memory bounds = new Bound[](4);
         if (bound1Positive != 0 || bound1Negative != 0) {
-            bounds[0] = Bound({ positive: bound1Positive, negative: bound1Negative, proof: m.getProof(words, proof1)
-});
+            bounds[0] = Bound({ positive: bound1Positive, negative: bound1Negative, proof: m.getProof(words, proof1) });
         }
         if (bound2Positive != 0 || bound2Negative != 0) {
-            bounds[1] = Bound({ positive: bound2Positive, negative: bound2Negative, proof: m.getProof(words, proof2)
-});
+            bounds[1] = Bound({ positive: bound2Positive, negative: bound2Negative, proof: m.getProof(words, proof2) });
         }
         if (bound3Positive != 0 || bound3Negative != 0) {
-            bounds[2] = Bound({ positive: bound3Positive, negative: bound3Negative, proof: m.getProof(words, proof3)
-});
+            bounds[2] = Bound({ positive: bound3Positive, negative: bound3Negative, proof: m.getProof(words, proof3) });
         }
         if (bound4Positive != 0 || bound4Negative != 0) {
-            bounds[3] = Bound({ positive: bound4Positive, negative: bound4Negative, proof: m.getProof(words, proof4)
-});
+            bounds[3] = Bound({ positive: bound4Positive, negative: bound4Negative, proof: m.getProof(words, proof4) });
         }
         return bounds;
     }
@@ -338,8 +334,7 @@ contract CrossWord is Words3Test {
         bool areCorrectBounds = false;
         if (
             bound2Positive == 0 && bound2Negative == 1 && proof2 == 7 && bound4Positive == 0 && bound4Negative == 2
-                && proof4 == 3 && bound1Positive == 0 && bound1Negative == 0 && bound3Positive == 0 && bound3Negative
-== 0
+                && proof4 == 3 && bound1Positive == 0 && bound1Negative == 0 && bound3Positive == 0 && bound3Negative == 0
         ) {
             areCorrectBounds = true;
         }

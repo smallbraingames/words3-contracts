@@ -34,6 +34,7 @@ library LibPrice {
     {
         int256 startX =
             getInverseF({ y: wadStartPrice, wadPower: wadPower, wadScale: wadScale, wadConstant: wadMinPrice });
+
         int256 currentX = startX + wadPassed;
         int256 wadPrice = getF({ x: currentX, wadPower: wadPower, wadScale: wadScale, wadConstant: wadMinPrice });
         return uint256(wadPrice / 1e18);

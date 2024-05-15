@@ -19,15 +19,12 @@ contract PostDeploy is Script {
         // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         // vm.startBroadcast(deployerPrivateKey);
 
-        // Letter[] memory infinite = new Letter[](8);
-        // infinite[0] = Letter.I;
-        // infinite[1] = Letter.N;
-        // infinite[2] = Letter.F;
-        // infinite[3] = Letter.I;
-        // infinite[4] = Letter.N;
-        // infinite[5] = Letter.I;
-        // infinite[6] = Letter.T;
-        // infinite[7] = Letter.E;
+        // Letter[] memory words = new Letter[](5);
+        // words[0] = Letter.W;
+        // words[1] = Letter.O;
+        // words[2] = Letter.R;
+        // words[3] = Letter.D;
+        // words[4] = Letter.S;
 
         // uint32[26] memory initialLetterAllocation;
         // for (uint8 i = 0; i < 26; i++) {
@@ -35,7 +32,7 @@ contract PostDeploy is Script {
         // }
 
         // world.start({
-        //     initialWord: infinite,
+        //     initialWord: words,
         //     initialLetterAllocation: initialLetterAllocation,
         //     initialLettersTo: address(0xA9656f80CF8fba7618455e1c904EA30aA6C70F94),
         //     merkleRoot: 0xacd24e8edae5cf4cdbc3ce0c196a670cbea1dbf37576112b0a3defac3318b432,
@@ -44,12 +41,12 @@ contract PostDeploy is Script {
         //     priceConfig: PriceConfigData({
         //         minPrice: 0.001 ether,
         //         wadPriceIncreaseFactor: 1.115e18,
-        //         wadPower: 0.9e18,
-        //         wadScale: 9.96e36
+        //         wadPower: 0.97e18,
+        //         wadScale: 2.03e37
         //     }),
         //     feeConfig: FeeConfigData({ feeBps: 690, feeTaker: address(0x7078272d7AbB477aed006190678054bB654815f4) }),
         //     crossWordRewardFraction: 3,
-        //     bonusDistance: 9,
+        //     bonusDistance: 5,
         //     numDrawLetters: 7
         // });
 

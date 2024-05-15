@@ -67,8 +67,7 @@ contract LibPointsTest is Words3Test {
         Bonus memory bonus = Bonus({ bonusValue: uint32(multiplier), bonusType: BonusType.MULTIPLY_LETTER });
         for (uint256 i = 1; i <= 26; i++) {
             assertEq(
-                LibPoints.getBonusLetterPoints(Letter(i), bonus), LibPoints.getBaseLetterPoints(Letter(i)) *
-multiplier
+                LibPoints.getBonusLetterPoints(Letter(i), bonus), LibPoints.getBaseLetterPoints(Letter(i)) * multiplier
             );
         }
     }
