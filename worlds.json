@@ -1,4 +1,8 @@
 {
+  "690": {
+    "address": "0x94916574668b6d41f226fd0c7374d9a75530a58d",
+    "blockNumber": 1760152
+  },
   "901": {
     "address": "0x1d778f689b42acb8309459ff173d1a9ca0b420b9",
     "blockNumber": 12058746
@@ -16,18 +20,18 @@
     "blockNumber": 6720499
   },
   "17069": {
-    "address": "0xa8fd20dd1e154590b61b649ea57109e3a3507971",
-    "blockNumber": 603227
+    "address": "0x810b70265e8270c6f8454ef368e65a3b9f043040",
+    "blockNumber": 1738520
   },
   "31337": {
-    "address": "0x8d8b6b8414e1e3dcfd4168561b9be6bd3bf6ec4b"
+    "address": "0xcb4eb503f4cae4579a6f0886b499b730ee879c8f"
   },
   "84531": {
     "address": "0xEF7c64d4773C13158A2419D43b68B6808C00421b",
     "blockNumber": 7978538
   },
   "84532": {
-    "address": "0x76e0bc80c2ef13f6b0af96002f094264bd163f25",
-    "blockNumber": 9620425
+    "address": "0x5f7286774e5d95e22a265f0ef39981821571c482",
+    "blockNumber": 9985722
   }
 }

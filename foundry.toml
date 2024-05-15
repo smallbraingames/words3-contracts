@@ -29,6 +29,9 @@
 [fuzz]
   runs = 1028
 
+[profile.redstone-mainnet]
+  eth_rpc_url = "https://rpc.redstonechain.com"
+
 [profile.redstone-garnet]
   eth_rpc_url = "https://rpc.garnetchain.com"
 

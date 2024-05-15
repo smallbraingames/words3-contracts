@@ -4,17 +4,16 @@ pragma solidity >=0.8.24;
 import { System } from "@latticexyz/world/src/System.sol";
 import { Letter, Status } from "codegen/common.sol";
 
-import { FeeConfigData, PriceConfigData } from "codegen/index.sol";
+import { FeeConfigData, PlayerLetters, PriceConfigData } from "codegen/index.sol";
 import { MAX_WORD_LENGTH } from "common/Constants.sol";
 import { Coord } from "common/Coord.sol";
 import { LibGame } from "libraries/LibGame.sol";
-import { LibLetters } from "libraries/LibLetters.sol";
 import { LibTile } from "libraries/LibTile.sol";
 
 contract StartSystem is System {
     error GameAlreadyStarted();
     error InitialWordTooLong();
-    error PriceWadFactorTooSmall();
+    error PriceWadPriceIncreaseFactorTooSmall();
 
     function start(
         Letter[] memory initialWord,
@@ -34,8 +33,8 @@ contract StartSystem is System {
         if (LibGame.getGameStatus() != Status.NOT_STARTED) {
             revert GameAlreadyStarted();
         }
-        if (priceConfig.wadFactor < 1e18) {
-            revert PriceWadFactorTooSmall();
+        if (priceConfig.wadPriceIncreaseFactor < 1.01e18) {
+            revert PriceWadPriceIncreaseFactorTooSmall();
         }
         writeInitialWordChecked({ initialWord: initialWord });
         allocateInitialLetters({ initialLetterAllocation: initialLetterAllocation, initialLettersTo: initialLettersTo });
@@ -67,9 +66,7 @@ contract StartSystem is System {
         for (uint256 i = 0; i < 26; i++) {
             Letter letter = Letter(i + 1);
             uint32 count = initialLetterAllocation[i];
-            for (uint32 j = 0; j < count; j++) {
-                LibLetters.addLetter({ player: initialLettersTo, letter: letter });
-            }
+            PlayerLetters.set({ player: initialLettersTo, letter: letter, value: count });
         }
     }
 }

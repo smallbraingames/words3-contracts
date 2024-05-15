@@ -1,6 +1,9 @@
 import { defineWorld } from "@latticexyz/world";
 
 export default defineWorld({
+  deploy: {
+    upgradeableWorldImplementation: true,
+  },
   tables: {
     // Config
     GameConfig: {
@@ -35,10 +38,9 @@ export default defineWorld({
       key: [],
       schema: {
         minPrice: "uint256",
-        wadFactor: "int256",
-        wadDurationRoot: "int256",
-        wadDurationScale: "int256",
-        wadDurationConstant: "int256"
+        wadPriceIncreaseFactor: "int256",
+        wadPower: "int256",
+        wadScale: "int256",
       },
     },
     DrawLetterOdds: {

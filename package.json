@@ -10,6 +10,7 @@
     "deploy:local": "bun run build && mud deploy",
     "deploy:base-testnet": "bun run build && mud deploy --profile=base-sepolia",
     "deploy:testnet": "bun run build && mud deploy --profile=redstone-garnet",
+    "deploy:redstone-mainnet": "bun run build && mud deploy --profile=redstone-mainnet",
     "deploy:testnet-legacy": "bun run build && mud deploy --profile=redstone-holesky-legacy",
     "deploy:base": "bun run build && mud deploy --profile=base-mainnet",
     "dev": "bun mud dev-contracts",
