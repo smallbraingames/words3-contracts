@@ -18,7 +18,7 @@
     "lint": "forge fmt && bun run solhint",
     "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",
     "test": "mud test",
-    "airdrop-letters": "bunx ts-node scripts/airdropLetters.ts"
+    "transfer-letters": "bunx ts-node scripts/transferLetters.ts"
   },
   "devDependencies": {
     "@latticexyz/cli": "2.0.8",
