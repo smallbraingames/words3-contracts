@@ -14,7 +14,7 @@ const main = async () => {
   const words = await getAllWords(dictionary);
   const tree = StandardMerkleTree.of<number[][]>(
     words.map((word) => [wordToCode(word.toLowerCase())]),
-    ["uint8[]"]
+    ["uint8[]"],
   );
   const outputFilename = `${output}.json`;
   await writeFile(
@@ -22,7 +22,7 @@ const main = async () => {
     JSON.stringify({
       root: tree.root,
       tree: tree.dump(),
-    })
+    }),
   );
   console.log(`Saved to ${outputFilename}`);
 };
