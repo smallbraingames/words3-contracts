@@ -11,3 +11,4 @@ broadcast/
 .env
 latticeEnv.sh
 foundry.toml
+scripts/csv
