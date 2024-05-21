@@ -56,7 +56,7 @@ const getLetterString = (letter: number) => {
   return String.fromCharCode(64 + letter);
 };
 
-const airdropLetters = async (
+const transferLetters = async (
   letters: number[],
   to: Address,
   walletClient: WalletClient,
@@ -65,11 +65,11 @@ const airdropLetters = async (
   worldAddress: Address,
 ) => {
   if (!walletClient.account) {
-    throw new Error("[Airdrop Letters] Account is not connected");
+    throw new Error("[Transfer Letters] Account is not connected");
   }
 
   console.log(
-    `[Airdrop Letters] Airdropping letters ${letters.map(getLetterString).join(",")} to ${to} on ${chain.name} chain`,
+    `[Transfer Letters] transferring letters ${letters.map(getLetterString).join(",")} to ${to} on ${chain.name} chain`,
   );
 
   const tx = await walletClient.writeContract({
@@ -84,34 +84,34 @@ const airdropLetters = async (
   const receipt = await publicClient.waitForTransactionReceipt({ hash: tx });
 
   if (receipt.status !== "success") {
-    console.log("[Airdrop Letters] Transaction failed", receipt);
-    throw new Error(`[Airdrop Letters] Transaction failed: ${receipt}`);
+    console.log("[Transfer Letters] Transaction failed", receipt);
+    throw new Error(`[Transfer Letters] Transaction failed: ${receipt}`);
   }
 
   console.log(
-    `[Airdrop Letters] Airdropped letters ${letters.map(getLetterString).join(",")} to ${to} on ${chain.name} chain (tx hash: ${tx})`,
+    `[Transfer Letters] Transferped letters ${letters.map(getLetterString).join(",")} to ${to} on ${chain.name} chain (tx hash: ${tx})`,
   );
 };
 
-type Airdrop = {
+type Transfer = {
   player: Address;
   letters: number[];
 };
 
-const processAirdrops = async (
-  airdrops: Airdrop[],
+const processTransfers = async (
+  transfers: Transfer[],
   walletClient: WalletClient,
   publicClient: PublicClient,
   chain: Chain,
   worldAddress: Address,
 ) => {
   console.log(
-    `[Airdrop Letters] Airdropping ${airdrops.length} times on ${chain.name} chain`,
+    `[Transfer Letters] transferring ${transfers.length} times on ${chain.name} chain`,
   );
-  for (const airdrop of airdrops) {
-    await airdropLetters(
-      airdrop.letters,
-      airdrop.player,
+  for (const transfer of transfers) {
+    await transferLetters(
+      transfer.letters,
+      transfer.player,
       walletClient,
       publicClient,
       chain,
@@ -119,7 +119,7 @@ const processAirdrops = async (
     );
   }
   console.log(
-    `[Airdrop Letters] Airdropped ${airdrops.length} times on ${chain.name} chain`,
+    `[Transfer Letters] Transferped ${transfers.length} times on ${chain.name} chain`,
   );
 };
 
@@ -152,19 +152,19 @@ const getPlayerCSVAddresses = async (csv: string): Promise<Address[]> => {
 const program = new Command();
 
 program
-  .name("airdrop-letters")
-  .description("Airdrop letters to a players")
-  .argument("<number>", "Chain to airdrop letters on")
+  .name("transfer-letters")
+  .description("Transfer letters to a players")
+  .argument("<number>", "Chain to transfer letters on")
   .argument("<string>", "Wallet private key")
-  .option("-l, --letters <string>", "List of letters to airdrop")
+  .option("-l, --letters <string>", "List of letters to transfer")
   .option(
     "-r, --random <number>",
-    "Randomly choose some letters from the letter list instead of airdropping all",
+    "Randomly choose some letters from the letter list instead of transferring all",
   )
   .option("--playersCsv <string>", "CSV file containing player addresses")
   .option(
     "--player <string>",
-    "Player address to airdrop to, airdrop to one player",
+    "Player address to transfer to, transfer to one player",
   )
   .action(
     async (
@@ -181,7 +181,7 @@ program
       const worldAddressRaw: string | undefined = worlds[chainId]?.address;
       if (!worldAddressRaw) {
         throw new Error(
-          `[Airdrop Letters] No world address found for chain ${chainId}. Did you run \`mud deploy\`?`,
+          `[Transfer Letters] No world address found for chain ${chainId}. Did you run \`mud deploy\`?`,
         );
       }
 
@@ -189,7 +189,7 @@ program
 
       const chain = SUPPORTED_CHAINS.find((c) => c.id.toString() === chainId);
       if (!chain) {
-        throw new Error(`[Airdrop Letters] Chain ${chainId} is not supported`);
+        throw new Error(`[Transfer Letters] Chain ${chainId} is not supported`);
       }
 
       const letters =
@@ -198,45 +198,45 @@ program
           .map((l) => getStringLetter(l.toLowerCase())) ??
         Array.from({ length: 26 }, (_, i) => i + 1);
       console.log(
-        `[Airdrop Letters] Airdropping with letter list ${letters.map(getLetterString).join(",")}`,
+        `[Transfer Letters] transferring with letter list ${letters.map(getLetterString).join(",")}`,
       );
 
       const players: Address[] = [];
       if (options.player) {
         players.push(getAddress(options.player));
         console.log(
-          `[Airdrop Letters] Airdropping to player ${options.player}`,
+          `[Transfer Letters] transferring to player ${options.player}`,
         );
       } else if (options.playersCsv) {
         const csvPlayers = await getPlayerCSVAddresses(options.playersCsv);
         players.push(...csvPlayers);
         console.log(
-          `[Airdrop Letters] Airdropping to ${csvPlayers.length} players from CSV`,
+          `[Transfer Letters] transferring to ${csvPlayers.length} players from CSV`,
         );
       } else {
         throw Error(
-          "[Airdrop Letters] No player specified, specify player or playersCsv",
+          "[Transfer Letters] No player specified, specify player or playersCsv",
         );
       }
 
-      const airdrops: Airdrop[] = [];
+      const transfers: Transfer[] = [];
       if (options.random) {
         const numLetters = parseInt(options.random);
         for (const player of players) {
           const randomLetters = letters
             .sort(() => Math.random() - 0.5)
             .slice(0, numLetters);
-          airdrops.push({ player, letters: randomLetters });
+          transfers.push({ player, letters: randomLetters });
         }
         console.log(
-          `[Airdrop Letters] Airdropping ${numLetters} random letter(s) to ${players.length} players`,
+          `[Transfer Letters] transferring ${numLetters} random letter(s) to ${players.length} players`,
         );
       } else {
         for (const player of players) {
-          airdrops.push({ player, letters });
+          transfers.push({ player, letters });
         }
         console.log(
-          `[Airdrop Letters] Airdropping all letters in list to ${players.length} players`,
+          `[Transfer Letters] transferring all letters in list to ${players.length} players`,
         );
       }
 
@@ -248,8 +248,8 @@ program
         transport: http(),
       });
       const publicClient = createPublicClient({ chain, transport: http() });
-      await processAirdrops(
-        airdrops,
+      await processTransfers(
+        transfers,
         walletClient,
         publicClient,
         chain,
