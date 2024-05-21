@@ -89,7 +89,7 @@ const airdropLetters = async (
   }
 
   console.log(
-    `[Airdrop Letters] Airdropped letters ${letters.map(getLetterString).join(",")} to ${to} on ${chain.name} chain`,
+    `[Airdrop Letters] Airdropped letters ${letters.map(getLetterString).join(",")} to ${to} on ${chain.name} chain (tx hash: ${tx})`,
   );
 };
 
@@ -130,7 +130,11 @@ const getPlayerCSVAddresses = async (csv: string): Promise<Address[]> => {
       .pipe(parse({ columns: true }))
       .on("data", (row) => {
         try {
-          addresses.push(getAddress(row.address));
+          let rowAddress = row.address;
+          if (!rowAddress.startsWith("0x")) {
+            rowAddress = `0x${rowAddress}`;
+          }
+          addresses.push(getAddress(rowAddress));
         } catch (e) {
           console.error(
             `[Get Player CSV Addresses] Error parsing row ${row}`,
