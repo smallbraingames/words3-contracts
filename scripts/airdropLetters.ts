@@ -15,6 +15,9 @@ import { Command } from "commander";
 import { baseSepolia } from "viem/chains";
 import { chainConfig } from "viem/op-stack";
 import { privateKeyToAccount } from "viem/accounts";
+import { parse } from "csv-parse";
+import { readFile } from "fs/promises";
+import { createReadStream } from "fs";
 
 const redstone = {
   ...chainConfig,
@@ -120,6 +123,28 @@ const processAirdrops = async (
   );
 };
 
+const getPlayerCSVAddresses = async (csv: string): Promise<Address[]> => {
+  const promise = new Promise<Address[]>((resolve, reject) => {
+    const addresses: Address[] = [];
+    createReadStream(csv)
+      .pipe(parse({ columns: true }))
+      .on("data", (row) => {
+        try {
+          addresses.push(getAddress(row.address));
+        } catch (e) {
+          console.error(
+            `[Get Player CSV Addresses] Error parsing row ${row}`,
+            e,
+          );
+        }
+      })
+      .on("end", () => {
+        resolve(addresses);
+      });
+  });
+  return promise;
+};
+
 const program = new Command();
 
 program
@@ -132,7 +157,7 @@ program
     "-r, --random <number>",
     "Randomly choose some letters from the letter list instead of airdropping all",
   )
-  .option("--playerCsv <string>", "CSV file containing player addresses")
+  .option("--playersCsv <string>", "CSV file containing player addresses")
   .option(
     "--player <string>",
     "Player address to airdrop to, airdrop to one player",
@@ -144,7 +169,7 @@ program
       options: {
         letters?: string;
         random?: string;
-        playerCsv?: string;
+        playersCsv?: string;
         player?: string;
       },
     ) => {
@@ -178,11 +203,15 @@ program
         console.log(
           `[Airdrop Letters] Airdropping to player ${options.player}`,
         );
-      } else if (options.playerCsv) {
-        throw Error("Not implemented");
+      } else if (options.playersCsv) {
+        const csvPlayers = await getPlayerCSVAddresses(options.playersCsv);
+        players.push(...csvPlayers);
+        console.log(
+          `[Airdrop Letters] Airdropping to ${csvPlayers.length} players from CSV`,
+        );
       } else {
         throw Error(
-          "[Airdrop Letters] No player specified, specify players or playerCsv",
+          "[Airdrop Letters] No player specified, specify player or playersCsv",
         );
       }
 
